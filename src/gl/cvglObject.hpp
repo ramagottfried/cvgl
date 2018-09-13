@@ -108,6 +108,39 @@ public:
         }
 
     }
+    
+    void draw( vector<int> drawtypes )
+    {
+        if( m_draw_mode == GL_STREAM_DRAW )
+            glBufferData(GL_ARRAY_BUFFER, sizeof(cvglVertex) * m_vertices.size(), m_vertices.data(), GL_STREAM_DRAW);
+        
+        for( size_t i = 0; i < m_start.size(); ++i )
+        {
+            if( m_tex[i] )
+                glBindTexture( GL_TEXTURE_2D, m_tex[i] );
+            
+            for( size_t j = 0; j < drawtypes.size(); ++j  )
+                glDrawArrays(drawtypes[j], (int)m_start[i], (int)m_size[i]);
+            
+        }
+        
+    }
+    
+    void draw( int drawtype )
+    {
+        if( m_draw_mode == GL_STREAM_DRAW )
+            glBufferData(GL_ARRAY_BUFFER, sizeof(cvglVertex) * m_vertices.size(), m_vertices.data(), GL_STREAM_DRAW);
+        
+        for( size_t i = 0; i < m_start.size(); ++i )
+        {
+            if( m_tex[i] )
+                glBindTexture( GL_TEXTURE_2D, m_tex[i] );
+            
+            glDrawArrays(drawtype, (int)m_start[i], (int)m_size[i]);
+            
+        }
+    }
+    
    
     void addVertexIndexArray( vector<GLuint> idx )
     {

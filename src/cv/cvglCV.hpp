@@ -44,7 +44,7 @@ public:
     
     // not sure yet if this should return the objects to draw or make that a separate call from the main loop
     
-    void process(cvglObject& outObj)
+    void process(cvglObject& outContour, cvglObject& outHull)
     {
         // later could wrap each function with a "set to output" flag, which could be used for debugging
         // or keep these all as class members and then query them as needed..
@@ -70,7 +70,8 @@ public:
         
         // use two threads, one to load object into buffer for GL and a second one to write into OSC and send
         
-        outObj.clear();
+        outContour.clear();
+        outHull.clear();
         
         size_t npix = threshold_output.rows * threshold_output.cols;
         float halfW = threshold_output.cols / 2.0f;
@@ -84,15 +85,15 @@ public:
             {
                 // is it possible to just to copy the whole set of XY coordinates into a buffer? maybe that's better?
                 // would require a different vertex layout
-                outObj.newObj( GL_LINE_LOOP );
+                outContour.newObj();
                 for( int j = 0; j < contours[i].size(); j++ )
                 {
-                    outObj.addVertex( cvglVertex({
+                    outContour.addVertex( cvglVertex({
                         (contours[i][j].x - halfW) / halfW,
                         -(contours[i][j].y - halfH) / halfH
                     }));
                 }
-                outObj.endObj();
+                outContour.endObj();
                 
                
                 // hull
@@ -107,15 +108,15 @@ public:
                 if( hullI_size > 3 )
                     convexityDefects( contours[i], hullI, defects );
                 
-                outObj.newObj( vector<int>({GL_LINE_LOOP, GL_POINTS}) );
+                outHull.newObj();
                 for( long hpi = 0; hpi < hullI_size; hpi++ )
                 {
-                    outObj.addVertex( cvglVertex({
+                    outHull.addVertex( cvglVertex({
                         (hullP[hpi].x - halfW) / halfW,
                         -(hullP[hpi].y - halfH) / halfH
                     }));
                 }
-                outObj.endObj();
+                outHull.endObj();
                 
             }
         }

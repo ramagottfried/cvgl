@@ -45,13 +45,14 @@ int main( void )
     rect.initStaticDraw();
     
     cvglTexture frameTex;
-    cvglTexture colorTex;
-    colorTex.setTexture(0, 1, 1, 0.5);
+    cvglTexture colorTex[2];
+    colorTex[0].setTexture(0, 1, 1, 0.5);
+    colorTex[1].setTexture(1, 0, 1, 1);
     
-    cvglObject contourMesh;
-
+    cvglObject contourMesh, hullMesh;
     
     glPointSize(5);
+    
     while( !context.shouldClose() )
     {
         context.clear();
@@ -61,15 +62,15 @@ int main( void )
         frameTex.setTexture( frame );
         rect.draw();
 
-      //  triangle.bind();
-//        colorTex.bind();
-//        triangle.draw();
-        
-        cvx.process(contourMesh);
+        cvx.process( contourMesh, hullMesh );
 
         contourMesh.bind();
-        colorTex.bind();
-        contourMesh.draw();
+        colorTex[0].bind();
+        contourMesh.draw(GL_LINE_LOOP);
+
+        hullMesh.bind();
+        colorTex[1].bind();
+        hullMesh.draw(vector<int>({GL_LINE_LOOP, GL_POINTS}));
 
         context.runningAvgFPS();
         context.drawAndPoll();
