@@ -1,0 +1,37 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "1CD4C6F0F54F19FF7A485E19C6BE964280B4D8AB",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "6EDA5A7FDA0A31D16357F67E6E23A05520175FA3" : 0,
+    "1CD4C6F0F54F19FF7A485E19C6BE964280B4D8AB" : 0,
+    "73CD3912FF7E5D839C8BDA43B346354BE088DDE8" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "B3F7BBEC-3D8E-4D26-A403-F9EBBCE9ACC7",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "6EDA5A7FDA0A31D16357F67E6E23A05520175FA3" : "o.cv",
+    "1CD4C6F0F54F19FF7A485E19C6BE964280B4D8AB" : "optic\/",
+    "73CD3912FF7E5D839C8BDA43B346354BE088DDE8" : "..\/libo"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "o.io.opencv",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "o.io.opencv\/o.io.opencv.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ramagottfried\/optic.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "1CD4C6F0F54F19FF7A485E19C6BE964280B4D8AB"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/CNMAT\/o.cv.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "6EDA5A7FDA0A31D16357F67E6E23A05520175FA3"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/CNMAT\/libo.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "73CD3912FF7E5D839C8BDA43B346354BE088DDE8"
+    }
+  ]
+}

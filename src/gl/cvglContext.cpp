@@ -1,0 +1,288 @@
+
+#include "cvglContext.hpp"
+#include "cvglCallbacks.hpp"
+
+void cvglContext::resize_callback(int w, int h)
+{
+    if( m_scaleAttrib )
+    {
+        double aspect = (double)w / (double)h;
+        
+        std::cout << aspect << " " << m_aspectRatio << " " << w << " " << h << std::endl;
+        double adjust =  aspect / m_aspectRatio;
+        glUniform3f(m_scaleAttrib, 1, adjust, 1 );
+    }
+}
+
+cvglContext::cvglContext()
+{
+    // Initialise GLFW
+    if( !glfwInit() )
+    {
+        cout << "Failed to initialize GLFW" << endl;
+        
+        // throw exception here?
+        return;
+    }
+    
+    logWindow( m_window, this );
+}
+
+cvglContext::~cvglContext()
+{
+    
+    if( m_shaderProgram )
+        glDeleteProgram(m_shaderProgram);
+
+    // Close OpenGL window and terminate GLFW
+    glfwTerminate();
+}
+
+
+void cvglContext::setupWindow(int width, int height )
+{
+    
+    m_aspectRatio = width / height;
+    
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    
+    // Open a window and create its OpenGL context
+    m_window = glfwCreateWindow( width, height, "cv gl", NULL, NULL);
+    if( m_window == NULL ){
+        cout <<"Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials." << endl;
+        glfwTerminate();
+        return;
+    }
+    
+    glfwMakeContextCurrent(m_window);
+    glfwSetWindowSizeCallback(m_window, global_resize_callback);
+    
+    
+    // glad: load all OpenGL function pointers
+    // ---------------------------------------
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        glfwTerminate();
+    }
+    
+    // Ensure we can capture the escape key being pressed below
+    glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT,  GL_NICEST);
+    
+}
+
+std::string slurp(std::ifstream& in) {
+    std::stringstream sstr;
+    sstr << in.rdbuf();
+    return sstr.str();
+}
+
+string getFileString(const char * file_path)
+{
+    ifstream in(file_path);
+    stringstream sstr;
+    sstr << in.rdbuf();
+    return sstr.str();
+}
+
+int cvglContext::loadShaderFiles(const char * vertex_file_path, const char * fragment_file_path)
+{
+    string vertex_src = getFileString(vertex_file_path);
+    string fragment_src = getFileString(fragment_file_path);
+    
+    if( !vertex_src.size() || !fragment_src.size() )
+        return 0;
+    
+    if( loadShaders( vertex_src.c_str(), fragment_src.c_str() ) )
+    {
+        useShader();
+        return 1;
+    }
+
+    return 0;
+    
+}
+
+int cvglContext::loadShaders(const char * vertex_src, const char * fragment_src)
+{
+    
+    // Create and compile the vertex shader
+    m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(m_vertexShader, 1, &vertex_src, NULL);
+    glCompileShader(m_vertexShader);
+    
+    int  success;
+    char infoLog[512];
+    glGetShaderiv(m_vertexShader, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        glGetShaderInfoLog(m_vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << vertex_src << endl;
+        return 0;
+    }
+    
+    // Create and compile the fragment shader
+    m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(m_fragmentShader, 1, &fragment_src, NULL);
+    glCompileShader(m_fragmentShader);
+    
+    glGetShaderiv(m_fragmentShader, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        glGetShaderInfoLog(m_fragmentShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << fragment_src << endl;
+        return 0;
+    }
+    
+    // Link the vertex and fragment shader into a shader program
+    m_shaderProgram = glCreateProgram();
+    glAttachShader(m_shaderProgram, m_vertexShader);
+    glAttachShader(m_shaderProgram, m_fragmentShader);
+    glLinkProgram(m_shaderProgram);
+    
+    // check for linking errors
+    glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(m_shaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        return 0;
+    }
+    
+    glUseProgram(m_shaderProgram);
+    
+    m_scaleAttrib = glGetUniformLocation(m_shaderProgram, "scalar");
+    
+    if( m_scaleAttrib == -1 )
+    {
+        cout << "failed to find m_scaleAttrib " << endl;
+    //    return 0;
+    }
+    
+    glBindFragDataLocation(m_shaderProgram, 0, "outColor");
+
+    glUniform3f(m_scaleAttrib, 1.0f, 1.0f, 1.0f );
+    
+    glDetachShader(m_shaderProgram, m_vertexShader);
+    glDetachShader(m_shaderProgram, m_fragmentShader);
+    glDeleteShader(m_vertexShader);
+    glDeleteShader(m_fragmentShader);
+    
+    return 1;
+}
+
+/*
+void cvglContext::genTexture()
+{
+    //------
+    // TEXTURE
+    glGenTextures(1, &m_tex);
+    glBindTexture(GL_TEXTURE_2D, m_tex);
+    
+    // wrap parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
+    // interpolation
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    // Mipmap not sure if this is supposed to be used with the interpolation or not
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+void cvglContext::setMatTexture(cv::Mat mat)
+{
+    glTexImage2D(GL_TEXTURE_2D,     // Type of texture
+                 0,                 // Pyramid level (for mip-mapping) - 0 is the top level
+                 GL_RGB,            // Internal colour format to convert to
+                 mat.cols,          // Image width  i.e. 640 for Kinect in standard mode
+                 mat.rows,          // Image height i.e. 480 for Kinect in standard mode
+                 0,                 // Border width in pixels (can either be 1 or 0)
+                 GL_BGR, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+                 GL_UNSIGNED_BYTE,  // Image data type
+                 mat.ptr());        // The actual image data itself
+    
+}
+
+*/
+
+/*
+ 
+ GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path)
+ {
+ 
+ GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+ GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+ 
+ const char * vertex_src = getFileString(vertex_file_path);
+ const char * fragment_src = getFileString(fragment_file_path);
+ 
+ if( !vertex_src || !fragment_src )
+ return 0;
+ 
+ GLint Result = GL_FALSE;
+ int InfoLogLength;
+ 
+ // Compile Vertex Shader
+ glShaderSource(vertexShaderID, 1, &vertex_src , NULL);
+ glCompileShader(vertexShaderID);
+ 
+ // Check Vertex Shader
+ glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &Result);
+ glGetShaderiv(vertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+ if ( InfoLogLength > 0 ){
+ std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
+ glGetShaderInfoLog(vertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+ cout << VertexShaderErrorMessage[0] << endl;
+ }
+ 
+ // Compile Fragment Shader
+ glShaderSource(fragmentShaderID, 1, &fragment_src , NULL);
+ glCompileShader(fragmentShaderID);
+ 
+ // Check Fragment Shader
+ glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &Result);
+ glGetShaderiv(fragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+ if ( InfoLogLength > 0 ){
+ std::vector<char> FragmentShaderErrorMessage(InfoLogLength+1);
+ glGetShaderInfoLog(fragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+ cout << FragmentShaderErrorMessage[0] << endl;
+ }
+ 
+ // Link the program
+ GLuint programID = glCreateProgram();
+ glAttachShader(programID, vertexShaderID);
+ glAttachShader(programID, fragmentShaderID);
+ glLinkProgram(programID);
+ 
+ // Check the program
+ glGetProgramiv(programID, GL_LINK_STATUS, &Result);
+ glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+ if ( InfoLogLength > 0 ){
+ std::vector<char> ProgramErrorMessage(InfoLogLength+1);
+ glGetProgramInfoLog(programID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+ printf("%s\n", &ProgramErrorMessage[0]);
+ }
+ 
+ 
+ glDetachShader(programID, vertexShaderID);
+ glDetachShader(programID, fragmentShaderID);
+ 
+ glDeleteShader(vertexShaderID);
+ glDeleteShader(fragmentShaderID);
+ 
+ return programID;
+ }
+ */
