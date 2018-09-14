@@ -46,9 +46,10 @@ int main( void )
     rect.initStaticDraw();
     
     cvglTexture frameTex;
-    cvglTexture colorTex[2];
+    cvglTexture colorTex[3];
     colorTex[0].setTexture(0, 1, 1, 0.5);
     colorTex[1].setTexture(1, 0, 1, 1);
+    colorTex[2].setTexture(1, 1, 1, 0.2);
     
     cvglObject contourMesh, hullMesh, minrectMesh;
 
@@ -73,9 +74,13 @@ int main( void )
         contourMesh.draw(GL_LINE_LOOP);
 
         hullMesh.bind();
-        colorTex[1].bind();
+        colorTex[2].bind();
         hullMesh.draw(vector<int>({GL_LINE_LOOP, GL_POINTS}));
 
+        minrectMesh.bind();
+        colorTex[2].bind();
+        minrectMesh.draw(GL_LINE_LOOP);
+        
         context.runningAvgFPS();
         context.drawAndPoll();
     }

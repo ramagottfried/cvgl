@@ -39,5 +39,22 @@ namespace cvgl
                 break;
         }
     }
+    
+    void rotatedRectToVertex(const RotatedRect& rect, cvglObject& vertexObj, const float halfScreenW, const float halfScreenH )
+    {
+        
+        Point2f rectPts[4];
+        rect.points( rectPts );
+
+        vertexObj.newObj();
+        for(int i = 0; i < 4; i++)
+        {
+            vertexObj.addVertex( cvglVertex({
+                static_cast<float>((rectPts[i].x - halfScreenW) / halfScreenW),
+                static_cast<float>(-(rectPts[i].y - halfScreenH) / halfScreenH)
+            }));
+        }
+        vertexObj.endObj();
+    }
 }
 

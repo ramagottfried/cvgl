@@ -55,6 +55,9 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
     outHull.clear();
     outHull.reserve( npoints ); // << probably no harm in resverving the max number of points incase all the contours are convex
     
+    minrectMesh.clear();
+    minrectMesh.reserve( contours.size() * 4 );
+    
     size_t npix = threshold_output.rows * threshold_output.cols;
     float halfW = threshold_output.cols / 2.0f;
     float halfH = threshold_output.rows / 2.0f;
@@ -72,9 +75,11 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
             Mat hullP, hullI;
             cv::RotatedRect minRect;
             vector<Vec4i> defects;
+
             cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
             
             cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
+            cvgl::rotatedRectToVertex(minRect, minrectMesh, halfW, halfH );
             
             size_t hullI_size = hullI.rows * hullI.cols;
             if( hullI_size > 3 )

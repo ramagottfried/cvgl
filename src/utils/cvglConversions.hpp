@@ -12,5 +12,8 @@ namespace cvgl
     
     template<typename T>
     void pointMatToVertex(const Mat& points, cvglObject& vertexObj, const float halfScreenW, const float halfScreenH );
+    
+    void rotatedRectToVertex(const RotatedRect& rect, cvglObject& vertexObj, const float halfScreenW, const float halfScreenH );
+
 }
 
