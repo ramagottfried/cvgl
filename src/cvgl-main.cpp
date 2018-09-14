@@ -91,6 +91,7 @@ int main( void )
         auto b = osc.getBundle();
         if( b.size() )
             cout << b.size() << endl;
+        
     }
     
     
