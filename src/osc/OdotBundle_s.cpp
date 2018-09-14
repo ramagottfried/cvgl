@@ -17,7 +17,12 @@ OdotBundle_s::OdotBundle_s( const OdotBundle_s& src )
     ptr = odot::newOdotBundlePtr_s( b );
 }
 
-OdotBundle_s::OdotBundle_s( const t_osc_bndl_s * src )
+OdotBundle_s::OdotBundle_s( t_osc_bndl_s * src ) // direct wrapper
+{
+    ptr = odot::newOdotBundlePtr_s( src );
+}
+
+OdotBundle_s::OdotBundle_s( const t_osc_bndl_s * src ) // copy
 {
     //    D_(cout << __func__  << "copy from odot pointer \n";)
     t_osc_bndl_s *b = NULL;
@@ -88,8 +93,10 @@ void OdotBundle_s::print( int level ) const
     cout << indent << "==== ODOT S BUNDLE ====" << endl;
     cout << indent << "   ( " << ptr.get() << " )" << endl;
     
-    cout << osc_bundle_s_pformat( ptr.get() );
-    
+    char * buf = osc_bundle_s_pformat( ptr.get() );
+    cout << buf << endl;
+    osc_mem_free(buf);
+
     cout << indent << "====-===-======-====" << endl;
     
 }

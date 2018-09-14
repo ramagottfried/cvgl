@@ -14,7 +14,6 @@ class cvglUDP
     
 public:
     
-    
     cvglUDP()
     {
         loop = uv_default_loop();
@@ -41,12 +40,14 @@ public:
     ~cvglUDP()
     {
         cout << "~" << endl;
+        uv_udp_recv_stop(&recv_socket);
         uv_stop(loop);
     }
     
     void stop()
     {
         cout << "stopping loop" << endl;
+        uv_udp_recv_stop(&recv_socket);
         uv_stop(loop);
     }
     
@@ -75,7 +76,6 @@ public:
     
     static void alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)
     {
-        fprintf(stderr, "alloc_buffer size %ld\n", suggested_size);
         buf->base = (char *)malloc(suggested_size);
         buf->len = suggested_size;
     }
@@ -95,22 +95,28 @@ public:
             free(buf->base);
             return;
         }
+        else if( nread == 0 )
+        {
+            free(buf->base);
+            return;
+        }
         
-        char sender[17] = { 0 };
-        uv_ip4_name((const struct sockaddr_in*) addr, sender, 16);
-        fprintf(stderr, "Recv from %s\n", sender);
+        /*
+        if( addr )
+        {
+            char sender[17] = { 0 };
+            uv_ip4_name((const struct sockaddr_in*) addr, sender, 16);
+            fprintf(stderr, "Recv from %s\n", sender);
+        }
+        */
+    
         
-        // ... DHCP specific code
-        unsigned int *as_integer = (unsigned int*)buf->base;
-        unsigned int ipbin = ntohl(as_integer[4]);
-        unsigned char ip[4] = {0};
-        int i;
-        for (i = 0; i < 4; i++)
-            ip[i] = (ipbin >> i*8) & 0xff;
-        fprintf(stderr, "Offered IP %d.%d.%d.%d\n", ip[3], ip[2], ip[1], ip[0]);
+       OdotBundle_s in_bndl( buf->base, nread );
+       // in_bndl.print();
+      
         
-        free(buf->base);
-        uv_udp_recv_stop(req);
+       // free(buf->base); // freed by bundle
+       //uv_udp_recv_stop(req);
     }
     
 

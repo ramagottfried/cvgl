@@ -118,7 +118,7 @@ void cvglCV::analysisThread(vector< Mat >               contours,
                          vector< Mat >                  hullI_vec,
                          vector< vector<cv::Vec4i> >    defects_vec )
 {
-    cout << "worker thread " << glfwGetTime() << endl;
+//    cout << "worker thread " << glfwGetTime() << endl;
     
     // do all OSC and UDP stuff on a different thread here
 }

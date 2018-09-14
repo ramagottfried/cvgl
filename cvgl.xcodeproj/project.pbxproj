@@ -111,6 +111,7 @@
 		216C6759214BF324009BDD3B /* osc_atom_s.c in Sources */ = {isa = PBXBuildFile; fileRef = 216C670B214BF323009BDD3B /* osc_atom_s.c */; };
 		216C675A214BF324009BDD3B /* osc_expr.h in Headers */ = {isa = PBXBuildFile; fileRef = 216C670C214BF323009BDD3B /* osc_expr.h */; };
 		216C676C214BF374009BDD3B /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
+		216C676D214BF795009BDD3B /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
 		21D7D44B2147E7AD00345757 /* cvglObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21DDFACD2146CCDC001FF716 /* cvglObject.cpp */; };
 		21D7D4502147E7AD00345757 /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06421415D0100C2CF41 /* libglfw.dylib */; };
 		21D7D4512147E7AD00345757 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06221415CD700C2CF41 /* OpenGL.framework */; };
@@ -370,6 +371,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				216C676D214BF795009BDD3B /* libcvgl-libo.a in Frameworks */,
 				216C6689214BDF1F009BDD3B /* libuv.a in Frameworks */,
 				21D7D4502147E7AD00345757 /* libglfw.dylib in Frameworks */,
 				21D7D4512147E7AD00345757 /* OpenGL.framework in Frameworks */,
@@ -1224,10 +1226,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
-					../libo,
 					/usr/local/Cellar/libuv/1.23.0/lib,
 				);
-				OTHER_LDFLAGS = "-lo";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				VALID_ARCHS = x86_64;
@@ -1247,11 +1248,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
-					../libo,
 					/usr/local/Cellar/libuv/1.23.0/lib,
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-lo";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				VALID_ARCHS = x86_64;

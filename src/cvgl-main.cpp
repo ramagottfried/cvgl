@@ -1,20 +1,26 @@
+
 #include "cvgl-main.hpp"
+
 #include "cvglContext.hpp"
 #include "cvglCV.hpp"
 #include "cvglObject.hpp"
+#include "cvglUDP.hpp"
+
 #include "cvglProfile.hpp"
-#include <thread>
 
 using namespace std;
 
 int main( void )
 {
+    cvglUDP udp;
+    
     cvglCV cvx;
     // add safety check here
     
     if( !cvx.camera.isOpen() )
         return -1;
     
+    // main thread context for gl window and OSC input
     cvglContext context;
     // add safety check here
     
@@ -78,7 +84,7 @@ int main( void )
         colorTex[2].bind();
         minrectMesh.draw(GL_LINE_LOOP);
         
-        context.runningAvgFPS();
+        // context.runningAvgFPS();
         context.drawAndPoll();
     }
     

@@ -16,7 +16,12 @@ public:
     OdotBundle_s();
     OdotBundle_s( const OdotBundle_s& src );
     OdotBundle_s( const t_osc_bndl_s *src );
-    
+
+    OdotBundle_s( t_osc_bndl_s *src );
+
+    OdotBundle_s( char *ptr, long len ) : OdotBundle_s( osc_bundle_s_alloc(len, ptr) )
+    {}
+
     OdotBundle_s( OdotBundle_s&& src ) = default;
     OdotBundle_s& operator=( OdotBundle_s&& src ) = default;
     
