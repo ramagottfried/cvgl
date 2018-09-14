@@ -1,7 +1,5 @@
 
 #include "cvglCV.hpp"
-#include "cvglConvexHull.hpp"
-#include "cvglConversions.hpp"
 
 void cvglCV::preprocess()
 {
@@ -39,145 +37,53 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
         return;
     }
     
-    vector< vector<cv::Point> >     contours;
-    vector< cv::Vec4i >             hierarchy;
-    vector< vector<cv::Point> >     hullP_vec;
-    vector< vector<int> >           hullI_vec;
-    vector< vector<cv::Vec4i> >     defects_vec;
-    
+    vector< Mat >           contours;
+    vector< Vec4i >         hierarchy;
+    vector< Mat >   hullP_vec;
+    vector< Mat >   hullI_vec;
+    vector< vector<Vec4i> > defects_vec;
+ 
     findContours( threshold_output, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
     
-    vector<Mat> contours2;
-    vector< cv::Vec4i > hierarchy2;
-    
-    findContours( threshold_output, contours2, hierarchy2, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+    size_t npoints = 0;
+    for( auto& c : contours )
+        npoints += (c.cols * c.rows);
 
- //   cout << contours2.size() << " " << contours2[0].cols << " " << contours2[0].rows << " " << contours2[0].channels() << endl;
-    
     outContour.clear();
-    outContour.reserve( contours.size() ); // << actually would be more accurate to reserve from a mat: cols*rows (not channels since it's just 2d points)
+    outContour.reserve( npoints ); // << actually would be more accurate to reserve from a mat: cols*rows (not channels since it's just 2d points)
     
     outHull.clear();
-    outHull.reserve( contours.size() ); // << probably no harm in resverving the max number of points incase all the contours are convex
+    outHull.reserve( npoints ); // << probably no harm in resverving the max number of points incase all the contours are convex
     
     size_t npix = threshold_output.rows * threshold_output.cols;
     float halfW = threshold_output.cols / 2.0f;
     float halfH = threshold_output.rows / 2.0f;
     
-    for( int i = 0; i < contours2.size(); i++ )
+    for( int i = 0; i < contours.size(); i++ )
     {
-        double contour_a = contourArea( contours2[i] ) / npix;
+        double contour_a = contourArea( contours[i] ) / npix;
         
         if( (contour_a > m_minsize) && (contour_a < m_maxsize ) )
         {
-            
-   //         cout << "contour " << contours2[i].size() << " " << contours2[i].cols << " " << contours2[i].rows << " " << contours2[i].channels() << endl;
-
-            // is it possible to just to copy the whole set of XY coordinates into a buffer? maybe that's better?
-            // would require a different vertex layout
-            // this might work better for cv too, because then I could just adjust the whole set of points in CV?
-            // ...
-            // actually no, because then the stride changes for every object, so the buffer upload to the GPU will be more complicated
-            
-            
-            // forthcoming new version will iterate the raw Mat here instead of the vector since convexhull uses Mats, no reason to convert it back and forth if not needed
-            
-            // *but* iterating the Mat is 2x slower than the vector
-           
-          
-            /*
-            markStart();
-            outContour.newObj();
-            for (MatConstIterator_<Point> it = contours2[i].begin<Point>();
-                 it != contours2[i].end<Point>();
-                 it++ )
-            {
-                outContour.addVertex( cvglVertex({
-                    ((*it).x - halfW) / halfW,
-                    -((*it).y - halfH) / halfH
-                }));
-
-            }
-            outContour.endObj();
-            markEnd();
-            
-            markStart();
-            outContour.newObj();
-            const cv::Mat& M = contours2[i];
-            for(int i = 0; i < M.rows; i++)
-            {
-                const Point* Mi = M.ptr<Point>(i);
-                for(int j = 0; j < M.cols; j++)
-                {
-                    const Point& Mij = Mi[j];
-                    outContour.addVertex( cvglVertex({
-                        (Mij.x - halfW) / halfW,
-                        -(Mij.y - halfH) / halfH
-                    }));
-                }
-            }
-            outContour.endObj();
-            markEnd();
-             */
-            
-            cvgl::pointMatToVertex(contours2[i], outContour, halfW, halfH );
+  
+            cvgl::pointMatToVertex(contours[i], outContour, halfW, halfH );
             
             // hull
-            
+            Mat hullP, hullI;
             cv::RotatedRect minRect;
-            std::vector<cv::Point> hullP;
-            std::vector<int> hullI;
-            std::vector<cv::Vec4i> defects;
+            vector<Vec4i> defects;
+            cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
             
-            Mat hullP2, hullI2;
+            cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
             
-            cvgl::minAreaRectHull( contours2[i], minRect, hullP2, hullI2 );
-           
-            /*
-            cout << "rotRec " << minRect.center.x << " " <<  minRect.center.y << " " <<  minRect.angle << endl;
-            cout << "hullI " << hullI2.size() << " " << hullI2.cols << " " << hullI2.rows << " " << hullI2.channels() << endl;
-            cout << "hullP " << hullP2.size() << " " << hullP2.cols << " " << hullP2.rows << " " << hullP2.channels() << endl;
-*/
-
-            
-            cvgl::pointMatToVertex(hullP2, outHull, halfW, halfH );
-/*
-            outHull.newObj();
-            for (MatConstIterator_<Point2f> it = hullP2.begin<Point2f>();
-                 it != hullP2.end<Point2f>();
-                 it++ )
-            {
-                outHull.addVertex( cvglVertex({
-                    ((*it).x - halfW) / halfW,
-                    -((*it).y - halfH) / halfH
-                }));
-//                cout << (*it).x << " " << (*it).y << endl;
-            }
-            
-            outHull.endObj();
-            */
-            
-            cv::convexHull( cv::Mat(contours[i]), hullP, false );
-            cv::convexHull( cv::Mat(contours[i]), hullI, false );
-            
-            size_t hullI_size = hullI.size();
+            size_t hullI_size = hullI.rows * hullI.cols;
             if( hullI_size > 3 )
                 convexityDefects( contours[i], hullI, defects );
             
             hullP_vec.emplace_back( hullP );
             hullI_vec.emplace_back( hullI );
             defects_vec.emplace_back( defects );
-     /*
-            outHull.newObj();
-            for( long hpi = 0; hpi < hullI_size; hpi++ )
-            {
-                outHull.addVertex( cvglVertex({
-                    (hullP[hpi].x - halfW) / halfW,
-                    -(hullP[hpi].y - halfH) / halfH
-                }));
-            }
-            outHull.endObj();
-       */
+
         }
     }
     
@@ -188,8 +94,8 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
     
     
     // object tracking IDs etc....
-    
-    thread worker( &cvglCV::analysisThread,
+
+    thread worker(&cvglCV::analysisThread,
                   this, // probably don't need it to be the same instance...
                   contours,
                   hierarchy,
@@ -198,14 +104,14 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
                   defects_vec );
     
     worker.detach();
-    
+
 }
 
-void cvglCV::analysisThread(vector< vector<cv::Point> >  contours,
-                         vector< cv::Vec4i >             hierarchy,
-                         vector< vector<cv::Point> >     hullP_vec,
-                         vector< vector<int> >           hullI_vec,
-                         vector< vector<cv::Vec4i> >     defects_vec )
+void cvglCV::analysisThread(vector< Mat >               contours,
+                         vector< cv::Vec4i >            hierarchy,
+                         vector< Mat >                  hullP_vec,
+                         vector< Mat >                  hullI_vec,
+                         vector< vector<cv::Vec4i> >    defects_vec )
 {
     cout << "worker thread " << glfwGetTime() << endl;
     

@@ -10,6 +10,8 @@
 
 #include "cvglCameraInput.hpp"
 #include "cvglObject.hpp"
+#include "cvglConversions.hpp"
+#include "cvglConvexHull.hpp"
 
 using namespace cv;
 using namespace std;
@@ -56,11 +58,11 @@ public:
     
     void getContours(cvglObject& outContour, cvglObject& outHull, cvglObject& minrectMesh);
     
-    void analysisThread(     vector< vector<cv::Point> >     contours,
-                             vector< cv::Vec4i >             hierarchy,
-                             vector< vector<cv::Point> >     hullP_vec,
-                             vector< vector<int> >           hullI_vec,
-                             vector< vector<cv::Vec4i> >     defects_vec );
+    void analysisThread(    vector< Mat >               contours,
+                            vector< cv::Vec4i >            hierarchy,
+                            vector< Mat >                  hullP_vec,
+                            vector< Mat >                  hullI_vec,
+                            vector< vector<cv::Vec4i> >    defects_vec );
     
     
     struct Stats {

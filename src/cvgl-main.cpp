@@ -3,6 +3,9 @@
 #include "cvglContext.hpp"
 #include "cvglCV.hpp"
 #include "cvglObject.hpp"
+
+#include "cvglProfile.hpp"
+
 #include <thread>
 
 using namespace std;
@@ -51,6 +54,8 @@ int main( void )
 
     glPointSize(5);
     
+    cvglProfile timer;
+    
     while( !context.shouldClose() )
     {
         context.clear();
@@ -62,7 +67,7 @@ int main( void )
 
         cvx.preprocess();
         cvx.getContours( contourMesh, hullMesh, minrectMesh );
-      
+        
         contourMesh.bind();
         colorTex[0].bind();
         contourMesh.draw(GL_LINE_LOOP);

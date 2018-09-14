@@ -98,6 +98,7 @@
 		216C667D214BB6F2009BDD3B /* cvglProfile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglProfile.hpp; sourceTree = "<group>"; };
 		216C667F214BB794009BDD3B /* cvglConversions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglConversions.cpp; sourceTree = "<group>"; };
 		216C6680214BB794009BDD3B /* cvglConversions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglConversions.hpp; sourceTree = "<group>"; };
+		216C6682214BB8F5009BDD3B /* cvglPrint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cvglPrint.h; sourceTree = "<group>"; };
 		21D7D4672147E7AD00345757 /* cvgl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cvgl; sourceTree = BUILT_PRODUCTS_DIR; };
 		21D7D4682147E7E000345757 /* cvglContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglContext.cpp; sourceTree = "<group>"; };
 		21D7D4692147E7E000345757 /* cvglContext.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglContext.hpp; sourceTree = "<group>"; };
@@ -221,6 +222,7 @@
 				216C667D214BB6F2009BDD3B /* cvglProfile.hpp */,
 				216C667F214BB794009BDD3B /* cvglConversions.cpp */,
 				216C6680214BB794009BDD3B /* cvglConversions.hpp */,
+				216C6682214BB8F5009BDD3B /* cvglPrint.h */,
 			);
 			path = utils;
 			sourceTree = "<group>";
