@@ -1,11 +1,8 @@
-
 #include "cvgl-main.hpp"
 #include "cvglContext.hpp"
 #include "cvglCV.hpp"
 #include "cvglObject.hpp"
-
 #include "cvglProfile.hpp"
-
 #include <thread>
 
 using namespace std;
@@ -70,7 +67,7 @@ int main( void )
         cvx.getContours( contourMesh, hullMesh, minrectMesh );
         
         contourMesh.bind();
-        colorTex[0].bind();
+        colorTex[2].bind();
         contourMesh.draw(GL_LINE_LOOP);
 
         hullMesh.bind();

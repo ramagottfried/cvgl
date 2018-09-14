@@ -37,8 +37,8 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
         return;
     }
     
-    vector< Mat >           contours;
-    vector< Vec4i >         hierarchy;
+    vector< Mat >   contours;
+    vector< Vec4i > hierarchy;
     vector< Mat >   hullP_vec;
     vector< Mat >   hullI_vec;
     vector< vector<Vec4i> > defects_vec;
@@ -50,10 +50,10 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
         npoints += (c.cols * c.rows);
 
     outContour.clear();
-    outContour.reserve( npoints ); // << actually would be more accurate to reserve from a mat: cols*rows (not channels since it's just 2d points)
+    outContour.reserve( npoints );
     
     outHull.clear();
-    outHull.reserve( npoints ); // << probably no harm in resverving the max number of points incase all the contours are convex
+    outHull.reserve( npoints );
     
     minrectMesh.clear();
     minrectMesh.reserve( contours.size() * 4 );
