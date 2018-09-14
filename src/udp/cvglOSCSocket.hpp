@@ -9,26 +9,28 @@
 
 using namespace std;
 
-class cvglUDP
+class cvglOSCSocket
 {
     
-public:
-    
-    cvglUDP()
+public:    
+    cvglOSCSocket()
     {
         loop = uv_default_loop();
         
-        uv_udp_init(loop, &recv_socket);
+        uv_udp_init(loop, &recv_socket_handle);
+        recv_socket_handle.data = this;
+        
+        cout << this << endl;
         
         struct sockaddr_in recv_addr;
         uv_ip4_addr("0.0.0.0", 7777, &recv_addr);
-        uv_udp_bind(&recv_socket, (const struct sockaddr *)&recv_addr, UV_UDP_REUSEADDR);
-        uv_udp_recv_start(&recv_socket, alloc_buffer, on_read);
+        uv_udp_bind(&recv_socket_handle, (const struct sockaddr *)&recv_addr, UV_UDP_REUSEADDR);
+        uv_udp_recv_start(&recv_socket_handle, alloc_buffer, on_read);
         
-        uv_udp_init(loop, &send_socket);
+        uv_udp_init(loop, &send_socket_handle);
         struct sockaddr_in bind_addr;
         uv_ip4_addr("0.0.0.0", 8888, &bind_addr);
-        uv_udp_bind(&send_socket, (const struct sockaddr *)&bind_addr, 0);
+        uv_udp_bind(&send_socket_handle, (const struct sockaddr *)&bind_addr, 0);
         
         cout << "starting loop " << endl;
         
@@ -37,41 +39,38 @@ public:
         
     }
     
-    ~cvglUDP()
+    ~cvglOSCSocket()
     {
         cout << "~" << endl;
-        uv_udp_recv_stop(&recv_socket);
-        uv_stop(loop);
+        if( !closing )
+        {
+            cout << "attepting to close, but better if you call the close() function before going out of scope" << endl;
+            lock_guard<mutex> lock(m_mutex);
+            closing = true;
+            uv_udp_recv_stop(&recv_socket_handle);
+            uv_stop(loop);
+        }
     }
     
     void stop()
     {
-        cout << "stopping loop" << endl;
-        uv_udp_recv_stop(&recv_socket);
+        lock_guard<mutex> lock(m_mutex);
+        closing = true;
+        uv_udp_recv_stop(&recv_socket_handle);
         uv_stop(loop);
     }
-    
-    void testMsg()
-    {
-        uv_udp_send_t send_req;
-        string yo = "#buffer";
-        uv_buf_t buf = uv_buf_init("#bundle", 7 );
-        
-        uv_ip4_addr(send_ip_addr.c_str(), 8888, &send_addr);
-        uv_udp_send(&send_req, &send_socket, &buf, 1, (const struct sockaddr *)&send_addr, on_send);
-    }
+  
     
     void sendBundle( OdotBundle& b)
     {
-        
         OdotBundle_s s_bundle = b.serialize();
         
         uv_udp_send_t send_req;
         
-        uv_buf_t buf = uv_buf_init( (char *)s_bundle.getPtr(), s_bundle.getLen() );
+        uv_buf_t buf = uv_buf_init( (char *)s_bundle.getPtr(), (unsigned int)s_bundle.getLen() );
         
         uv_ip4_addr(send_ip_addr.c_str(), 8888, &send_addr);
-        uv_udp_send(&send_req, &send_socket, &buf, 1, (const struct sockaddr *)&send_addr, on_send);
+        uv_udp_send(&send_req, &send_socket_handle, &buf, 1, (const struct sockaddr *)&send_addr, on_send);
     }
     
     static void alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)
@@ -90,7 +89,7 @@ public:
     static void on_read(uv_udp_t *req, ssize_t nread, const uv_buf_t *buf, const struct sockaddr *addr, unsigned flags)
     {
         if (nread < 0) {
-            fprintf(stderr, "Read error %s\n", uv_err_name(nread));
+            fprintf(stderr, "Read error %s\n", uv_err_name((int)nread));
             uv_close((uv_handle_t*) req, NULL);
             free(buf->base);
             return;
@@ -109,26 +108,42 @@ public:
             fprintf(stderr, "Recv from %s\n", sender);
         }
         */
-    
+        OdotBundle_s in_bndl( buf->base, nread );
+        OdotBundle b = in_bndl.deserialize();
         
-       OdotBundle_s in_bndl( buf->base, nread );
-       // in_bndl.print();
-      
+        cvglOSCSocket * ref = (cvglOSCSocket *)req->data;
+        if( ref )
+        {
+
+            lock_guard<mutex> lock(ref->m_mutex);
+            if( !ref->closing )
+                ref->state_bundle.unionWith(b, true);
+        }
         
        // free(buf->base); // freed by bundle
        //uv_udp_recv_stop(req);
     }
     
-
+    OdotBundle getBundle()
+    {
+        lock_guard<mutex> lock(m_mutex);
+        // should we clear the bundle here?
+        OdotBundle tmp = state_bundle;
+        state_bundle.clear();
+        return tmp;
+    }
     
 private:
     
     uv_loop_t *loop;
-    uv_udp_t send_socket;
-    uv_udp_t recv_socket;
+    uv_udp_t send_socket_handle;
+    uv_udp_t recv_socket_handle;
 
     struct sockaddr_in send_addr;
     string send_ip_addr = "127.0.0.1";
 
-    
+    bool closing = false;
+    mutex m_mutex;
+    OdotBundle state_bundle;
+
 };

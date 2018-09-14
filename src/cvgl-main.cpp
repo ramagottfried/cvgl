@@ -4,16 +4,17 @@
 #include "cvglContext.hpp"
 #include "cvglCV.hpp"
 #include "cvglObject.hpp"
-#include "cvglUDP.hpp"
+#include "cvglOSCSocket.hpp"
 
 #include "cvglProfile.hpp"
 
 using namespace std;
 
+
 int main( void )
 {
-    cvglUDP udp;
-    
+    cvglOSCSocket osc;
+
     cvglCV cvx;
     // add safety check here
     
@@ -84,9 +85,16 @@ int main( void )
         colorTex[2].bind();
         minrectMesh.draw(GL_LINE_LOOP);
         
-        // context.runningAvgFPS();
+        context.runningAvgFPS();
         context.drawAndPoll();
+        
+        auto b = osc.getBundle();
+        if( b.size() )
+            cout << b.size() << endl;
     }
+    
+    
+    osc.stop();
     
     return 0;
 }

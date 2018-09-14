@@ -10,7 +10,7 @@
 #include "opencv2/core/utility.hpp"
 
 #include "cvglTexture.hpp"
-#include "cvglState.hpp"
+#include "cvglVAO.hpp"
 #include "cvglVertex.hpp"
 
 using namespace std;
@@ -89,7 +89,7 @@ public:
     void initStaticDraw()
     {
         m_draw_mode = GL_STATIC_DRAW;
-        m_state.bind();
+        m_VAO.bind();
         glBufferData(GL_ARRAY_BUFFER, sizeof(cvglVertex) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW);
         glBindVertexArray(0);
 
@@ -97,7 +97,7 @@ public:
     
     void bind()
     {
-        m_state.bind();
+        m_VAO.bind();
     }
     
     void draw()
@@ -159,10 +159,9 @@ public:
     
 private:
     
-    cvglState m_state;
+    cvglVAO m_VAO;
     
-    //GLuint m_vao;
-    //GLuint m_vbo;
+    
     GLuint m_ebo;
     
     GLuint m_draw_mode = GL_STREAM_DRAW;

@@ -8,15 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		21038D03214A43080078F594 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 21038D02214A43080078F594 /* glad.c */; };
-		21038D06214A89650078F594 /* cvglState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D04214A89650078F594 /* cvglState.cpp */; };
+		21038D06214A89650078F594 /* cvglVAO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D04214A89650078F594 /* cvglVAO.cpp */; };
 		21038D09214A89B60078F594 /* cvglVertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D07214A89B60078F594 /* cvglVertex.cpp */; };
 		21038D0F214AD2A20078F594 /* cvglConvexHull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */; };
 		21038D17214AECB10078F594 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D16214AECB10078F594 /* main.cpp */; };
 		216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C667F214BB794009BDD3B /* cvglConversions.cpp */; };
-		216C6686214BC62E009BDD3B /* cvglUDP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglUDP.cpp */; };
+		216C6686214BC62E009BDD3B /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
 		216C6689214BDF1F009BDD3B /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C6687214BDF05009BDD3B /* libuv.a */; };
 		216C6692214BE7B0009BDD3B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6691214BE7B0009BDD3B /* main.cpp */; };
-		216C6696214BE7B8009BDD3B /* cvglUDP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglUDP.cpp */; };
+		216C6696214BE7B8009BDD3B /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
 		216C6697214BE7F8009BDD3B /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C6687214BDF05009BDD3B /* libuv.a */; };
 		216C66A8214BF299009BDD3B /* OdotBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669B214BF299009BDD3B /* OdotBundle.cpp */; };
 		216C66A9214BF299009BDD3B /* OdotBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669B214BF299009BDD3B /* OdotBundle.cpp */; };
@@ -176,8 +176,8 @@
 
 /* Begin PBXFileReference section */
 		21038D02214A43080078F594 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
-		21038D04214A89650078F594 /* cvglState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglState.cpp; sourceTree = "<group>"; };
-		21038D05214A89650078F594 /* cvglState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglState.hpp; sourceTree = "<group>"; };
+		21038D04214A89650078F594 /* cvglVAO.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglVAO.cpp; sourceTree = "<group>"; };
+		21038D05214A89650078F594 /* cvglVAO.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglVAO.hpp; sourceTree = "<group>"; };
 		21038D07214A89B60078F594 /* cvglVertex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglVertex.cpp; sourceTree = "<group>"; };
 		21038D08214A89B60078F594 /* cvglVertex.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglVertex.hpp; sourceTree = "<group>"; };
 		21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglConvexHull.cpp; sourceTree = "<group>"; };
@@ -207,8 +207,8 @@
 		216C667F214BB794009BDD3B /* cvglConversions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglConversions.cpp; sourceTree = "<group>"; };
 		216C6680214BB794009BDD3B /* cvglConversions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglConversions.hpp; sourceTree = "<group>"; };
 		216C6682214BB8F5009BDD3B /* cvglPrint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cvglPrint.h; sourceTree = "<group>"; };
-		216C6684214BC62E009BDD3B /* cvglUDP.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglUDP.cpp; sourceTree = "<group>"; };
-		216C6685214BC62E009BDD3B /* cvglUDP.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglUDP.hpp; sourceTree = "<group>"; };
+		216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglOSCSocket.cpp; sourceTree = "<group>"; };
+		216C6685214BC62E009BDD3B /* cvglOSCSocket.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglOSCSocket.hpp; sourceTree = "<group>"; };
 		216C6687214BDF05009BDD3B /* libuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuv.a; path = ../../../../../usr/local/Cellar/libuv/1.23.0/lib/libuv.a; sourceTree = "<group>"; };
 		216C668A214BE42A009BDD3B /* uv-temp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "uv-temp.h"; sourceTree = "<group>"; };
 		216C668F214BE7B0009BDD3B /* uv-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "uv-test"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -478,8 +478,8 @@
 		216C6683214BC61E009BDD3B /* udp */ = {
 			isa = PBXGroup;
 			children = (
-				216C6684214BC62E009BDD3B /* cvglUDP.cpp */,
-				216C6685214BC62E009BDD3B /* cvglUDP.hpp */,
+				216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */,
+				216C6685214BC62E009BDD3B /* cvglOSCSocket.hpp */,
 				216C668A214BE42A009BDD3B /* uv-temp.h */,
 			);
 			path = udp;
@@ -620,8 +620,8 @@
 		21D7D494214A3F4500345757 /* gl */ = {
 			isa = PBXGroup;
 			children = (
-				21038D04214A89650078F594 /* cvglState.cpp */,
-				21038D05214A89650078F594 /* cvglState.hpp */,
+				21038D04214A89650078F594 /* cvglVAO.cpp */,
+				21038D05214A89650078F594 /* cvglVAO.hpp */,
 				21DDFACD2146CCDC001FF716 /* cvglObject.cpp */,
 				21DDFACE2146CCDC001FF716 /* cvglObject.hpp */,
 				21D7D48C214946E700345757 /* cvglTexture.cpp */,
@@ -850,7 +850,7 @@
 				216C66B1214BF299009BDD3B /* OdotHash.cpp in Sources */,
 				216C66B3214BF299009BDD3B /* OdotBundle_s.cpp in Sources */,
 				216C66B5214BF299009BDD3B /* OdotExpr.cpp in Sources */,
-				216C6696214BE7B8009BDD3B /* cvglUDP.cpp in Sources */,
+				216C6696214BE7B8009BDD3B /* cvglOSCSocket.cpp in Sources */,
 				216C66A9214BF299009BDD3B /* OdotBundle.cpp in Sources */,
 				216C66AD214BF299009BDD3B /* OdotMessage.cpp in Sources */,
 				216C66AF214BF299009BDD3B /* OdotSelect.cpp in Sources */,
@@ -911,7 +911,7 @@
 				216C66B2214BF299009BDD3B /* OdotBundle_s.cpp in Sources */,
 				21D7D4702147EAC000345757 /* cvglCameraInput.cpp in Sources */,
 				216C66B4214BF299009BDD3B /* OdotExpr.cpp in Sources */,
-				216C6686214BC62E009BDD3B /* cvglUDP.cpp in Sources */,
+				216C6686214BC62E009BDD3B /* cvglOSCSocket.cpp in Sources */,
 				21D7D48E214946E700345757 /* cvglTexture.cpp in Sources */,
 				21D7D46A2147E7E000345757 /* cvglContext.cpp in Sources */,
 				216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */,
@@ -919,7 +919,7 @@
 				21038D0F214AD2A20078F594 /* cvglConvexHull.cpp in Sources */,
 				21D7D46D2147E8A900345757 /* cvgl-main.cpp in Sources */,
 				216C66AC214BF299009BDD3B /* OdotMessage.cpp in Sources */,
-				21038D06214A89650078F594 /* cvglState.cpp in Sources */,
+				21038D06214A89650078F594 /* cvglVAO.cpp in Sources */,
 				21D7D47A2147FEEF00345757 /* cvglCV.cpp in Sources */,
 				216C66B0214BF299009BDD3B /* OdotHash.cpp in Sources */,
 				21038D03214A43080078F594 /* glad.c in Sources */,

@@ -9,10 +9,10 @@
 
 #include "cvglVertex.hpp"
 
-class cvglState
+class cvglVAO
 {
 public:
-    cvglState()
+    cvglVAO()
     {
         glGenVertexArrays(1, &m_vao);
         glGenBuffers( 1, &m_vbo);
@@ -28,7 +28,7 @@ public:
         glBindVertexArray(0);
     }
     
-    ~cvglState()
+    ~cvglVAO()
     {
         glDeleteBuffers(1, &m_vbo);
         glDeleteVertexArrays(1, &m_vao);
