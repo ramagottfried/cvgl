@@ -52,7 +52,15 @@ public:
         m_vertices.clear();
         m_drawTypes.clear();
         m_tex.clear();
-        
+    }
+    
+    void reserve(size_t n)
+    {
+        m_start.reserve(n);
+        m_size.reserve(n);
+        m_vertices.reserve(n);
+        m_drawTypes.reserve(n);
+        m_tex.reserve(n);
     }
     
     void addVertex(cvglVertex v)
@@ -140,6 +148,7 @@ public:
             
         }
     }
+    
     
    
     void addVertexIndexArray( vector<GLuint> idx )

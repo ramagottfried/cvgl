@@ -3,11 +3,12 @@
 #include "cvglContext.hpp"
 #include "cvglCV.hpp"
 #include "cvglObject.hpp"
+#include <thread>
 
+using namespace std;
 
 int main( void )
 {
-  
     cvglCV cvx;
     // add safety check here
     
@@ -21,9 +22,6 @@ int main( void )
     
     if( !context.loadShaderFiles( "vertex.vs", "fragment.fs" ) )
         return -1;
-    
-  //  cout << glGetUniformLocation(context.getShader(), "scalar") <<  endl;
-    
     
     cvglObject triangle;
     triangle.newObj(GL_LINE_LOOP);
@@ -49,8 +47,8 @@ int main( void )
     colorTex[0].setTexture(0, 1, 1, 0.5);
     colorTex[1].setTexture(1, 0, 1, 1);
     
-    cvglObject contourMesh, hullMesh;
-    
+    cvglObject contourMesh, hullMesh, minrectMesh;
+
     glPointSize(5);
     
     while( !context.shouldClose() )
@@ -62,8 +60,9 @@ int main( void )
         frameTex.setTexture( frame );
         rect.draw();
 
-        cvx.process( contourMesh, hullMesh );
-
+        cvx.preprocess();
+        cvx.getContours( contourMesh, hullMesh, minrectMesh );
+      
         contourMesh.bind();
         colorTex[0].bind();
         contourMesh.draw(GL_LINE_LOOP);

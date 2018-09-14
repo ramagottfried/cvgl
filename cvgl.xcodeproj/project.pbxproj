@@ -10,6 +10,9 @@
 		21038D03214A43080078F594 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 21038D02214A43080078F594 /* glad.c */; };
 		21038D06214A89650078F594 /* cvglState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D04214A89650078F594 /* cvglState.cpp */; };
 		21038D09214A89B60078F594 /* cvglVertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D07214A89B60078F594 /* cvglVertex.cpp */; };
+		21038D0F214AD2A20078F594 /* cvglConvexHull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */; };
+		21038D17214AECB10078F594 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D16214AECB10078F594 /* main.cpp */; };
+		216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C667F214BB794009BDD3B /* cvglConversions.cpp */; };
 		21D7D44B2147E7AD00345757 /* cvglObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21DDFACD2146CCDC001FF716 /* cvglObject.cpp */; };
 		21D7D4502147E7AD00345757 /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06421415D0100C2CF41 /* libglfw.dylib */; };
 		21D7D4512147E7AD00345757 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06221415CD700C2CF41 /* OpenGL.framework */; };
@@ -41,6 +44,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		21038D12214AECB10078F594 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		21D7D4632147E7AD00345757 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -60,6 +72,10 @@
 		21038D05214A89650078F594 /* cvglState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglState.hpp; sourceTree = "<group>"; };
 		21038D07214A89B60078F594 /* cvglVertex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglVertex.cpp; sourceTree = "<group>"; };
 		21038D08214A89B60078F594 /* cvglVertex.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglVertex.hpp; sourceTree = "<group>"; };
+		21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglConvexHull.cpp; sourceTree = "<group>"; };
+		21038D0E214AD2A20078F594 /* cvglConvexHull.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglConvexHull.hpp; sourceTree = "<group>"; };
+		21038D14214AECB10078F594 /* profiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = profiler; sourceTree = BUILT_PRODUCTS_DIR; };
+		21038D16214AECB10078F594 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2104B00521413FA500C2CF41 /* libopencv_imgcodecs.4.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgcodecs.4.0.0.dylib; path = ../../../../../../../usr/local/lib/libopencv_imgcodecs.4.0.0.dylib; sourceTree = "<group>"; };
 		2104B00621413FA500C2CF41 /* libopencv_objdetect.4.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_objdetect.4.0.0.dylib; path = ../../../../../../../usr/local/lib/libopencv_objdetect.4.0.0.dylib; sourceTree = "<group>"; };
 		2104B00721413FA500C2CF41 /* libopencv_imgproc.4.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.4.0.0.dylib; path = ../../../../../../../usr/local/lib/libopencv_imgproc.4.0.0.dylib; sourceTree = "<group>"; };
@@ -79,6 +95,9 @@
 		2104B01521413FA500C2CF41 /* libopencv_highgui.4.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.4.0.0.dylib; path = ../../../../../../../usr/local/lib/libopencv_highgui.4.0.0.dylib; sourceTree = "<group>"; };
 		2104B06221415CD700C2CF41 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		2104B06421415D0100C2CF41 /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.dylib; path = ../../../../../../../usr/local/lib/libglfw.dylib; sourceTree = "<group>"; };
+		216C667D214BB6F2009BDD3B /* cvglProfile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglProfile.hpp; sourceTree = "<group>"; };
+		216C667F214BB794009BDD3B /* cvglConversions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglConversions.cpp; sourceTree = "<group>"; };
+		216C6680214BB794009BDD3B /* cvglConversions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglConversions.hpp; sourceTree = "<group>"; };
 		21D7D4672147E7AD00345757 /* cvgl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cvgl; sourceTree = BUILT_PRODUCTS_DIR; };
 		21D7D4682147E7E000345757 /* cvglContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglContext.cpp; sourceTree = "<group>"; };
 		21D7D4692147E7E000345757 /* cvglContext.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglContext.hpp; sourceTree = "<group>"; };
@@ -99,6 +118,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		21038D11214AECB10078F594 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21D7D44E2147E7AD00345757 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -132,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				21DDFAC92146CC53001FF716 /* src */,
+				21038D15214AECB10078F594 /* profiler */,
 				112485191A9EA8F90032B37A /* Products */,
 				2104B00421413FA400C2CF41 /* Frameworks */,
 			);
@@ -141,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				21D7D4672147E7AD00345757 /* cvgl */,
+				21038D14214AECB10078F594 /* profiler */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -151,6 +179,14 @@
 				21038D02214A43080078F594 /* glad.c */,
 			);
 			path = glad;
+			sourceTree = "<group>";
+		};
+		21038D15214AECB10078F594 /* profiler */ = {
+			isa = PBXGroup;
+			children = (
+				21038D16214AECB10078F594 /* main.cpp */,
+			);
+			path = profiler;
 			sourceTree = "<group>";
 		};
 		2104B00421413FA400C2CF41 /* Frameworks */ = {
@@ -179,17 +215,27 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		216C667A214BB6D7009BDD3B /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				216C667D214BB6F2009BDD3B /* cvglProfile.hpp */,
+				216C667F214BB794009BDD3B /* cvglConversions.cpp */,
+				216C6680214BB794009BDD3B /* cvglConversions.hpp */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
 		21D7D494214A3F4500345757 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				21038D04214A89650078F594 /* cvglState.cpp */,
+				21038D05214A89650078F594 /* cvglState.hpp */,
 				21DDFACD2146CCDC001FF716 /* cvglObject.cpp */,
 				21DDFACE2146CCDC001FF716 /* cvglObject.hpp */,
 				21D7D48C214946E700345757 /* cvglTexture.cpp */,
 				21D7D48D214946E700345757 /* cvglTexture.hpp */,
 				21038D07214A89B60078F594 /* cvglVertex.cpp */,
 				21038D08214A89B60078F594 /* cvglVertex.hpp */,
-				21038D04214A89650078F594 /* cvglState.cpp */,
-				21038D05214A89650078F594 /* cvglState.hpp */,
 				21D7D4682147E7E000345757 /* cvglContext.cpp */,
 				21D7D4692147E7E000345757 /* cvglContext.hpp */,
 				21D7D4892149426A00345757 /* cvglCallbacks.cpp */,
@@ -201,10 +247,12 @@
 		21D7D495214A3F6400345757 /* cv */ = {
 			isa = PBXGroup;
 			children = (
-				21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */,
-				21D7D46F2147EAC000345757 /* cvglCameraInput.hpp */,
 				21D7D4782147FEEF00345757 /* cvglCV.cpp */,
 				21D7D4792147FEEF00345757 /* cvglCV.hpp */,
+				21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */,
+				21D7D46F2147EAC000345757 /* cvglCameraInput.hpp */,
+				21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */,
+				21038D0E214AD2A20078F594 /* cvglConvexHull.hpp */,
 			);
 			path = cv;
 			sourceTree = "<group>";
@@ -217,6 +265,7 @@
 				21D7D46B2147E8A900345757 /* cvgl-main.cpp */,
 				21D7D46C2147E8A900345757 /* cvgl-main.hpp */,
 				21D7D495214A3F6400345757 /* cv */,
+				216C667A214BB6D7009BDD3B /* utils */,
 				21D7D494214A3F4500345757 /* gl */,
 				21038D01214A42F50078F594 /* glad */,
 			);
@@ -226,6 +275,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		21038D13214AECB10078F594 /* profiler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 21038D18214AECB10078F594 /* Build configuration list for PBXNativeTarget "profiler" */;
+			buildPhases = (
+				21038D10214AECB10078F594 /* Sources */,
+				21038D11214AECB10078F594 /* Frameworks */,
+				21038D12214AECB10078F594 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = profiler;
+			productName = profiler;
+			productReference = 21038D14214AECB10078F594 /* profiler */;
+			productType = "com.apple.product-type.tool";
+		};
 		21D7D4492147E7AD00345757 /* cvgl */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 21D7D4642147E7AD00345757 /* Build configuration list for PBXNativeTarget "cvgl" */;
@@ -251,6 +317,12 @@
 			attributes = {
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = cnmat;
+				TargetAttributes = {
+					21038D13214AECB10078F594 = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 112485131A9EA8F90032B37A /* Build configuration list for PBXProject "cvgl" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -265,11 +337,20 @@
 			projectRoot = "";
 			targets = (
 				21D7D4492147E7AD00345757 /* cvgl */,
+				21038D13214AECB10078F594 /* profiler */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		21038D10214AECB10078F594 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21038D17214AECB10078F594 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21D7D44A2147E7AD00345757 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -279,6 +360,8 @@
 				21D7D4702147EAC000345757 /* cvglCameraInput.cpp in Sources */,
 				21D7D48E214946E700345757 /* cvglTexture.cpp in Sources */,
 				21D7D46A2147E7E000345757 /* cvglContext.cpp in Sources */,
+				216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */,
+				21038D0F214AD2A20078F594 /* cvglConvexHull.cpp in Sources */,
 				21D7D46D2147E8A900345757 /* cvgl-main.cpp in Sources */,
 				21038D06214A89650078F594 /* cvglState.cpp in Sources */,
 				21D7D47A2147FEEF00345757 /* cvglCV.cpp in Sources */,
@@ -368,6 +451,65 @@
 			};
 			name = Release;
 		};
+		21038D19214AECB10078F594 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		21038D1A214AECB10078F594 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		21D7D4652147E7AD00345757 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -421,6 +563,15 @@
 			buildConfigurations = (
 				1124851D1A9EA8F90032B37A /* Debug */,
 				1124851E1A9EA8F90032B37A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		21038D18214AECB10078F594 /* Build configuration list for PBXNativeTarget "profiler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21038D19214AECB10078F594 /* Debug */,
+				21038D1A214AECB10078F594 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
