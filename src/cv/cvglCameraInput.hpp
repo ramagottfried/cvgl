@@ -2,9 +2,6 @@
 
 #include "opencv2/highgui.hpp"
 
-using namespace std;
-using namespace cv;
-
 class cvglCameraInput
 {
 public:
@@ -21,16 +18,16 @@ public:
         
     }
     
-    Mat getFrame()
+    cv::Mat getFrame()
     {
-        Mat img;
+        cv::Mat img;
         cap >> img;
-        return move(img);
+        return std::move(img);
     }
     
-    void readFrame(Mat& mat)
+    void readFrame( cv::Mat& outmat )
     {
-        cap >> mat;
+        cap >> outmat;
     }
     
     bool isOpen()

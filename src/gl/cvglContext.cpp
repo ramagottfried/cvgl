@@ -2,6 +2,9 @@
 #include "cvglContext.hpp"
 #include "cvglCallbacks.hpp"
 
+using namespace std;
+
+
 void cvglContext::resize_callback(int w, int h)
 {
     if( m_scaleAttrib )

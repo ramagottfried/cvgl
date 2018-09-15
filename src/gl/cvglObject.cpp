@@ -1,6 +1,8 @@
 
 #include "cvglObject.hpp"
 
+using namespace std;
+
 void cvglObject::newObj()
 {
     m_start.emplace_back( m_vertices.size() );

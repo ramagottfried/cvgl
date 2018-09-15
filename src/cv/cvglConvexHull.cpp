@@ -94,15 +94,15 @@ namespace cvgl {
      //F*/
     
     /* we will use usual cartesian coordinates */
-    void rotatingCalipers( const Point2f* points, int n, int mode, float* out )
+    void rotatingCalipers( const cv::Point2f* points, int n, int mode, float* out )
     {
         float minarea = FLT_MAX;
         float max_dist = 0;
         char buffer[32] = {};
         int i, k;
-        AutoBuffer<float> abuf(n*3);
+        cv::AutoBuffer<float> abuf(n*3);
         float* inv_vect_length = abuf.data();
-        Point2f* vect = (Point2f*)(inv_vect_length + n);
+        cv::Point2f* vect = (Point2f*)(inv_vect_length + n);
         int left = 0, bottom = 0, right = 0, top = 0;
         int seq[4] = { -1, -1, -1, -1 };
         
@@ -115,7 +115,7 @@ namespace cvgl {
         float base_b = 0;
         
         float left_x, right_x, top_y, bottom_y;
-        Point2f pt0 = points[0];
+        cv::Point2f pt0 = points[0];
         
         left_x = right_x = pt0.x;
         top_y = bottom_y = pt0.y;
@@ -136,7 +136,7 @@ namespace cvgl {
             if( pt0.y < bottom_y )
                 bottom_y = pt0.y, bottom = i;
             
-            Point2f pt = points[(i+1) & (i+1 < n ? -1 : 0)];
+            cv::Point2f pt = points[(i+1) & (i+1 < n ? -1 : 0)];
             
             dx = pt.x - pt0.x;
             dy = pt.y - pt0.y;
@@ -364,18 +364,18 @@ namespace cvgl {
          
          */
         
-        Point2f out[3];
+        cv::Point2f out[3];
         cvgl::convexHullPI( _points, hullP, hullI, true );
         
         if( hullP.depth() != CV_32F )
         {
-            Mat temp;
+            cv::Mat temp;
             hullP.convertTo(temp, CV_32F);
             hullP = temp;
         }
         
         int n = hullP.checkVector(2);
-        const Point2f* hpoints = hullP.ptr<Point2f>();
+        const cv::Point2f* hpoints = hullP.ptr<cv::Point2f>();
         
         
         if( n > 2 )
@@ -407,7 +407,7 @@ namespace cvgl {
     }
   
     template<typename _Tp>
-    int Sklansky_( Point_<_Tp>** array, int start, int end, int* stack, int nsign, int sign2 )
+    int Sklansky_( cv::Point_<_Tp>** array, int start, int end, int* stack, int nsign, int sign2 )
     {
         int incr = end > start ? 1 : -1;
         // prepare first triangle
@@ -482,12 +482,12 @@ namespace cvgl {
     template<typename _Tp>
     struct CHullCmpPoints
     {
-        bool operator()(const Point_<_Tp>* p1, const Point_<_Tp>* p2) const
+        bool operator()(const cv::Point_<_Tp>* p1, const cv::Point_<_Tp>* p2) const
         { return p1->x < p2->x || (p1->x == p2->x && p1->y < p2->y); }
     };
     
     
-    void convexHull( InputArray _points, OutputArray _hull, bool clockwise, bool returnPoints )
+    void convexHull( cv::InputArray _points, cv::OutputArray _hull, bool clockwise, bool returnPoints )
     {
         
         CV_Assert(_points.getObj() != _hull.getObj());

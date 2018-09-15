@@ -1,6 +1,9 @@
 
 #include "cvglCV.hpp"
 
+using namespace cv;
+using namespace std;
+
 void cvglCV::preprocess()
 {
     // later could wrap each function with a "set to output" flag, which could be used for debugging

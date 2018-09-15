@@ -1,6 +1,8 @@
 
 #include "cvglOSCSocket.hpp"
 
+using namespace std;
+
 cvglOSCSocket::cvglOSCSocket()
 {
     loop = uv_default_loop();

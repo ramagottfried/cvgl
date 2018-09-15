@@ -8,11 +8,15 @@
 
 #include "cvglProfile.hpp"
 
-using namespace std;
+#include "cvglDeckLinkDiscover.hpp"
 
+using namespace std;
+//using namespace cv;
 
 int main( void )
 {
+    //testCamerFinder();
+    
     cvglOSCSocket osc;
 
     cvglCV cvx;
@@ -64,7 +68,7 @@ int main( void )
     while( !context.shouldClose() )
     {
         context.clear();
-        Mat frame = cvx.getFrame();
+        cv::Mat frame = cvx.getFrame();
 
         rect.bind();
         frameTex.setTexture( frame );
@@ -85,12 +89,12 @@ int main( void )
         colorTex[2].bind();
         minrectMesh.draw(GL_LINE_LOOP);
         
-        context.runningAvgFPS();
+//        context.runningAvgFPS();
         context.drawAndPoll();
         
         auto b = osc.getBundle();
         if( b.size() )
-            cout << b.size() << endl;
+            std::cout << b.size() << std::endl;
         
     }
     

@@ -13,9 +13,6 @@
 #include "cvglConversions.hpp"
 #include "cvglConvexHull.hpp"
 
-using namespace cv;
-using namespace std;
-
 class cvglCV
 {
     
@@ -44,7 +41,7 @@ public:
     }
     
     
-    Mat getFrame()
+    cv::Mat getFrame()
     {
         camera.readFrame(m_img);
         return m_img.clone();
@@ -58,11 +55,11 @@ public:
     
     void getContours(cvglObject& outContour, cvglObject& outHull, cvglObject& minrectMesh);
     
-    void analysisThread(    vector< Mat >               contours,
-                            vector< cv::Vec4i >            hierarchy,
-                            vector< Mat >                  hullP_vec,
-                            vector< Mat >                  hullI_vec,
-                            vector< vector<cv::Vec4i> >    defects_vec );
+    void analysisThread(    std::vector< cv::Mat >               contours,
+                            std::vector< cv::Vec4i >            hierarchy,
+                            std::vector< cv::Mat >                  hullP_vec,
+                            std::vector< cv::Mat >                  hullI_vec,
+                            std::vector< std::vector<cv::Vec4i> >    defects_vec );
     
     
     struct Stats {
@@ -74,12 +71,12 @@ public:
         double variance = 0;
     };
     
-    void getStatsChar( const Mat& src, const Mat& sobel, const Mat& mask, const cv::Rect& roi, vector<Stats>& _stats);
+    void getStatsChar( const cv::Mat& src, const cv::Mat& sobel, const cv::Mat& mask, const cv::Rect& roi, std::vector<Stats>& _stats);
     
     
 private:
     
-    Mat m_img;
+    cv::Mat m_img;
     cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray;
 
     float m_resize = 1;
@@ -90,8 +87,8 @@ private:
     
     int m_gauss_sigma = 3;
     int m_gauss_ksize = m_gauss_sigma*5;
-    Mat m_er_element = getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
-    Mat m_di_element = getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
+    cv::Mat m_er_element = cv::getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
+    cv::Mat m_di_element = getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
 
     
 };

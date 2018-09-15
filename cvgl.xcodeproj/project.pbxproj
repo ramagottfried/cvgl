@@ -112,6 +112,10 @@
 		216C675A214BF324009BDD3B /* osc_expr.h in Headers */ = {isa = PBXBuildFile; fileRef = 216C670C214BF323009BDD3B /* osc_expr.h */; };
 		216C676C214BF374009BDD3B /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
 		216C676D214BF795009BDD3B /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
+		21C0767D214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0767B214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp */; };
+		21C0768F214D6D4F000F0AA4 /* platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0768D214D6D4F000F0AA4 /* platform.cpp */; };
+		21C07691214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */; };
+		21C07693214D7C31000F0AA4 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C07692214D7C31000F0AA4 /* CoreFoundation.framework */; };
 		21D7D44B2147E7AD00345757 /* cvglObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21DDFACD2146CCDC001FF716 /* cvglObject.cpp */; };
 		21D7D4502147E7AD00345757 /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06421415D0100C2CF41 /* libglfw.dylib */; };
 		21D7D4512147E7AD00345757 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06221415CD700C2CF41 /* OpenGL.framework */; };
@@ -324,6 +328,12 @@
 		216C6769214BF33C009BDD3B /* osc_vtable.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_vtable.r; path = ../../libo/osc_vtable.r; sourceTree = "<group>"; };
 		216C676A214BF33C009BDD3B /* osc_message_iterator_s.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_message_iterator_s.r; path = ../../libo/osc_message_iterator_s.r; sourceTree = "<group>"; };
 		216C676B214BF33C009BDD3B /* osc_expr_rec.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_expr_rec.r; path = ../../libo/osc_expr_rec.r; sourceTree = "<group>"; };
+		21C0767B214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglDeckLinkDiscover.cpp; sourceTree = "<group>"; };
+		21C0767C214D6A38000F0AA4 /* cvglDeckLinkDiscover.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglDeckLinkDiscover.hpp; sourceTree = "<group>"; };
+		21C0768D214D6D4F000F0AA4 /* platform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform.cpp; sourceTree = "<group>"; };
+		21C0768E214D6D4F000F0AA4 /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
+		21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeckLinkAPIDispatch.cpp; sourceTree = "<group>"; };
+		21C07692214D7C31000F0AA4 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		21D7D4672147E7AD00345757 /* cvgl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cvgl; sourceTree = BUILT_PRODUCTS_DIR; };
 		21D7D4682147E7E000345757 /* cvglContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglContext.cpp; sourceTree = "<group>"; };
 		21D7D4692147E7E000345757 /* cvglContext.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglContext.hpp; sourceTree = "<group>"; };
@@ -371,6 +381,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21C07693214D7C31000F0AA4 /* CoreFoundation.framework in Frameworks */,
 				216C676D214BF795009BDD3B /* libcvgl-libo.a in Frameworks */,
 				216C6689214BDF1F009BDD3B /* libuv.a in Frameworks */,
 				21D7D4502147E7AD00345757 /* libglfw.dylib in Frameworks */,
@@ -440,6 +451,7 @@
 		2104B00421413FA400C2CF41 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				21C07692214D7C31000F0AA4 /* CoreFoundation.framework */,
 				216C6687214BDF05009BDD3B /* libuv.a */,
 				2104B06421415D0100C2CF41 /* libglfw.dylib */,
 				2104B06221415CD700C2CF41 /* OpenGL.framework */,
@@ -617,6 +629,18 @@
 			path = libo;
 			sourceTree = "<group>";
 		};
+		21C0767A214D698B000F0AA4 /* blackmagic */ = {
+			isa = PBXGroup;
+			children = (
+				21C0767B214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp */,
+				21C0767C214D6A38000F0AA4 /* cvglDeckLinkDiscover.hpp */,
+				21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */,
+				21C0768D214D6D4F000F0AA4 /* platform.cpp */,
+				21C0768E214D6D4F000F0AA4 /* platform.h */,
+			);
+			path = blackmagic;
+			sourceTree = "<group>";
+		};
 		21D7D494214A3F4500345757 /* gl */ = {
 			isa = PBXGroup;
 			children = (
@@ -658,6 +682,7 @@
 				21D7D46B2147E8A900345757 /* cvgl-main.cpp */,
 				21D7D46C2147E8A900345757 /* cvgl-main.hpp */,
 				216C6698214BF250009BDD3B /* osc */,
+				21C0767A214D698B000F0AA4 /* blackmagic */,
 				21D7D495214A3F6400345757 /* cv */,
 				216C667A214BB6D7009BDD3B /* utils */,
 				216C6683214BC61E009BDD3B /* udp */,
@@ -911,7 +936,9 @@
 				216C66B2214BF299009BDD3B /* OdotBundle_s.cpp in Sources */,
 				21D7D4702147EAC000345757 /* cvglCameraInput.cpp in Sources */,
 				216C66B4214BF299009BDD3B /* OdotExpr.cpp in Sources */,
+				21C07691214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp in Sources */,
 				216C6686214BC62E009BDD3B /* cvglOSCSocket.cpp in Sources */,
+				21C0767D214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp in Sources */,
 				21D7D48E214946E700345757 /* cvglTexture.cpp in Sources */,
 				21D7D46A2147E7E000345757 /* cvglContext.cpp in Sources */,
 				216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */,
@@ -924,6 +951,7 @@
 				216C66B0214BF299009BDD3B /* OdotHash.cpp in Sources */,
 				21038D03214A43080078F594 /* glad.c in Sources */,
 				21038D09214A89B60078F594 /* cvglVertex.cpp in Sources */,
+				21C0768F214D6D4F000F0AA4 /* platform.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1223,6 +1251,7 @@
 					/usr/local/include,
 					/usr/local/cuda/include,
 					../../../libo,
+					"\"$(SRCROOT)/../Blackmagic-DeckLink-SDK-10.11.2/Mac/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -1245,6 +1274,7 @@
 					/usr/local/include,
 					/usr/local/cuda/include,
 					../../../libo,
+					"\"$(SRCROOT)/../Blackmagic-DeckLink-SDK-10.11.2/Mac/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,

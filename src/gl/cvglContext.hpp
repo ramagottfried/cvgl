@@ -17,8 +17,6 @@
 #include "opencv2/core/utility.hpp"
 
 
-using namespace std;
-
 class cvglContext
 {
 public:
@@ -66,7 +64,7 @@ public:
     void printFPS()
     {
         time = glfwGetTime();
-        cout << 1.0f / (time - prevtime) << endl;
+        std::cout << 1.0f / (time - prevtime) << std::endl;
         prevtime = time;
     }
     
@@ -75,7 +73,7 @@ public:
         time = glfwGetTime();
         double fps = 1.0f / (time - prevtime);
         accumulator = (accumulator_alpha * fps) + (1.0 - accumulator_alpha) * accumulator;
-        cout << accumulator << endl;
+        std::cout << accumulator << std::endl;
         prevtime = time;
     }
     

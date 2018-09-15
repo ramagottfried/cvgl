@@ -3,23 +3,19 @@
 #include "opencv2/core/utility.hpp"
 #include "opencv2/imgproc.hpp"
 
-
-using namespace cv;
-
 namespace cvgl
 {
     enum { CALIPERS_MAXHEIGHT=0, CALIPERS_MINAREARECT=1, CALIPERS_MAXDIST=2 };
     void rotatingCalipers( const cv::Point2f* points, int n, int mode, float* out );
     
-    
-    void convexHull( InputArray _points, OutputArray _hull, bool clockwise, bool returnPoints );
+    void convexHull( cv::InputArray _points, cv::OutputArray _hull, bool clockwise, bool returnPoints );
 
-    void convexHullPI( InputArray _points, OutputArray _hullP, OutputArray _hullI, bool clockwise );
+    void convexHullPI( cv::InputArray _points, cv::OutputArray _hullP, cv::OutputArray _hullI, bool clockwise );
 
-    void minAreaRectHull( const Mat& _points, RotatedRect& box, Mat& hullP, Mat& hullI );
+    void minAreaRectHull( const cv::Mat& _points, cv::RotatedRect& box, cv::Mat& hullP, cv::Mat& hullI );
 
-    void convexityDefects( InputArray _points, InputArray _hull, OutputArray _defects );
-    bool isContourConvex( InputArray _contour );
+    void convexityDefects( cv::InputArray _points, cv::InputArray _hull, cv::OutputArray _defects );
+    bool isContourConvex( cv::InputArray _contour );
 
 }
 

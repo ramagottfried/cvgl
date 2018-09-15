@@ -5,7 +5,6 @@
 #include <thread>
 #include "OdotBundle.hpp"
 
-using namespace std;
 
 class cvglOSCSocket
 {

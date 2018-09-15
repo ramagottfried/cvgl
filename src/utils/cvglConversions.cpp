@@ -1,5 +1,8 @@
 #include "cvglConversions.hpp"
 
+using namespace std;
+using namespace cv;
+
 namespace cvgl
 {
     template<typename T>
