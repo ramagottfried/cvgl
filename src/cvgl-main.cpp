@@ -8,10 +8,10 @@
 
 #include "cvglProfile.hpp"
 
-#include "cvglDeckLinkDiscover.hpp"
+#include "cvglBlackmagic.hpp"
 
 using namespace std;
-//using namespace cv;
+using namespace cv;
 
 int main( void )
 {
@@ -94,7 +94,7 @@ int main( void )
         
         auto b = osc.getBundle();
         if( b.size() )
-            std::cout << b.size() << std::endl;
+            cout << b.size() << endl;
         
     }
     

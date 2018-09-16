@@ -3,6 +3,9 @@
 #include "platform.h"
 #include <iostream>
 
+
+#define stdmct STDMETHODCALLTYPE
+
 int testCamerFinder();
 
 // The input callback class
@@ -10,24 +13,24 @@ class NotificationCallback : public IDeckLinkInputCallback
 {
     
 public:
-    IDeckLinkInput* m_deckLinkInput;
+    IDeckLinkInput * m_deckLinkInput;
     
-    NotificationCallback(IDeckLinkInput *deckLinkInput) : m_refCount(1)
+    NotificationCallback( IDeckLinkInput *deckLinkInput ) : m_refCount(1)
     {
         m_deckLinkInput = deckLinkInput;
     }
     
-    HRESULT        STDMETHODCALLTYPE QueryInterface (REFIID iid, LPVOID *ppv)
+    HRESULT stdmct QueryInterface (REFIID iid, LPVOID *ppv)
     {
         return E_NOINTERFACE;
     }
     
-    ULONG        STDMETHODCALLTYPE AddRef ()
+    ULONG stdmct AddRef ()
     {
         return AtomicIncrement(&m_refCount);
     }
     
-    ULONG        STDMETHODCALLTYPE Release ()
+    ULONG stdmct Release ()
     {
         INT32_UNSIGNED newRefValue = AtomicDecrement(&m_refCount);
         
@@ -38,10 +41,10 @@ public:
     }
     
     // The callback that is called when a property of the video input stream has changed.
-    HRESULT        STDMETHODCALLTYPE VideoInputFormatChanged (/* in */ BMDVideoInputFormatChangedEvents notificationEvents, /* in */ IDeckLinkDisplayMode *newDisplayMode, /* in */ BMDDetectedVideoInputFormatFlags detectedSignalFlags)
+    HRESULT stdmct VideoInputFormatChanged (/* in */ BMDVideoInputFormatChangedEvents notificationEvents, /* in */ IDeckLinkDisplayMode *newDisplayMode, /* in */ BMDDetectedVideoInputFormatFlags detectedSignalFlags)
     {
         BMDPixelFormat pixelFormat = bmdFormat10BitYUV;
-        STRINGOBJ            displayModeString = NULL;
+        STRINGOBJ displayModeString = NULL;
         
         // Check for video field changes
         if (notificationEvents & bmdVideoInputFieldDominanceChanged)
@@ -115,17 +118,14 @@ public:
         return S_OK;
     }
     
-    HRESULT        STDMETHODCALLTYPE VideoInputFrameArrived (/* in */ IDeckLinkVideoInputFrame* videoFrame, /* in */ IDeckLinkAudioInputPacket* audioPacket)
+    HRESULT stdmct VideoInputFrameArrived (/* in */ IDeckLinkVideoInputFrame* videoFrame, /* in */ IDeckLinkAudioInputPacket* audioPacket)
     {
         std::cout << "new frame : " << videoFrame->GetWidth() << " " << videoFrame->GetHeight() << std::endl;
         return S_OK;
     }
     
 private:
-    INT32_SIGNED        m_refCount;
+    INT32_SIGNED m_refCount;
     
-    virtual ~NotificationCallback(void)
-    {
-        ;
-    }
+    virtual ~NotificationCallback(void) {}
 };

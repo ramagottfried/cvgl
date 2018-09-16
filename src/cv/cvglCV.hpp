@@ -18,7 +18,9 @@ class cvglCV
     
 public:
     cvglCameraInput camera;
-
+    inline bool foundBlackmagic(){ return camera.foundBlackmagic(); }
+    inline void frameCallback( cvglFrameCallback& callbackObj ){ camera.frameCallback(callbackObj); }
+    
     void readFrame()
     {
         camera.readFrame(m_img);
@@ -40,6 +42,7 @@ public:
         m_di_element = getStructuringElement( cv::MORPH_RECT, cv::Size( 2*di + 1, 2*di+1 ), cv::Point( di, di ) );
     }
     
+   
     
     cv::Mat getFrame()
     {

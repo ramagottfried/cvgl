@@ -12,6 +12,53 @@
 		21038D09214A89B60078F594 /* cvglVertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D07214A89B60078F594 /* cvglVertex.cpp */; };
 		21038D0F214AD2A20078F594 /* cvglConvexHull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */; };
 		21038D17214AECB10078F594 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D16214AECB10078F594 /* main.cpp */; };
+		2112A4B7214DA3A300EC1C11 /* cvglCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4892149426A00345757 /* cvglCallbacks.cpp */; };
+		2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21DDFACD2146CCDC001FF716 /* cvglObject.cpp */; };
+		2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A1214BF299009BDD3B /* OdotSelect.cpp */; };
+		2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669D214BF299009BDD3B /* OdotAtom.cpp */; };
+		2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A6214BF299009BDD3B /* OdotBundle_s.cpp */; };
+		2112A4BC214DA3A300EC1C11 /* cvglCameraInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */; };
+		2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A7214BF299009BDD3B /* OdotExpr.cpp */; };
+		2112A4BE214DA3A300EC1C11 /* DeckLinkAPIDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */; };
+		2112A4BF214DA3A300EC1C11 /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
+		2112A4C0214DA3A300EC1C11 /* cvglBlackmagic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0767B214D6A38000F0AA4 /* cvglBlackmagic.cpp */; };
+		2112A4C1214DA3A300EC1C11 /* cvglTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D48C214946E700345757 /* cvglTexture.cpp */; };
+		2112A4C2214DA3A300EC1C11 /* cvglContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4682147E7E000345757 /* cvglContext.cpp */; };
+		2112A4C3214DA3A300EC1C11 /* cvglConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C667F214BB794009BDD3B /* cvglConversions.cpp */; };
+		2112A4C4214DA3A300EC1C11 /* OdotBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669B214BF299009BDD3B /* OdotBundle.cpp */; };
+		2112A4C5214DA3A300EC1C11 /* cvglConvexHull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */; };
+		2112A4C7214DA3A300EC1C11 /* OdotMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A0214BF299009BDD3B /* OdotMessage.cpp */; };
+		2112A4C8214DA3A300EC1C11 /* cvglVAO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D04214A89650078F594 /* cvglVAO.cpp */; };
+		2112A4C9214DA3A300EC1C11 /* cvglCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4782147FEEF00345757 /* cvglCV.cpp */; };
+		2112A4CA214DA3A300EC1C11 /* OdotHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A4214BF299009BDD3B /* OdotHash.cpp */; };
+		2112A4CB214DA3A300EC1C11 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 21038D02214A43080078F594 /* glad.c */; };
+		2112A4CC214DA3A300EC1C11 /* cvglVertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D07214A89B60078F594 /* cvglVertex.cpp */; };
+		2112A4CD214DA3A300EC1C11 /* platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0768D214D6D4F000F0AA4 /* platform.cpp */; };
+		2112A4CF214DA3A300EC1C11 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C07692214D7C31000F0AA4 /* CoreFoundation.framework */; };
+		2112A4D0214DA3A300EC1C11 /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
+		2112A4D1214DA3A300EC1C11 /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C6687214BDF05009BDD3B /* libuv.a */; };
+		2112A4D2214DA3A300EC1C11 /* libglfw.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06421415D0100C2CF41 /* libglfw.dylib */; };
+		2112A4D3214DA3A300EC1C11 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06221415CD700C2CF41 /* OpenGL.framework */; };
+		2112A4D4214DA3A300EC1C11 /* libopencv_imgcodecs.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00521413FA500C2CF41 /* libopencv_imgcodecs.4.0.0.dylib */; };
+		2112A4D5214DA3A300EC1C11 /* libopencv_objdetect.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00621413FA500C2CF41 /* libopencv_objdetect.4.0.0.dylib */; };
+		2112A4D6214DA3A300EC1C11 /* libopencv_imgproc.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00721413FA500C2CF41 /* libopencv_imgproc.4.0.0.dylib */; };
+		2112A4D7214DA3A300EC1C11 /* libopencv_video.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00821413FA500C2CF41 /* libopencv_video.4.0.0.dylib */; };
+		2112A4D8214DA3A300EC1C11 /* libopencv_superres.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00921413FA500C2CF41 /* libopencv_superres.4.0.0.dylib */; };
+		2112A4D9214DA3A300EC1C11 /* libopencv_photo.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00A21413FA500C2CF41 /* libopencv_photo.4.0.0.dylib */; };
+		2112A4DA214DA3A300EC1C11 /* libopencv_shape.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00B21413FA500C2CF41 /* libopencv_shape.4.0.0.dylib */; };
+		2112A4DB214DA3A300EC1C11 /* libopencv_calib3d.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00C21413FA500C2CF41 /* libopencv_calib3d.4.0.0.dylib */; };
+		2112A4DC214DA3A300EC1C11 /* libopencv_dnn.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00D21413FA500C2CF41 /* libopencv_dnn.4.0.0.dylib */; };
+		2112A4DD214DA3A300EC1C11 /* libopencv_features2d.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00E21413FA500C2CF41 /* libopencv_features2d.4.0.0.dylib */; };
+		2112A4DE214DA3A300EC1C11 /* libopencv_flann.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B00F21413FA500C2CF41 /* libopencv_flann.4.0.0.dylib */; };
+		2112A4DF214DA3A300EC1C11 /* libopencv_ml.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01021413FA500C2CF41 /* libopencv_ml.4.0.0.dylib */; };
+		2112A4E0214DA3A300EC1C11 /* libopencv_core.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01121413FA500C2CF41 /* libopencv_core.4.0.0.dylib */; };
+		2112A4E1214DA3A300EC1C11 /* libopencv_stitching.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01221413FA500C2CF41 /* libopencv_stitching.4.0.0.dylib */; };
+		2112A4E2214DA3A300EC1C11 /* libopencv_videoio.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01321413FA500C2CF41 /* libopencv_videoio.4.0.0.dylib */; };
+		2112A4E3214DA3A300EC1C11 /* libopencv_videostab.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01421413FA500C2CF41 /* libopencv_videostab.4.0.0.dylib */; };
+		2112A4E4214DA3A300EC1C11 /* libopencv_highgui.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01521413FA500C2CF41 /* libopencv_highgui.4.0.0.dylib */; };
+		2112A4E6214DA3A300EC1C11 /* vertex.vs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4852149270900345757 /* vertex.vs */; };
+		2112A4E7214DA3A300EC1C11 /* fragment.fs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4862149274300345757 /* fragment.fs */; };
+		2112A4EF214DA46400EC1C11 /* cvgl-blackmagic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2112A4EC214DA46000EC1C11 /* cvgl-blackmagic.cpp */; };
 		216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C667F214BB794009BDD3B /* cvglConversions.cpp */; };
 		216C6686214BC62E009BDD3B /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
 		216C6689214BDF1F009BDD3B /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C6687214BDF05009BDD3B /* libuv.a */; };
@@ -112,7 +159,7 @@
 		216C675A214BF324009BDD3B /* osc_expr.h in Headers */ = {isa = PBXBuildFile; fileRef = 216C670C214BF323009BDD3B /* osc_expr.h */; };
 		216C676C214BF374009BDD3B /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
 		216C676D214BF795009BDD3B /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
-		21C0767D214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0767B214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp */; };
+		21C0767D214D6A38000F0AA4 /* cvglBlackmagic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0767B214D6A38000F0AA4 /* cvglBlackmagic.cpp */; };
 		21C0768F214D6D4F000F0AA4 /* platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0768D214D6D4F000F0AA4 /* platform.cpp */; };
 		21C07691214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */; };
 		21C07693214D7C31000F0AA4 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21C07692214D7C31000F0AA4 /* CoreFoundation.framework */; };
@@ -155,6 +202,17 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		2112A4E5214DA3A300EC1C11 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				2112A4E6214DA3A300EC1C11 /* vertex.vs in CopyFiles */,
+				2112A4E7214DA3A300EC1C11 /* fragment.fs in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		216C668D214BE7B0009BDD3B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -207,6 +265,9 @@
 		2104B01521413FA500C2CF41 /* libopencv_highgui.4.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.4.0.0.dylib; path = ../../../../../../../usr/local/lib/libopencv_highgui.4.0.0.dylib; sourceTree = "<group>"; };
 		2104B06221415CD700C2CF41 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		2104B06421415D0100C2CF41 /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.dylib; path = ../../../../../../../usr/local/lib/libglfw.dylib; sourceTree = "<group>"; };
+		2112A4EB214DA3A300EC1C11 /* cvgl_blackmagic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cvgl_blackmagic; sourceTree = BUILT_PRODUCTS_DIR; };
+		2112A4EC214DA46000EC1C11 /* cvgl-blackmagic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "cvgl-blackmagic.cpp"; sourceTree = "<group>"; };
+		2112A4ED214DA46000EC1C11 /* cvgl-blackmagic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = "cvgl-blackmagic.hpp"; sourceTree = "<group>"; };
 		216C667D214BB6F2009BDD3B /* cvglProfile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglProfile.hpp; sourceTree = "<group>"; };
 		216C667F214BB794009BDD3B /* cvglConversions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglConversions.cpp; sourceTree = "<group>"; };
 		216C6680214BB794009BDD3B /* cvglConversions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglConversions.hpp; sourceTree = "<group>"; };
@@ -328,8 +389,8 @@
 		216C6769214BF33C009BDD3B /* osc_vtable.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_vtable.r; path = ../../libo/osc_vtable.r; sourceTree = "<group>"; };
 		216C676A214BF33C009BDD3B /* osc_message_iterator_s.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_message_iterator_s.r; path = ../../libo/osc_message_iterator_s.r; sourceTree = "<group>"; };
 		216C676B214BF33C009BDD3B /* osc_expr_rec.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_expr_rec.r; path = ../../libo/osc_expr_rec.r; sourceTree = "<group>"; };
-		21C0767B214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglDeckLinkDiscover.cpp; sourceTree = "<group>"; };
-		21C0767C214D6A38000F0AA4 /* cvglDeckLinkDiscover.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglDeckLinkDiscover.hpp; sourceTree = "<group>"; };
+		21C0767B214D6A38000F0AA4 /* cvglBlackmagic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglBlackmagic.cpp; sourceTree = "<group>"; };
+		21C0767C214D6A38000F0AA4 /* cvglBlackmagic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglBlackmagic.hpp; sourceTree = "<group>"; };
 		21C0768D214D6D4F000F0AA4 /* platform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform.cpp; sourceTree = "<group>"; };
 		21C0768E214D6D4F000F0AA4 /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
 		21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeckLinkAPIDispatch.cpp; sourceTree = "<group>"; };
@@ -358,6 +419,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2112A4CE214DA3A300EC1C11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2112A4CF214DA3A300EC1C11 /* CoreFoundation.framework in Frameworks */,
+				2112A4D0214DA3A300EC1C11 /* libcvgl-libo.a in Frameworks */,
+				2112A4D1214DA3A300EC1C11 /* libuv.a in Frameworks */,
+				2112A4D2214DA3A300EC1C11 /* libglfw.dylib in Frameworks */,
+				2112A4D3214DA3A300EC1C11 /* OpenGL.framework in Frameworks */,
+				2112A4D4214DA3A300EC1C11 /* libopencv_imgcodecs.4.0.0.dylib in Frameworks */,
+				2112A4D5214DA3A300EC1C11 /* libopencv_objdetect.4.0.0.dylib in Frameworks */,
+				2112A4D6214DA3A300EC1C11 /* libopencv_imgproc.4.0.0.dylib in Frameworks */,
+				2112A4D7214DA3A300EC1C11 /* libopencv_video.4.0.0.dylib in Frameworks */,
+				2112A4D8214DA3A300EC1C11 /* libopencv_superres.4.0.0.dylib in Frameworks */,
+				2112A4D9214DA3A300EC1C11 /* libopencv_photo.4.0.0.dylib in Frameworks */,
+				2112A4DA214DA3A300EC1C11 /* libopencv_shape.4.0.0.dylib in Frameworks */,
+				2112A4DB214DA3A300EC1C11 /* libopencv_calib3d.4.0.0.dylib in Frameworks */,
+				2112A4DC214DA3A300EC1C11 /* libopencv_dnn.4.0.0.dylib in Frameworks */,
+				2112A4DD214DA3A300EC1C11 /* libopencv_features2d.4.0.0.dylib in Frameworks */,
+				2112A4DE214DA3A300EC1C11 /* libopencv_flann.4.0.0.dylib in Frameworks */,
+				2112A4DF214DA3A300EC1C11 /* libopencv_ml.4.0.0.dylib in Frameworks */,
+				2112A4E0214DA3A300EC1C11 /* libopencv_core.4.0.0.dylib in Frameworks */,
+				2112A4E1214DA3A300EC1C11 /* libopencv_stitching.4.0.0.dylib in Frameworks */,
+				2112A4E2214DA3A300EC1C11 /* libopencv_videoio.4.0.0.dylib in Frameworks */,
+				2112A4E3214DA3A300EC1C11 /* libopencv_videostab.4.0.0.dylib in Frameworks */,
+				2112A4E4214DA3A300EC1C11 /* libopencv_highgui.4.0.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +518,7 @@
 				21038D14214AECB10078F594 /* profiler */,
 				216C668F214BE7B0009BDD3B /* uv-test */,
 				216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */,
+				2112A4EB214DA3A300EC1C11 /* cvgl_blackmagic */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -629,16 +720,18 @@
 			path = libo;
 			sourceTree = "<group>";
 		};
-		21C0767A214D698B000F0AA4 /* blackmagic */ = {
+		21C0767A214D698B000F0AA4 /* camera */ = {
 			isa = PBXGroup;
 			children = (
-				21C0767B214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp */,
-				21C0767C214D6A38000F0AA4 /* cvglDeckLinkDiscover.hpp */,
+				21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */,
+				21D7D46F2147EAC000345757 /* cvglCameraInput.hpp */,
+				21C0767B214D6A38000F0AA4 /* cvglBlackmagic.cpp */,
+				21C0767C214D6A38000F0AA4 /* cvglBlackmagic.hpp */,
 				21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */,
 				21C0768D214D6D4F000F0AA4 /* platform.cpp */,
 				21C0768E214D6D4F000F0AA4 /* platform.h */,
 			);
-			path = blackmagic;
+			path = camera;
 			sourceTree = "<group>";
 		};
 		21D7D494214A3F4500345757 /* gl */ = {
@@ -666,8 +759,6 @@
 			children = (
 				21D7D4782147FEEF00345757 /* cvglCV.cpp */,
 				21D7D4792147FEEF00345757 /* cvglCV.hpp */,
-				21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */,
-				21D7D46F2147EAC000345757 /* cvglCameraInput.hpp */,
 				21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */,
 				21038D0E214AD2A20078F594 /* cvglConvexHull.hpp */,
 			);
@@ -681,8 +772,10 @@
 				21D7D4862149274300345757 /* fragment.fs */,
 				21D7D46B2147E8A900345757 /* cvgl-main.cpp */,
 				21D7D46C2147E8A900345757 /* cvgl-main.hpp */,
+				2112A4EC214DA46000EC1C11 /* cvgl-blackmagic.cpp */,
+				2112A4ED214DA46000EC1C11 /* cvgl-blackmagic.hpp */,
 				216C6698214BF250009BDD3B /* osc */,
-				21C0767A214D698B000F0AA4 /* blackmagic */,
+				21C0767A214D698B000F0AA4 /* camera */,
 				21D7D495214A3F6400345757 /* cv */,
 				216C667A214BB6D7009BDD3B /* utils */,
 				216C6683214BC61E009BDD3B /* udp */,
@@ -761,6 +854,23 @@
 			name = profiler;
 			productName = profiler;
 			productReference = 21038D14214AECB10078F594 /* profiler */;
+			productType = "com.apple.product-type.tool";
+		};
+		2112A4B5214DA3A300EC1C11 /* cvgl_blackmagic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2112A4E8214DA3A300EC1C11 /* Build configuration list for PBXNativeTarget "cvgl_blackmagic" */;
+			buildPhases = (
+				2112A4B6214DA3A300EC1C11 /* Sources */,
+				2112A4CE214DA3A300EC1C11 /* Frameworks */,
+				2112A4E5214DA3A300EC1C11 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = cvgl_blackmagic;
+			productName = "openCV-test";
+			productReference = 2112A4EB214DA3A300EC1C11 /* cvgl_blackmagic */;
 			productType = "com.apple.product-type.tool";
 		};
 		216C668E214BE7B0009BDD3B /* uv-test */ = {
@@ -850,6 +960,7 @@
 			projectRoot = "";
 			targets = (
 				21D7D4492147E7AD00345757 /* cvgl */,
+				2112A4B5214DA3A300EC1C11 /* cvgl_blackmagic */,
 				21038D13214AECB10078F594 /* profiler */,
 				216C668E214BE7B0009BDD3B /* uv-test */,
 				216C66B9214BF2BD009BDD3B /* cvgl-libo */,
@@ -863,6 +974,36 @@
 			buildActionMask = 2147483647;
 			files = (
 				21038D17214AECB10078F594 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2112A4B6214DA3A300EC1C11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2112A4B7214DA3A300EC1C11 /* cvglCallbacks.cpp in Sources */,
+				2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */,
+				2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */,
+				2112A4EF214DA46400EC1C11 /* cvgl-blackmagic.cpp in Sources */,
+				2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */,
+				2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */,
+				2112A4BC214DA3A300EC1C11 /* cvglCameraInput.cpp in Sources */,
+				2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */,
+				2112A4BE214DA3A300EC1C11 /* DeckLinkAPIDispatch.cpp in Sources */,
+				2112A4BF214DA3A300EC1C11 /* cvglOSCSocket.cpp in Sources */,
+				2112A4C0214DA3A300EC1C11 /* cvglBlackmagic.cpp in Sources */,
+				2112A4C1214DA3A300EC1C11 /* cvglTexture.cpp in Sources */,
+				2112A4C2214DA3A300EC1C11 /* cvglContext.cpp in Sources */,
+				2112A4C3214DA3A300EC1C11 /* cvglConversions.cpp in Sources */,
+				2112A4C4214DA3A300EC1C11 /* OdotBundle.cpp in Sources */,
+				2112A4C5214DA3A300EC1C11 /* cvglConvexHull.cpp in Sources */,
+				2112A4C7214DA3A300EC1C11 /* OdotMessage.cpp in Sources */,
+				2112A4C8214DA3A300EC1C11 /* cvglVAO.cpp in Sources */,
+				2112A4C9214DA3A300EC1C11 /* cvglCV.cpp in Sources */,
+				2112A4CA214DA3A300EC1C11 /* OdotHash.cpp in Sources */,
+				2112A4CB214DA3A300EC1C11 /* glad.c in Sources */,
+				2112A4CC214DA3A300EC1C11 /* cvglVertex.cpp in Sources */,
+				2112A4CD214DA3A300EC1C11 /* platform.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -938,7 +1079,7 @@
 				216C66B4214BF299009BDD3B /* OdotExpr.cpp in Sources */,
 				21C07691214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp in Sources */,
 				216C6686214BC62E009BDD3B /* cvglOSCSocket.cpp in Sources */,
-				21C0767D214D6A38000F0AA4 /* cvglDeckLinkDiscover.cpp in Sources */,
+				21C0767D214D6A38000F0AA4 /* cvglBlackmagic.cpp in Sources */,
 				21D7D48E214946E700345757 /* cvglTexture.cpp in Sources */,
 				21D7D46A2147E7E000345757 /* cvglContext.cpp in Sources */,
 				216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */,
@@ -1100,6 +1241,53 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2112A4E9214DA3A300EC1C11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/include,
+					/usr/local/cuda/include,
+					../../../libo,
+					"\"$(SRCROOT)/../Blackmagic-DeckLink-SDK-10.11.2/Mac/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/usr/local/Cellar/libuv/1.23.0/lib,
+				);
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		2112A4EA214DA3A300EC1C11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/include,
+					/usr/local/cuda/include,
+					../../../libo,
+					"\"$(SRCROOT)/../Blackmagic-DeckLink-SDK-10.11.2/Mac/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/usr/local/Cellar/libuv/1.23.0/lib,
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
@@ -1305,6 +1493,15 @@
 			buildConfigurations = (
 				21038D19214AECB10078F594 /* Debug */,
 				21038D1A214AECB10078F594 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2112A4E8214DA3A300EC1C11 /* Build configuration list for PBXNativeTarget "cvgl_blackmagic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2112A4E9214DA3A300EC1C11 /* Debug */,
+				2112A4EA214DA3A300EC1C11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

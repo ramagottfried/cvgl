@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "21C8F8212146ABB600B07D81"
-               BuildableName = "cv-gl2"
-               BlueprintName = "cv-gl2"
+               BlueprintIdentifier = "21D7D4492147E7AD00345757"
+               BuildableName = "cvgl"
+               BlueprintName = "cvgl"
                ReferencedContainer = "container:cvgl.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "21C8F8212146ABB600B07D81"
-            BuildableName = "cv-gl2"
-            BlueprintName = "cv-gl2"
+            BlueprintIdentifier = "21D7D4492147E7AD00345757"
+            BuildableName = "cvgl"
+            BlueprintName = "cvgl"
             ReferencedContainer = "container:cvgl.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -55,9 +55,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "21C8F8212146ABB600B07D81"
-            BuildableName = "cv-gl2"
-            BlueprintName = "cv-gl2"
+            BlueprintIdentifier = "21D7D4492147E7AD00345757"
+            BuildableName = "cvgl"
+            BlueprintName = "cvgl"
             ReferencedContainer = "container:cvgl.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -74,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "21C8F8212146ABB600B07D81"
-            BuildableName = "cv-gl2"
-            BlueprintName = "cv-gl2"
+            BlueprintIdentifier = "21D7D4492147E7AD00345757"
+            BuildableName = "cvgl"
+            BlueprintName = "cvgl"
             ReferencedContainer = "container:cvgl.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

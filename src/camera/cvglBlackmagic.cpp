@@ -1,4 +1,4 @@
-#include "cvglDeckLinkDiscover.hpp"
+#include "cvglBlackmagic.hpp"
 
 
 int testCamerFinder ()
