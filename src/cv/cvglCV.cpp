@@ -4,8 +4,9 @@
 using namespace cv;
 using namespace std;
 
-void cvglCV::preprocess()
+void cvglCV::preprocess(Mat& mat)
 {
+    m_img = mat.clone();
     // later could wrap each function with a "set to output" flag, which could be used for debugging
     // or keep these all as class members and then query them as needed..
     if( m_img.empty() )
@@ -29,6 +30,89 @@ void cvglCV::preprocess()
     // optical flow? ... maybe CNN later?
     
     //  toDisplay = threshold_output;
+    
+}
+
+void cvglCV::getContours(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObject>& outHull, unique_ptr<cvglObject>& minrectMesh)
+{
+    if( threshold_output.empty() )
+    {
+        cout << "no image" << endl;
+        return;
+    }
+    
+    vector< Mat >   contours;
+    vector< Vec4i > hierarchy;
+    vector< Mat >   hullP_vec;
+    vector< Mat >   hullI_vec;
+    vector< vector<Vec4i> > defects_vec;
+    
+    findContours( threshold_output, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+    
+    size_t npoints = 0;
+    for( auto& c : contours )
+        npoints += (c.cols * c.rows);
+    
+    outContour->clear();
+    outContour->reserve( npoints );
+    
+    outHull->clear();
+    outHull->reserve( npoints );
+    
+    minrectMesh->clear();
+    minrectMesh->reserve( contours.size() * 4 );
+    
+    size_t npix = threshold_output.rows * threshold_output.cols;
+    float halfW = threshold_output.cols / 2.0f;
+    float halfH = threshold_output.rows / 2.0f;
+    
+    for( int i = 0; i < contours.size(); i++ )
+    {
+        double contour_a = contourArea( contours[i] ) / npix;
+        
+        if( (contour_a > m_minsize) && (contour_a < m_maxsize ) )
+        {
+            
+            cvgl::pointMatToVertex(contours[i], outContour, halfW, halfH );
+            
+            // hull
+            Mat hullP, hullI;
+            cv::RotatedRect minRect;
+            vector<Vec4i> defects;
+            
+            cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
+            
+            cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
+            cvgl::rotatedRectToVertex(minRect, minrectMesh, halfW, halfH );
+            
+            size_t hullI_size = hullI.rows * hullI.cols;
+            if( hullI_size > 3 )
+                convexityDefects( contours[i], hullI, defects );
+            
+            hullP_vec.emplace_back( hullP );
+            hullI_vec.emplace_back( hullI );
+            defects_vec.emplace_back( defects );
+            
+        }
+    }
+    
+    // pass contour analysis data to another thread if not drawn
+    // I guess it needs to be decided ahead of time what gets drawn then...
+    // most data comes from the contour, hull, and rotated rect
+    // the other data is more about averages, focus level... hmm
+    
+    
+    // object tracking IDs etc....
+    
+    thread worker(&cvglCV::analysisThread,
+                  this, // probably don't need it to be the same instance...
+                  contours,
+                  hierarchy,
+                  hullP_vec,
+                  hullI_vec,
+                  defects_vec );
+    
+    worker.detach();
     
 }
 

@@ -5,36 +5,33 @@
 #include "cvglOSCSocket.hpp"
 
 #include "cvglProfile.hpp"
+#include "cvglCameraInput.hpp"
 
 
 using namespace std;
 using namespace cv;
 
 
-struct cvglMainState
+/*
+ 
+ opengl context has to be setup before we can create VAO/VBO bindings
+ the drawing needs to be in the context of the glwindow
+ so, I guess we can just make them globals
+ 
+ */
+
+cvglCV cvx;
+cvglContext context;
+cvglOSCSocket osc;
+cvglCameraInput camera;
+
+cvglProfile timer;
+
+class cvglFirstProc
 {
-    cvglCV cvx;
-    cvglContext context;
-    cvglOSCSocket osc;
+    cvglFrameCallbackFn m_cb;
     
-    int isClosing()
-    {
-        if( context.shouldClose() )
-        {
-            // do close here
-            return 1;
-        }
-        
-        return 0;
-    }
-};
-
-
-class cvglFirstProc : public cvglFrameCallback
-{
 public:
-    
-    cvglFirstProc(cvglMainState& app) : m_main(app) {}
     
     cvglObject triangle;
     cvglObject rect;
@@ -43,7 +40,6 @@ public:
     cvglTexture frameTex;
     cvglTexture colorTex[3];
 
-    
     void init()
     {
         triangle.newObj(GL_LINE_LOOP);
@@ -72,82 +68,36 @@ public:
         cvglProfile timer;
     }
     
-    void onNewFrame(cv::Mat& frame) override
+    cvglFrameCallbackFn getCallback()
     {
-        if( m_main.isClosing() )
-        {
-            // closing, so clean up and exit
-            return;
-        }
-        
-        rect.bind();
-        frameTex.setTexture( frame );
-        rect.draw();
-        
-        m_main.cvx.preprocess();
-        m_main.cvx.getContours( contourMesh, hullMesh, minrectMesh );
-        
-        contourMesh.bind();
-        colorTex[2].bind();
-        contourMesh.draw(GL_LINE_LOOP);
-        
-        hullMesh.bind();
-        colorTex[2].bind();
-        hullMesh.draw(vector<int>({GL_LINE_LOOP, GL_POINTS}));
-        
-        minrectMesh.bind();
-        colorTex[2].bind();
-        minrectMesh.draw(GL_LINE_LOOP);
-        
-        //        context.runningAvgFPS();
-        m_main.context.drawAndPoll();
-        
-        auto b = m_main.osc.getBundle();
-        if( b.size() )
-            cout << b.size() << endl;
+        return std::bind(&cvglFirstProc::onNewFrame, this, std::placeholders::_1);
     }
     
-private:
-    cvglMainState& m_main;
-
-};
-
-
-int main( void )
-{
-    //testCamerFinder();
-    
-    cvglMainState app;
-    // main thread context for gl window and OSC input
-    
-    app.context.setupWindow( app.cvx.camera.getWidth(), app.cvx.camera.getHeight() );
-    
-    if( !app.context.loadShaderFiles( "vertex.vs", "fragment.fs" ) )
-        return -1;
-    
-    cvglFirstProc proc1(app);
-    
-    if( app.cvx.foundBlackmagic() )
-        app.cvx.frameCallback( proc1 );
-    else if( !app.cvx.camera.isOpen() )
-        return -1;
-   
-    
-    glPointSize(5);
-    
-    cvglProfile timer;
-    
-    /*
-    while( !context.shouldClose() )
+    int onNewFrame(cv::Mat frame)
     {
-        context.clear();
-        cv::Mat frame = cvx.getFrame();
+
+        cout << __func__ << endl;
+        
+        /*
+        if( !context.isActive() )
+        {
+            
+            return 1;
+        }
+        */
+        
+        if( context.shouldClose() )
+        {
+            // closing, so clean up and exit
+            return 0;
+        }
+        
         
         rect.bind();
         frameTex.setTexture( frame );
         rect.draw();
         
-        cvx.preprocess();
+        cvx.preprocess( frame );
         cvx.getContours( contourMesh, hullMesh, minrectMesh );
         
         contourMesh.bind();
@@ -169,10 +119,34 @@ int main( void )
         if( b.size() )
             cout << b.size() << endl;
         
+        return 1;
+
     }
-    */
+ 
+
+};
+
+
+int main( void )
+{
+    if( !camera.isOpen() )
+        return -1;
     
-    app.osc.stop();
+    // main thread context for gl window and OSC input
+    context.setupWindow( camera.getWidth(), camera.getHeight() );
+    
+    if( !context.loadShaderFiles( "vertex.vs", "fragment.fs" ) )
+        return -1;
+    
+    cvglFirstProc proc;
+    proc.init();
+    
+    camera.setCallback( proc.getCallback() );
+    
+    camera.start();
+    
+    
+    osc.stop();
     
     return 0;
 }

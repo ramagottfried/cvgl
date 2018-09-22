@@ -15,6 +15,8 @@ void cvglContext::resize_callback(int w, int h)
         double adjust =  aspect / m_aspectRatio;
         glUniform3f(m_scaleAttrib, 1, adjust, 1 );
     }
+    cout << "resize_callback " << w <<  " " << h << endl;
+
 }
 
 cvglContext::cvglContext()
@@ -44,8 +46,9 @@ cvglContext::~cvglContext()
 
 void cvglContext::setupWindow(int width, int height )
 {
+    cout << "setting up window " << width <<  " " << height << endl;
     
-    m_aspectRatio = width / height;
+    m_aspectRatio = (double)width / (double)height;
     
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -82,6 +85,8 @@ void cvglContext::setupWindow(int width, int height )
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT,  GL_NICEST);
     
+    cout << "initializing gl with size " << width << " " << height << " " << m_window << endl;
+
 }
 
 std::string slurp(std::ifstream& in) {

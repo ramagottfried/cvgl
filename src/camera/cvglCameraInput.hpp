@@ -1,157 +1,86 @@
 #pragma once
-
 #include "opencv2/highgui.hpp"
-#include "cvglBlackmagic.hpp"
+//#include "cvglBlackmagicCallback.hpp"
+#include <functional>
 #include <thread>
+#include "blackmagic_cb.hpp"
 
 
-// maybe separate camera input from CV processing...
+// client callback
+typedef std::function<int(cv::Mat)> cvglFrameCallbackFn;
 
-
-class cvglFrameCallback
-{
-public:
-    virtual void onNewFrame(cv::Mat& frame){}
-    
-};
+// internal callback
+typedef std::function<void(IDeckLinkVideoInputFrame*)> cvglBMFrameCallbackFn;
+typedef std::function<void(BMDVideoInputFormatChangedEvents, IDeckLinkDisplayMode*, BMDDetectedVideoInputFormatFlags)> cvglBMSizeCallbackFn;
 
 class cvglCameraInput
 {
 public:
-    
-    cvglCameraInput()
-    {
-        if( blackmagicScan() == 0 )
-        {
-            blackmagic = true;
-        }
-        else
-        {
-            cap.open(0);
-            if(!cap.isOpened())  // check if we succeeded
-            {
-                return;
-            }
-            
-            cap.set(cv::CAP_PROP_FPS, 30);
-        }
-        
-        
-    }
-    
-    ~cvglCameraInput()
-    {
-        
-        printf("Exiting.\n");
-        
-        stop();
-        
-      
-    }
-    
-    
-    inline bool foundBlackmagic(){ return blackmagic; }
-    
-    int blackmagicScan();
-    
-    void frameCallback(cvglFrameCallback callbackObj )
-    {
-        m_callback = callbackObj;
-    }
-    
-    void start()
-    {
-        if( blackmagic )
-        {
-            // start bm loop
-        }
-        else
-        {
-            // spawn loop thread
-            
-        }
-    }
-    
-    void stop()
-    {
-        if( blackmagic )
-        {
-            if( deckLinkInput )
-            {
-                // Stop capture
-                deckLinkInput->StopStreams();
-                
-                // Disable the video input interface
-                deckLinkInput->DisableVideoInput();
-            }
-            
-            // Release the attributes interface
-            if(deckLinkAttributes != NULL)
-                deckLinkAttributes->Release();
-            
-            // Release the video input interface
-            if(deckLinkInput != NULL)
-                deckLinkInput->Release();
-            
-            // Release the Decklink object
-            if(deckLink != NULL)
-                deckLink->Release();
-            
-            // Release the notification callback object
-            if(notificationCallback != NULL)
-                notificationCallback->Release();
-        }
-        else
-        {
-            // stop and close camera loop thread
-        }
-    }
 
-    cv::Mat getFrame()
+    cvglCameraInput();
+    cvglCameraInput(Blackmagic_cb * cb);
+
+    ~cvglCameraInput();
+
+    
+    int blackmagicScan(Blackmagic_cb * cb);
+    inline bool foundBlackmagic(){ return blackmagic; }
+
+    void bmFrameCallback(IDeckLinkVideoInputFrame* videoFrame);
+    
+    void bmSizeCallback(BMDVideoInputFormatChangedEvents notificationEvents,
+                        IDeckLinkDisplayMode *newDisplayMode,
+                        BMDDetectedVideoInputFormatFlags detectedSignalFlags );
+    
+    
+    
+    void setCallback(cvglFrameCallbackFn callback)
     {
-        cv::Mat img;
-        cap >> img;
-        return std::move(img);
+        std::cout << "set callback " << std::endl;
+        m_callback = callback;
+        callback_set = true;
     }
+ 
+    // opencv camera callback
+    void cvCamLoop();
+    void bmCamLoop();
+
+    int getWidth();
+    int getHeight();
     
-    void readFrame( cv::Mat& outmat )
-    {
-        cap >> outmat;
-    }
+    void start();
+    void stop();
+    void pause();
+
     
-    bool isOpen()
-    {
-        return cap.isOpened();
-    }
-    
-    int getWidth()
-    {
-        return cap.get(cv::CAP_PROP_FRAME_WIDTH);
-    }
-    
-    int getHeight()
-    {
-        return cap.get(cv::CAP_PROP_FRAME_HEIGHT);
-    }
-    
-    
+    cv::Mat getFrame();
+    void readFrame( cv::Mat& outmat );
+    bool isOpen();
+
 private:
     // add camera selection and fps info here
     
-    cvglFrameCallback m_callback;
+    int m_width = 0;
+    int m_height = 0;
     
-    bool blackmagic = false;
+    bool callback_set = false;
+    cvglFrameCallbackFn m_callback = nullptr;
+    
+    cvglBMFrameCallbackFn m_bm_frame_cb = nullptr;
+    cvglBMSizeCallbackFn m_bm_size_cb = nullptr;
+    
+    
+    std::mutex m_mutex;
+    bool init_softlock = true;
     
     cv::VideoCapture cap;
     
-    std::unique_ptr<std::thread> m_usb_input_thread;
+    bool blackmagic = false;
+    
+    Blackmagic_cb *         m_blackmagic_callback;
+    IDeckLinkAttributes*    deckLinkAttributes = NULL;
+    IDeckLink*              deckLink = NULL;
+    IDeckLinkInput*         deckLinkInput = NULL;
     
     
-    IDeckLinkAttributes *   deckLinkAttributes = NULL;
-    IDeckLink *             deckLink = NULL;
-    IDeckLinkInput *        deckLinkInput = NULL;
-    NotificationCallback *  notificationCallback = NULL;
-    
-    
-
 };

@@ -17,14 +17,6 @@ class cvglCV
 {
     
 public:
-    cvglCameraInput camera;
-    inline bool foundBlackmagic(){ return camera.foundBlackmagic(); }
-    inline void frameCallback( cvglFrameCallback& callbackObj ){ camera.frameCallback(callbackObj); }
-    
-    void readFrame()
-    {
-        camera.readFrame(m_img);
-    }
     
     void gaussSigma(int k)
     {
@@ -43,20 +35,16 @@ public:
     }
     
    
-    
-    cv::Mat getFrame()
-    {
-        camera.readFrame(m_img);
-        return m_img.clone();
-    }
-    
     size_t imageSize(){
         return m_img.rows * m_img.cols;
     }
 
-    void preprocess();
+    void preprocess(cv::Mat& mat);
     
     void getContours(cvglObject& outContour, cvglObject& outHull, cvglObject& minrectMesh);
+    void getContours(std::unique_ptr<cvglObject>& outContour,
+                     std::unique_ptr<cvglObject>& outHull,
+                     std::unique_ptr<cvglObject>& minrectMesh);
     
     void analysisThread(    std::vector< cv::Mat >               contours,
                             std::vector< cv::Vec4i >            hierarchy,

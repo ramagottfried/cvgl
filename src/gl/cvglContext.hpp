@@ -34,10 +34,12 @@ public:
     inline GLuint getShader(){ return m_shaderProgram; }
     inline void setScalarAttribute(GLuint attrID) { m_scaleAttrib = attrID; }
     
-    inline int shouldClose()
+    inline bool isActive()
     {
-        return (glfwGetKey(m_window, GLFW_KEY_ESCAPE ) == GLFW_PRESS) || glfwWindowShouldClose(m_window) ;
+        return (glfwGetCurrentContext() != NULL);
     }
+    
+   
     
     inline void clearColor(float r, float b, float g, float a)
     {
@@ -53,6 +55,21 @@ public:
     {
         glfwSwapBuffers(m_window);
         glfwPollEvents();
+    }
+    
+    // the glfw loop can only be on the main thread!
+    inline void doPollLoop()
+    {
+        while(!m_should_close)
+        {
+            glfwPollEvents();
+            m_should_close = shouldClose();
+        }
+    }
+    
+    inline int shouldClose()
+    {
+        return (glfwGetKey(m_window, GLFW_KEY_ESCAPE ) == GLFW_PRESS) || glfwWindowShouldClose(m_window)  ;
     }
     
     void useShader()
@@ -90,7 +107,9 @@ private:
     GLuint m_vao;
     
     GLuint m_tex;
-    
+
+    bool m_should_close = false;
+
     
     double time = glfwGetTime();
     double prevtime = time;

@@ -14,6 +14,7 @@ class cvglVAO
 public:
     cvglVAO()
     {
+        
         glGenVertexArrays(1, &m_vao);
         glGenBuffers( 1, &m_vbo);
         
