@@ -12,23 +12,25 @@
 using namespace std;
 using namespace cv;
 
+cvglOSCSocket osc;
+
 class MainApp : public Blackmagic_cb
 {
 
 public:
     
-    cvglOSCSocket osc;
     cvglCV cvx;
     
     unique_ptr<cvglCameraInput> camera;
 
     unique_ptr<cvglContext> context;
-    unique_ptr<cvglObject> triangle, rect, contourMesh, hullMesh, minrectMesh;
+    unique_ptr<cvglObject> triangle, rect, contourMesh, hullMesh, minrectMesh, flowMesh;
     unique_ptr<cvglTexture> frameTex, colorTex[3];
     
     cv::Mat m_frame;
     
     bool objects_initialized = false;
+
     
     void initCamera()
     {
@@ -50,7 +52,8 @@ public:
         contourMesh =  unique_ptr<cvglObject>(new cvglObject);
         hullMesh =  unique_ptr<cvglObject>(new cvglObject);
         minrectMesh =  unique_ptr<cvglObject>(new cvglObject);
-
+        flowMesh =  unique_ptr<cvglObject>(new cvglObject);
+        
         frameTex =  unique_ptr<cvglTexture>(new cvglTexture);
         colorTex[0] =  unique_ptr<cvglTexture>(new cvglTexture);
         colorTex[1] =  unique_ptr<cvglTexture>(new cvglTexture);
@@ -90,40 +93,26 @@ public:
     {
 
         m_frame = frame;
-       
-    }
-    
-    void process()
-    {
         
-        // cout << __func__ << endl;
-        
-        /*
-         if( !context.isActive() )
-         {
-         
-         return 1;
-         }
-         */
-        //   cout << "context=" << context.get() << endl;
-        
-        if( !context.get() || !objects_initialized )
-        {
-            // closing, so clean up and exit
-            return;
-        }
-        
-        if( !m_frame.data )
+        if( !m_frame.data || !newframe || !objects_initialized  )
             return;
         
         cvx.preprocess( m_frame );
         cvx.getContours( contourMesh, hullMesh, minrectMesh );
+    //    cvx.getFlow( flowMesh );
+    }
+    
+    void draw()
+    {
         
+        if( !context.get() || !objects_initialized || !m_frame.data || !newframe )
+            return;
+        
+       
         rect->bind();
         frameTex->setTexture( m_frame );
         rect->draw();
-        
-
+      
         contourMesh->bind();
         colorTex[2]->bind();
         contourMesh->draw(GL_LINE_LOOP);
@@ -136,13 +125,11 @@ public:
         colorTex[2]->bind();
         minrectMesh->draw(GL_LINE_LOOP);
         
-
+        context->printFPS();
+        
         context->drawAndPoll();
         
-        auto b = osc.getBundle();
-        if( b.size() )
-            cout << b.size() << endl;
-        
+        newframe = false;
     }
     
     
@@ -159,6 +146,9 @@ int main( void )
     
     MainApp app;
     app.initCamera();
+    if( !app.camera->isOpen() )
+        return -1;
+    
     app.initContext();
 
     app.context->setupWindow( app.camera->getWidth(), app.camera->getHeight() );
@@ -173,16 +163,18 @@ int main( void )
     
     while( !app.context->shouldClose() )
     {
-        app.process();
-    
-        app.context->drawAndPoll();
+        
+        app.draw();
+        
+        auto b = osc.getBundle();
+        if( b.size() )
+            cout << b.size() << endl;
+        
     }
 
-        
+    app.camera->stop();
     
-    app.context->doPollLoop();
-    
-    app.osc.stop();
+    osc.stop();
     
     return 0;
 }

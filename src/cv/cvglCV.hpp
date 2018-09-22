@@ -7,6 +7,7 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"
+#include "opencv2/video/tracking.hpp"
 
 #include "cvglCameraInput.hpp"
 #include "cvglObject.hpp"
@@ -46,6 +47,9 @@ public:
                      std::unique_ptr<cvglObject>& outHull,
                      std::unique_ptr<cvglObject>& minrectMesh);
     
+    void getFlow(std::unique_ptr<cvglObject>& outFlow);
+
+    
     void analysisThread(    std::vector< cv::Mat >               contours,
                             std::vector< cv::Vec4i >            hierarchy,
                             std::vector< cv::Mat >                  hullP_vec,
@@ -67,7 +71,7 @@ public:
     
 private:
     
-    cv::Mat m_img;
+    cv::Mat m_img, m_prev_frame;
     cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray;
 
     float m_resize = 1;
@@ -81,7 +85,7 @@ private:
     cv::Mat m_er_element = cv::getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
     cv::Mat m_di_element = getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
 
-    
+    cv::Mat m_prev_points;
 };
 
 

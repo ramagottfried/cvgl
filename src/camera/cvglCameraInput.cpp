@@ -227,6 +227,19 @@ cvglCameraInput::cvglCameraInput(Blackmagic_cb * cb)
         pause();
         
     }
+    else
+    {
+        cap.open(0);
+        if(!cap.isOpened())  // check if we succeeded
+        {
+            return;
+        }
+        
+        m_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
+        m_height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+        
+        cap.set(cv::CAP_PROP_FPS, 30);
+    }
     
         
 }

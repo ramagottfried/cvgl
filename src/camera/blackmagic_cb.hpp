@@ -11,6 +11,9 @@ typedef std::function<void(BMDVideoInputFormatChangedEvents, IDeckLinkDisplayMod
 class Blackmagic_cb : public IDeckLinkInputCallback
 {
 public:
+    
+    bool newframe = false;
+    
     void setDevice( IDeckLinkInput *deckLinkInput );
 
     IDeckLinkInput * m_deckLinkInput = nullptr;

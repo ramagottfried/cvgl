@@ -94,6 +94,8 @@ public:
         prevtime = time;
     }
     
+    inline bool isClosing() { return m_should_close; }
+    
 private:
     
     GLFWwindow* m_window = nullptr;

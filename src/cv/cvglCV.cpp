@@ -23,6 +23,7 @@ void cvglCV::preprocess(Mat& mat)
     
     threshold( src_blur_gray, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
     
+    
     // add sobel here?
     
     // canny? for focus part?
@@ -31,6 +32,34 @@ void cvglCV::preprocess(Mat& mat)
     
     //  toDisplay = threshold_output;
     
+}
+
+void cvglCV::getFlow( unique_ptr<cvglObject>& outFlow)
+{
+    
+    Mat stat, err;
+    Mat defect_startpt;
+    
+// this is crashing
+    if( !m_prev_frame.empty() ){
+        calcOpticalFlowPyrLK( m_prev_frame, src_gray, m_prev_points, defect_startpt, stat, err);
+    }
+    m_prev_frame = src_gray.clone();
+
+    
+    cout << defect_startpt.rows << " " << defect_startpt.cols << endl;
+    
+    if( !defect_startpt.empty() )
+    {
+        cout << defect_startpt.rows << " " << defect_startpt.cols << endl;
+        //cvgl::pointMatToVertex(defect_startpt, outFlow, m_img.cols/2.0f, m_img.rows/2.0f );
+    }
+    
+    cout << "copy" << endl;
+
+
+    
+    cout << "end" << endl;
 }
 
 void cvglCV::getContours(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObject>& outHull, unique_ptr<cvglObject>& minrectMesh)

@@ -76,7 +76,7 @@ namespace cvgl
                 pointMatToVertex<Point2d>(points, vertexObj, halfScreenW, halfScreenH );
                 break;
             default:
-                cout << __func__ << "unknown type, maybe long? "  << endl;
+                cout << __func__ << "unknown type, maybe long? " << points.depth() << endl;
                 break;
         }
     }

@@ -188,8 +188,9 @@ HRESULT STDMETHODCALLTYPE Blackmagic_cb::VideoInputFrameArrived (IDeckLinkVideoI
         cv::Mat mat = cv::Mat((int)videoFrame->GetHeight(), (int)videoFrame->GetWidth(), CV_8UC2, data);
         cv::Mat mRGB;
         cv::cvtColor(mat, mRGB, cv::COLOR_YUV2BGR_UYVY);
-        setFrame(mRGB);
         
+        newframe = true;
+        setFrame(mRGB);
     }
 
     
