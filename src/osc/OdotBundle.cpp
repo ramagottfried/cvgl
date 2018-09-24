@@ -29,7 +29,7 @@ OdotBundle::OdotBundle()
 OdotBundle::OdotBundle( const OdotBundle& src )
 {
 //    D_(cout << __func__ << "copy \n";)
-    t_osc_bndl_u *b = osc_bundle_u_alloc();
+    t_osc_bndl_u *b = nullptr;
     osc_bundle_u_copy( &b, src.ptr.get() );
     ptr = odot::newOdotBundlePtr( b );
     osc_error_setHandler( odot_expr_error_handler );
@@ -38,7 +38,7 @@ OdotBundle::OdotBundle( const OdotBundle& src )
 OdotBundle::OdotBundle( const OdotBundle* src )
 {
     //    D_(cout << __func__ << "copy \n";)
-    t_osc_bndl_u *b = osc_bundle_u_alloc();
+    t_osc_bndl_u *b = nullptr;
     osc_bundle_u_copy( &b, src->ptr.get() );
     ptr = odot::newOdotBundlePtr( b );
     osc_error_setHandler( odot_expr_error_handler );
@@ -47,7 +47,7 @@ OdotBundle::OdotBundle( const OdotBundle* src )
 OdotBundle::OdotBundle( const t_osc_bndl_u * src )
 {
 //    D_(cout << __func__  << "copy from odot pointer \n";)
-    t_osc_bndl_u *b = osc_bundle_u_alloc();
+    t_osc_bndl_u *b = nullptr;
     osc_bundle_u_copy( &b, (t_osc_bndl_u *)src );
     ptr = odot::newOdotBundlePtr( b );
     osc_error_setHandler( odot_expr_error_handler );
@@ -80,7 +80,7 @@ OdotBundle& OdotBundle::operator=( const OdotBundle& src )
     
     if( this != &src )
     {
-        t_osc_bndl_u *b = osc_bundle_u_alloc();
+        t_osc_bndl_u *b = nullptr;
         osc_bundle_u_copy( &b, (t_osc_bndl_u *)src.ptr.get() );
         ptr = odot::newOdotBundlePtr( b );
         osc_error_setHandler( odot_expr_error_handler );
