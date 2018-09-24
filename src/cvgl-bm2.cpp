@@ -7,22 +7,19 @@
 #include "cvglProfile.hpp"
 #include "cvglCameraInput.hpp"
 
-#include "blackmagic_cb.hpp"
+#include "cvglCamera.hpp"
 
 using namespace std;
 using namespace cv;
 
 cvglOSCSocket osc;
+cvglCV cvx;
 
-class MainApp : public Blackmagic_cb
+class CameraContext : public cvglCamera
 {
 
 public:
     
-    cvglCV cvx;
-    
-    unique_ptr<cvglCameraInput> camera;
-
     unique_ptr<cvglContext> context;
     unique_ptr<cvglObject> triangle, rect, contourMesh, hullMesh, minrectMesh, flowMesh;
     unique_ptr<cvglTexture> frameTex, colorTex[3];
@@ -31,12 +28,6 @@ public:
     
     bool objects_initialized = false;
 
-    
-    void initCamera()
-    {
-        camera = unique_ptr<cvglCameraInput>( new cvglCameraInput(this) );
-
-    }
     
     void initContext()
     {
@@ -89,7 +80,7 @@ public:
     }
     
     
-    void setFrame(cv::Mat frame) override
+    void processFrame(cv::Mat frame) override
     {
 
         m_frame = frame;
@@ -97,6 +88,7 @@ public:
         if( !m_frame.data || !newframe || !objects_initialized  )
             return;
         
+
         cvx.preprocess( m_frame );
         cvx.getContours( contourMesh, hullMesh, minrectMesh );
     //    cvx.getFlow( flowMesh );
@@ -144,14 +136,14 @@ cvglProfile timer;
 int main( void )
 {
     
-    MainApp app;
-    app.initCamera();
-    if( !app.camera->isOpen() )
+    CameraContext app;
+    
+    if( !app.hasCamera() )
         return -1;
     
     app.initContext();
 
-    app.context->setupWindow( app.camera->getWidth(), app.camera->getHeight() );
+    app.context->setupWindow( app.getWidth(), app.getHeight() );
     
     if( !app.context->loadShaderFiles( "vertex.vs", "fragment.fs" ) )
         return -1;
@@ -159,20 +151,22 @@ int main( void )
     
     app.initObjs();
     
-    app.camera->start();
+    app.start();
     
     while( !app.context->shouldClose() )
     {
         
         app.draw();
         
+
         auto b = osc.getBundle();
+                /*
         if( b.size() )
             cout << b.size() << endl;
-        
+        */
     }
 
-    app.camera->stop();
+    app.stop();
     
     osc.stop();
     

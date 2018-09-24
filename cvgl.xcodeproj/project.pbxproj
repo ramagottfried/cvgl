@@ -159,6 +159,7 @@
 		216C675A214BF324009BDD3B /* osc_expr.h in Headers */ = {isa = PBXBuildFile; fileRef = 216C670C214BF323009BDD3B /* osc_expr.h */; };
 		216C676C214BF374009BDD3B /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
 		216C676D214BF795009BDD3B /* libcvgl-libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */; };
+		21AA02FF2159531600D9751F /* cvglCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AA02FD2159531600D9751F /* cvglCamera.cpp */; };
 		21C0767D214D6A38000F0AA4 /* cvglBlackmagicCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0767B214D6A38000F0AA4 /* cvglBlackmagicCallback.cpp */; };
 		21C0768F214D6D4F000F0AA4 /* platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0768D214D6D4F000F0AA4 /* platform.cpp */; };
 		21C07691214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */; };
@@ -391,6 +392,8 @@
 		216C6769214BF33C009BDD3B /* osc_vtable.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_vtable.r; path = ../../libo/osc_vtable.r; sourceTree = "<group>"; };
 		216C676A214BF33C009BDD3B /* osc_message_iterator_s.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_message_iterator_s.r; path = ../../libo/osc_message_iterator_s.r; sourceTree = "<group>"; };
 		216C676B214BF33C009BDD3B /* osc_expr_rec.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = osc_expr_rec.r; path = ../../libo/osc_expr_rec.r; sourceTree = "<group>"; };
+		21AA02FD2159531600D9751F /* cvglCamera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglCamera.cpp; sourceTree = "<group>"; };
+		21AA02FE2159531600D9751F /* cvglCamera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCamera.hpp; sourceTree = "<group>"; };
 		21C0767B214D6A38000F0AA4 /* cvglBlackmagicCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglBlackmagicCallback.cpp; sourceTree = "<group>"; };
 		21C0767C214D6A38000F0AA4 /* cvglBlackmagicCallback.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglBlackmagicCallback.hpp; sourceTree = "<group>"; };
 		21C0768D214D6D4F000F0AA4 /* platform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform.cpp; sourceTree = "<group>"; };
@@ -734,6 +737,8 @@
 				21C0768E214D6D4F000F0AA4 /* platform.h */,
 				214352FC214EDDFA00329FE8 /* blackmagic_cb.cpp */,
 				214352FD214EDDFA00329FE8 /* blackmagic_cb.hpp */,
+				21AA02FD2159531600D9751F /* cvglCamera.cpp */,
+				21AA02FE2159531600D9751F /* cvglCamera.hpp */,
 			);
 			path = camera;
 			sourceTree = "<group>";
@@ -990,6 +995,7 @@
 				2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */,
 				2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */,
 				2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */,
+				21AA02FF2159531600D9751F /* cvglCamera.cpp in Sources */,
 				2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */,
 				2112A4BC214DA3A300EC1C11 /* cvglCameraInput.cpp in Sources */,
 				2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */,

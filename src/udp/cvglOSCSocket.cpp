@@ -122,4 +122,4 @@ OdotBundle cvglOSCSocket::getBundle()
     OdotBundle tmp = state_bundle;
     state_bundle.clear();
     return tmp;
-    }
+}
