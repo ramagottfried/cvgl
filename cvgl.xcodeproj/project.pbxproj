@@ -56,7 +56,6 @@
 		2112A4E4214DA3A300EC1C11 /* libopencv_highgui.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01521413FA500C2CF41 /* libopencv_highgui.4.0.0.dylib */; };
 		2112A4E6214DA3A300EC1C11 /* vertex.vs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4852149270900345757 /* vertex.vs */; };
 		2112A4E7214DA3A300EC1C11 /* fragment.fs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4862149274300345757 /* fragment.fs */; };
-		21599D352155339F0085A00D /* cvgl-bm2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 214352FF214EDFA000329FE8 /* cvgl-bm2.cpp */; };
 		216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C667F214BB794009BDD3B /* cvglConversions.cpp */; };
 		216C6686214BC62E009BDD3B /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
 		216C6689214BDF1F009BDD3B /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 216C6687214BDF05009BDD3B /* libuv.a */; };
@@ -189,6 +188,8 @@
 		21D7D48B2149426A00345757 /* cvglCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4892149426A00345757 /* cvglCallbacks.cpp */; };
 		21D7D48E214946E700345757 /* cvglTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D48C214946E700345757 /* cvglTexture.cpp */; };
 		21D875FC215A5CD30068B7BD /* cvglCameraInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */; };
+		21D87601215A6BB30068B7BD /* cvgl_main3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D87600215A6BB30068B7BD /* cvgl_main3.cpp */; };
+		21D87602215A6D070068B7BD /* cvglMainProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D875FD215A698E0068B7BD /* cvglMainProcess.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -415,6 +416,7 @@
 		21D7D48D214946E700345757 /* cvglTexture.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglTexture.hpp; sourceTree = "<group>"; };
 		21D875FD215A698E0068B7BD /* cvglMainProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglMainProcess.cpp; sourceTree = "<group>"; };
 		21D875FE215A698E0068B7BD /* cvglMainProcess.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglMainProcess.hpp; sourceTree = "<group>"; };
+		21D87600215A6BB30068B7BD /* cvgl_main3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvgl_main3.cpp; sourceTree = "<group>"; };
 		21DDFACD2146CCDC001FF716 /* cvglObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglObject.cpp; sourceTree = "<group>"; };
 		21DDFACE2146CCDC001FF716 /* cvglObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglObject.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -785,6 +787,7 @@
 		21DDFAC92146CC53001FF716 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				21D87600215A6BB30068B7BD /* cvgl_main3.cpp */,
 				214352FF214EDFA000329FE8 /* cvgl-bm2.cpp */,
 				21D875FD215A698E0068B7BD /* cvglMainProcess.cpp */,
 				21D875FE215A698E0068B7BD /* cvglMainProcess.hpp */,
@@ -1003,16 +1006,17 @@
 			files = (
 				2112A4B7214DA3A300EC1C11 /* cvglCallbacks.cpp in Sources */,
 				2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */,
+				21D87601215A6BB30068B7BD /* cvgl_main3.cpp in Sources */,
 				2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */,
 				2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */,
 				21AA02FF2159531600D9751F /* cvglCamera.cpp in Sources */,
 				2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */,
 				2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */,
 				2112A4BE214DA3A300EC1C11 /* DeckLinkAPIDispatch.cpp in Sources */,
-				21599D352155339F0085A00D /* cvgl-bm2.cpp in Sources */,
 				2112A4BF214DA3A300EC1C11 /* cvglOSCSocket.cpp in Sources */,
 				2112A4C1214DA3A300EC1C11 /* cvglTexture.cpp in Sources */,
 				2112A4C2214DA3A300EC1C11 /* cvglContext.cpp in Sources */,
+				21D87602215A6D070068B7BD /* cvglMainProcess.cpp in Sources */,
 				2112A4C3214DA3A300EC1C11 /* cvglConversions.cpp in Sources */,
 				2112A4C4214DA3A300EC1C11 /* OdotBundle.cpp in Sources */,
 				2112A4C5214DA3A300EC1C11 /* cvglConvexHull.cpp in Sources */,

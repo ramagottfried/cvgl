@@ -20,7 +20,7 @@ class CameraContext : public cvglCamera
 
 public:
     
-    unique_ptr<cvglContext> context;
+    cvglContext context;
     unique_ptr<cvglObject> triangle, rect, contourMesh, hullMesh, minrectMesh, flowMesh;
     unique_ptr<cvglTexture> frameTex, colorTex[3];
     
@@ -28,11 +28,6 @@ public:
     
     bool objects_initialized = false;
 
-    
-    void initContext()
-    {
-        context = unique_ptr<cvglContext>(new cvglContext);
-    }
     
     void initObjs()
     {
@@ -97,7 +92,7 @@ public:
     void draw()
     {
         
-        if( !context.get() || !objects_initialized || !m_frame.data || !newframe )
+        if( !objects_initialized || !m_frame.data || !newframe )
             return;
         
        
@@ -117,9 +112,9 @@ public:
         colorTex[2]->bind();
         minrectMesh->draw(GL_LINE_LOOP);
         
-        context->printFPS();
+        context.printFPS();
         
-        context->drawAndPoll();
+        context.drawAndPoll();
         
         newframe = false;
     }
@@ -137,15 +132,14 @@ int main( void )
 {
     
     CameraContext app;
-    
+
     if( !app.hasCamera() )
         return -1;
     
-    app.initContext();
 
-    app.context->setupWindow( app.getWidth(), app.getHeight() );
+    app.context.setupWindow( app.getWidth(), app.getHeight() );
     
-    if( !app.context->loadShaderFiles( "vertex.vs", "fragment.fs" ) )
+    if( !app.context.loadShaderFiles( "vertex.vs", "fragment.fs" ) )
         return -1;
     
     
@@ -153,7 +147,7 @@ int main( void )
     
     app.start();
     
-    while( !app.context->shouldClose() )
+    while( !app.context.shouldClose() )
     {
         
         app.draw();
