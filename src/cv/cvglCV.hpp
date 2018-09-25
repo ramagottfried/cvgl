@@ -16,13 +16,18 @@
 
 #include "cvglOSCSocket.hpp"
 
+class cvglMainProcess;
+
 class cvglCV
 {
     
 public:
     
-    cvglCV(cvglOSCSocket& attachSocket) : m_socket(attachSocket) {}
-    
+    /*
+     *  implement in sub-class for callback to process CV bundle before output
+     *
+     */
+    virtual void processBundle(OdotBundle &bndl) {}
     
     void gaussSigma(int k)
     {
@@ -78,7 +83,7 @@ public:
     
 private:
     
-    cvglOSCSocket& m_socket;
+ //   cvglMainProcess& m_main;
     
     cv::Mat m_img, m_prev_frame;
     cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray;

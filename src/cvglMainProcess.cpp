@@ -4,10 +4,13 @@
 using namespace std;
 using namespace cv;
 
+/**
+ *  initObjects()
+ *  init function to setup VBOs for GL objects, must be called after context setup is complete
+ */
 
 void cvglMainProcess::initObjs()
 {
-    
     triangle =  unique_ptr<cvglObject>(new cvglObject);
     rect =  unique_ptr<cvglObject>(new cvglObject);
     contourMesh =  unique_ptr<cvglObject>(new cvglObject);
@@ -49,7 +52,9 @@ void cvglMainProcess::initObjs()
     cout << objects_initialized << endl;
 }
 
-
+/**
+ *  virtual function callback called from camera loops to process frames with opengl
+ */
 void cvglMainProcess::processFrame(cv::Mat frame)
 {
     
@@ -58,9 +63,18 @@ void cvglMainProcess::processFrame(cv::Mat frame)
     if( !m_frame.data || !newframe || !objects_initialized  )
         return;
     
-    cvx.preprocess( m_frame );
-    cvx.getContours( contourMesh, hullMesh, minrectMesh );
+    preprocess( m_frame );
+    getContours( contourMesh, hullMesh, minrectMesh );
     //    cvx.getFlow( flowMesh );
+}
+
+
+/**
+ *  virtual function callback called from detached openCV worker thread
+ */
+void cvglMainProcess::processBundle(OdotBundle& bndl)
+{
+    osc.sendBundle(bndl);
 }
 
 void cvglMainProcess::draw()

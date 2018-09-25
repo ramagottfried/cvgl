@@ -1,5 +1,6 @@
 
 #include "cvglCV.hpp"
+#include "cvglMainProcess.hpp"
 
 using namespace cv;
 using namespace std;
@@ -231,7 +232,7 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
 
 }
 
-void cvglCV::analysisThread(vector< Mat >               contours,
+void cvglCV::analysisThread(vector< Mat >                  contours,
                             vector< cv::Vec4i >            hierarchy,
                             vector< Mat >                  hullP_vec,
                             vector< Mat >                  hullI_vec,
@@ -239,7 +240,6 @@ void cvglCV::analysisThread(vector< Mat >               contours,
                             double halfW, double halfH )
 {
 //    cout << "worker thread " << glfwGetTime() << endl;
-    
     OdotBundle bundle;
     int count = 1;
     for( auto& ptMat : hullP_vec )
@@ -249,8 +249,8 @@ void cvglCV::analysisThread(vector< Mat >               contours,
         bundle.addMessage("/"+to_string(count++), b);
     }
     // do all OSC and UDP stuff on a different thread here
-    
-    m_socket.sendBundle(bundle);
+
+    processBundle(bundle);
     
 }
 

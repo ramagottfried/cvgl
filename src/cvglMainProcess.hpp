@@ -9,15 +9,14 @@
 #include "cvglCamera.hpp"
 
 
-class cvglMainProcess : public cvglCamera
+class cvglMainProcess : public cvglCamera, public cvglCV
 {
     
 public:
-    cvglMainProcess() : cvx(osc) {}
+    cvglMainProcess() {}
     
     cvglContext context;
     cvglOSCSocket osc;
-    cvglCV cvx;
     
     std::unique_ptr<cvglObject> triangle, rect, contourMesh, hullMesh, minrectMesh, flowMesh;
     std::unique_ptr<cvglTexture> frameTex, colorTex[3];
@@ -29,9 +28,9 @@ public:
     void initObjs();
     
     void processFrame(cv::Mat frame) override;
+    void processBundle(OdotBundle& bndl) override;
     
     void draw();
-    
     
 };
 
