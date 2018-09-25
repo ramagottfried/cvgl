@@ -362,6 +362,11 @@ HRESULT STDMETHODCALLTYPE cvglCamera::VideoInputFormatChanged (BMDVideoInputForm
     // Start video capture
     m_deckLinkInput->StartStreams();
     
+    m_width = (int)newDisplayMode->GetWidth();
+    m_height = (int)newDisplayMode->GetHeight();
+    m_mutex.unlock();
+    std::cout << "unlocking" << std::endl;
+    
     return S_OK;
 }
 
@@ -372,7 +377,6 @@ HRESULT STDMETHODCALLTYPE cvglCamera::VideoInputFrameArrived (IDeckLinkVideoInpu
 {
     // std::cout << "new frame : " << videoFrame->GetWidth() << " " << videoFrame->GetHeight() << std::endl;
     
-    std::cout << __func__ << std::endl;    // do conversion here
     if( init_softlock )
     {
         std::cout << "waiting for init" << std::endl;
