@@ -20,6 +20,9 @@ public:
     
 private:
     
+    int m_recv_port = 8888;
+    int m_send_port = 7777;
+    
     uv_loop_t *loop;
     uv_udp_t send_socket_handle;
     uv_udp_t recv_socket_handle;

@@ -1,3 +1,5 @@
+#pragma once
+
 
 #include "cvglContext.hpp"
 #include "cvglCV.hpp"
@@ -9,15 +11,12 @@
 
 #include "cvglCamera.hpp"
 
-using namespace std;
-using namespace cv;
-
 cvglOSCSocket osc;
 cvglCV cvx( osc );
 
 class CameraContext : public cvglCamera
 {
-
+    
 public:
     
     unique_ptr<cvglContext> context;
@@ -27,7 +26,7 @@ public:
     cv::Mat m_frame;
     
     bool objects_initialized = false;
-
+    
     
     void initContext()
     {
@@ -82,16 +81,16 @@ public:
     
     void processFrame(cv::Mat frame) override
     {
-
+        
         m_frame = frame;
         
         if( !m_frame.data || !newframe || !objects_initialized  )
             return;
         
-
+        
         cvx.preprocess( m_frame );
         cvx.getContours( contourMesh, hullMesh, minrectMesh );
-    //    cvx.getFlow( flowMesh );
+        //    cvx.getFlow( flowMesh );
     }
     
     void draw()
@@ -100,11 +99,11 @@ public:
         if( !context.get() || !objects_initialized || !m_frame.data || !newframe )
             return;
         
-       
+        
         rect->bind();
         frameTex->setTexture( m_frame );
         rect->draw();
-      
+        
         contourMesh->bind();
         colorTex[2]->bind();
         contourMesh->draw(GL_LINE_LOOP);
@@ -142,7 +141,7 @@ int main( void )
         return -1;
     
     app.initContext();
-
+    
     app.context->setupWindow( app.getWidth(), app.getHeight() );
     
     if( !app.context->loadShaderFiles( "vertex.vs", "fragment.fs" ) )
@@ -158,13 +157,13 @@ int main( void )
         
         app.draw();
         
-
+        
         auto b = osc.getBundle();
         if( b.size() )
             cout << b.size() << endl;
-
+        
     }
-
+    
     app.stop();
     
     osc.stop();

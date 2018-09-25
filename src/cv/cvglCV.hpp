@@ -14,10 +14,15 @@
 #include "cvglConversions.hpp"
 #include "cvglConvexHull.hpp"
 
+#include "cvglOSCSocket.hpp"
+
 class cvglCV
 {
     
 public:
+    
+    cvglCV(cvglOSCSocket& attachSocket) : m_socket(attachSocket) {}
+    
     
     void gaussSigma(int k)
     {
@@ -54,7 +59,9 @@ public:
                             std::vector< cv::Vec4i >            hierarchy,
                             std::vector< cv::Mat >                  hullP_vec,
                             std::vector< cv::Mat >                  hullI_vec,
-                            std::vector< std::vector<cv::Vec4i> >    defects_vec );
+                            std::vector< std::vector<cv::Vec4i> >    defects_vec ,
+                            double halfW,
+                            double halfH );
     
     
     struct Stats {
@@ -70,6 +77,8 @@ public:
     
     
 private:
+    
+    cvglOSCSocket& m_socket;
     
     cv::Mat m_img, m_prev_frame;
     cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray;

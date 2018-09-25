@@ -13,13 +13,13 @@ cvglOSCSocket::cvglOSCSocket()
     cout << this << endl;
     
     struct sockaddr_in recv_addr;
-    uv_ip4_addr("0.0.0.0", 7777, &recv_addr);
+    uv_ip4_addr("0.0.0.0", m_recv_port, &recv_addr);
     uv_udp_bind(&recv_socket_handle, (const struct sockaddr *)&recv_addr, UV_UDP_REUSEADDR);
     uv_udp_recv_start(&recv_socket_handle, alloc_buffer, on_read);
     
     uv_udp_init(loop, &send_socket_handle);
     struct sockaddr_in bind_addr;
-    uv_ip4_addr("0.0.0.0", 8888, &bind_addr);
+    uv_ip4_addr("0.0.0.0", m_send_port, &bind_addr);
     uv_udp_bind(&send_socket_handle, (const struct sockaddr *)&bind_addr, 0);
     
     cout << "starting loop " << endl;
@@ -55,12 +55,17 @@ void cvglOSCSocket::sendBundle( OdotBundle& b)
 {
     OdotBundle_s s_bundle = b.serialize();
     
-    uv_udp_send_t send_req;
+    // uv_udp_send_t send_req;
     
     uv_buf_t buf = uv_buf_init( (char *)s_bundle.getPtr(), (unsigned int)s_bundle.getLen() );
     
-    uv_ip4_addr(send_ip_addr.c_str(), 8888, &send_addr);
-    uv_udp_send(&send_req, &send_socket_handle, &buf, 1, (const struct sockaddr *)&send_addr, on_send);
+    uv_ip4_addr(send_ip_addr.c_str(), m_send_port, &send_addr);
+    
+    // fail silently
+    int res = uv_udp_try_send(&send_socket_handle, &buf, 1, (const struct sockaddr *)&send_addr);
+    
+    if( res <= 0 )
+        cout << uv_err_name(res) << endl;
 }
 
 void cvglOSCSocket::alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)

@@ -17,7 +17,6 @@
 		2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A1214BF299009BDD3B /* OdotSelect.cpp */; };
 		2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669D214BF299009BDD3B /* OdotAtom.cpp */; };
 		2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A6214BF299009BDD3B /* OdotBundle_s.cpp */; };
-		2112A4BC214DA3A300EC1C11 /* cvglCameraInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */; };
 		2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A7214BF299009BDD3B /* OdotExpr.cpp */; };
 		2112A4BE214DA3A300EC1C11 /* DeckLinkAPIDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */; };
 		2112A4BF214DA3A300EC1C11 /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
@@ -57,7 +56,6 @@
 		2112A4E4214DA3A300EC1C11 /* libopencv_highgui.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01521413FA500C2CF41 /* libopencv_highgui.4.0.0.dylib */; };
 		2112A4E6214DA3A300EC1C11 /* vertex.vs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4852149270900345757 /* vertex.vs */; };
 		2112A4E7214DA3A300EC1C11 /* fragment.fs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4862149274300345757 /* fragment.fs */; };
-		21599D332154ED0B0085A00D /* blackmagic_cb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 214352FC214EDDFA00329FE8 /* blackmagic_cb.cpp */; };
 		21599D352155339F0085A00D /* cvgl-bm2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 214352FF214EDFA000329FE8 /* cvgl-bm2.cpp */; };
 		216C6681214BB794009BDD3B /* cvglConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C667F214BB794009BDD3B /* cvglConversions.cpp */; };
 		216C6686214BC62E009BDD3B /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
@@ -185,12 +183,12 @@
 		21D7D4612147E7AD00345757 /* libopencv_videostab.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01421413FA500C2CF41 /* libopencv_videostab.4.0.0.dylib */; };
 		21D7D4622147E7AD00345757 /* libopencv_highgui.4.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B01521413FA500C2CF41 /* libopencv_highgui.4.0.0.dylib */; };
 		21D7D46A2147E7E000345757 /* cvglContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4682147E7E000345757 /* cvglContext.cpp */; };
-		21D7D4702147EAC000345757 /* cvglCameraInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */; };
 		21D7D47A2147FEEF00345757 /* cvglCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4782147FEEF00345757 /* cvglCV.cpp */; };
 		21D7D4872149386F00345757 /* vertex.vs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4852149270900345757 /* vertex.vs */; };
 		21D7D4882149386F00345757 /* fragment.fs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4862149274300345757 /* fragment.fs */; };
 		21D7D48B2149426A00345757 /* cvglCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4892149426A00345757 /* cvglCallbacks.cpp */; };
 		21D7D48E214946E700345757 /* cvglTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D48C214946E700345757 /* cvglTexture.cpp */; };
+		21D875FC215A5CD30068B7BD /* cvglCameraInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -415,6 +413,8 @@
 		21D7D48A2149426A00345757 /* cvglCallbacks.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCallbacks.hpp; sourceTree = "<group>"; };
 		21D7D48C214946E700345757 /* cvglTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglTexture.cpp; sourceTree = "<group>"; };
 		21D7D48D214946E700345757 /* cvglTexture.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglTexture.hpp; sourceTree = "<group>"; };
+		21D875FD215A698E0068B7BD /* cvglMainProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglMainProcess.cpp; sourceTree = "<group>"; };
+		21D875FE215A698E0068B7BD /* cvglMainProcess.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglMainProcess.hpp; sourceTree = "<group>"; };
 		21DDFACD2146CCDC001FF716 /* cvglObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglObject.cpp; sourceTree = "<group>"; };
 		21DDFACE2146CCDC001FF716 /* cvglObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglObject.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -728,17 +728,12 @@
 		21C0767A214D698B000F0AA4 /* camera */ = {
 			isa = PBXGroup;
 			children = (
-				21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */,
-				21D7D46F2147EAC000345757 /* cvglCameraInput.hpp */,
-				21C0767B214D6A38000F0AA4 /* cvglBlackmagicCallback.cpp */,
-				21C0767C214D6A38000F0AA4 /* cvglBlackmagicCallback.hpp */,
 				21C07690214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp */,
 				21C0768D214D6D4F000F0AA4 /* platform.cpp */,
 				21C0768E214D6D4F000F0AA4 /* platform.h */,
-				214352FC214EDDFA00329FE8 /* blackmagic_cb.cpp */,
-				214352FD214EDDFA00329FE8 /* blackmagic_cb.hpp */,
 				21AA02FD2159531600D9751F /* cvglCamera.cpp */,
 				21AA02FE2159531600D9751F /* cvglCamera.hpp */,
+				21D875FB215A5CC20068B7BD /* old */,
 			);
 			path = camera;
 			sourceTree = "<group>";
@@ -774,16 +769,31 @@
 			path = cv;
 			sourceTree = "<group>";
 		};
+		21D875FB215A5CC20068B7BD /* old */ = {
+			isa = PBXGroup;
+			children = (
+				21D7D46E2147EAC000345757 /* cvglCameraInput.cpp */,
+				21D7D46F2147EAC000345757 /* cvglCameraInput.hpp */,
+				21C0767B214D6A38000F0AA4 /* cvglBlackmagicCallback.cpp */,
+				21C0767C214D6A38000F0AA4 /* cvglBlackmagicCallback.hpp */,
+				214352FC214EDDFA00329FE8 /* blackmagic_cb.cpp */,
+				214352FD214EDDFA00329FE8 /* blackmagic_cb.hpp */,
+			);
+			path = old;
+			sourceTree = "<group>";
+		};
 		21DDFAC92146CC53001FF716 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				214352FF214EDFA000329FE8 /* cvgl-bm2.cpp */,
+				21D875FD215A698E0068B7BD /* cvglMainProcess.cpp */,
+				21D875FE215A698E0068B7BD /* cvglMainProcess.hpp */,
 				21D7D4852149270900345757 /* vertex.vs */,
 				21D7D4862149274300345757 /* fragment.fs */,
 				21D7D46B2147E8A900345757 /* cvgl-main.cpp */,
 				21D7D46C2147E8A900345757 /* cvgl-main.hpp */,
 				2112A4EC214DA46000EC1C11 /* cvgl-blackmagic.cpp */,
 				2112A4ED214DA46000EC1C11 /* cvgl-blackmagic.hpp */,
-				214352FF214EDFA000329FE8 /* cvgl-bm2.cpp */,
 				216C6698214BF250009BDD3B /* osc */,
 				21C0767A214D698B000F0AA4 /* camera */,
 				21D7D495214A3F6400345757 /* cv */,
@@ -997,7 +1007,6 @@
 				2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */,
 				21AA02FF2159531600D9751F /* cvglCamera.cpp in Sources */,
 				2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */,
-				2112A4BC214DA3A300EC1C11 /* cvglCameraInput.cpp in Sources */,
 				2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */,
 				2112A4BE214DA3A300EC1C11 /* DeckLinkAPIDispatch.cpp in Sources */,
 				21599D352155339F0085A00D /* cvgl-bm2.cpp in Sources */,
@@ -1012,7 +1021,6 @@
 				2112A4C9214DA3A300EC1C11 /* cvglCV.cpp in Sources */,
 				2112A4CA214DA3A300EC1C11 /* OdotHash.cpp in Sources */,
 				2112A4CB214DA3A300EC1C11 /* glad.c in Sources */,
-				21599D332154ED0B0085A00D /* blackmagic_cb.cpp in Sources */,
 				2112A4CC214DA3A300EC1C11 /* cvglVertex.cpp in Sources */,
 				2112A4CD214DA3A300EC1C11 /* platform.cpp in Sources */,
 			);
@@ -1086,7 +1094,6 @@
 				216C66AE214BF299009BDD3B /* OdotSelect.cpp in Sources */,
 				216C66AA214BF299009BDD3B /* OdotAtom.cpp in Sources */,
 				216C66B2214BF299009BDD3B /* OdotBundle_s.cpp in Sources */,
-				21D7D4702147EAC000345757 /* cvglCameraInput.cpp in Sources */,
 				216C66B4214BF299009BDD3B /* OdotExpr.cpp in Sources */,
 				21C07691214D6DDA000F0AA4 /* DeckLinkAPIDispatch.cpp in Sources */,
 				216C6686214BC62E009BDD3B /* cvglOSCSocket.cpp in Sources */,
@@ -1099,6 +1106,7 @@
 				216C66AC214BF299009BDD3B /* OdotMessage.cpp in Sources */,
 				21038D06214A89650078F594 /* cvglVAO.cpp in Sources */,
 				21D7D47A2147FEEF00345757 /* cvglCV.cpp in Sources */,
+				21D875FC215A5CD30068B7BD /* cvglCameraInput.cpp in Sources */,
 				216C66B0214BF299009BDD3B /* OdotHash.cpp in Sources */,
 				21038D03214A43080078F594 /* glad.c in Sources */,
 				21038D09214A89B60078F594 /* cvglVertex.cpp in Sources */,

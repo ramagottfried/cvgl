@@ -81,6 +81,46 @@ namespace cvgl
         }
     }
     
+    template<typename ptT, typename outT>
+    void pointMatToXYBundle(const Mat& points, OdotBundle& b, const float halfScreenW, const float halfScreenH )
+    {
+
+        vector<outT> x, y;
+        for(int i = 0; i < points.rows; i++)
+        {
+            const ptT* Mi = points.ptr<ptT>(i);
+            for(int j = 0; j < points.cols; j++)
+            {
+                const ptT& Mij = Mi[j];
+                x.emplace_back( static_cast<float>((Mij.x - halfScreenW) / halfScreenW) );
+                y.emplace_back( static_cast<float>((Mij.x - halfScreenW) / halfScreenW) );
+            }
+        }
+        b.addMessage("/x", x);
+        b.addMessage("/y", y);
+        
+    }
+    
+    void pointMatToXYBundle(const Mat& points, OdotBundle& b, const float halfScreenW, const float halfScreenH )
+    {
+        switch( points.depth() )
+        {
+            case CV_32S:
+                pointMatToXYBundle<Point2i,int>(points, b, halfScreenW, halfScreenH );
+                break;
+            case CV_32F:
+                pointMatToXYBundle<Point2f,float>(points, b, halfScreenW, halfScreenH );
+                break;
+            case CV_64F:
+                pointMatToXYBundle<Point2d,double>(points, b, halfScreenW, halfScreenH );
+                break;
+            default:
+                cout << __func__ << "unknown type, maybe long? "  << endl;
+                break;
+        }
+    }
+    
+    
     void rotatedRectToVertex(const RotatedRect& rect, cvglObject& vertexObj, const float halfScreenW, const float halfScreenH )
     {
         

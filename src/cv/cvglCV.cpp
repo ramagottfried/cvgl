@@ -139,7 +139,9 @@ void cvglCV::getContours(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObje
                   hierarchy,
                   hullP_vec,
                   hullI_vec,
-                  defects_vec );
+                  defects_vec,
+                  halfW,
+                  halfH );
     
     worker.detach();
     
@@ -222,21 +224,34 @@ void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject
                   hierarchy,
                   hullP_vec,
                   hullI_vec,
-                  defects_vec );
+                  defects_vec,
+                  halfW, halfH);
     
     worker.detach();
 
 }
 
 void cvglCV::analysisThread(vector< Mat >               contours,
-                         vector< cv::Vec4i >            hierarchy,
-                         vector< Mat >                  hullP_vec,
-                         vector< Mat >                  hullI_vec,
-                         vector< vector<cv::Vec4i> >    defects_vec )
+                            vector< cv::Vec4i >            hierarchy,
+                            vector< Mat >                  hullP_vec,
+                            vector< Mat >                  hullI_vec,
+                            vector< vector<cv::Vec4i> >    defects_vec,
+                            double halfW, double halfH )
 {
 //    cout << "worker thread " << glfwGetTime() << endl;
     
+    OdotBundle bundle;
+    int count = 1;
+    for( auto& ptMat : hullP_vec )
+    {
+        OdotBundle b;
+        cvgl::pointMatToXYBundle(ptMat, b, halfW, halfH );
+        bundle.addMessage("/"+to_string(count++), b);
+    }
     // do all OSC and UDP stuff on a different thread here
+    
+    m_socket.sendBundle(bundle);
+    
 }
 
 
