@@ -8,7 +8,7 @@
 #include "OdotPointers.h"
 
 
-using namespace std;
+//using namespace std;
 
 class OdotBundle;
 
@@ -75,6 +75,9 @@ public:
     inline void appendValue( double val ){   osc_message_u_appendDouble( ptr.get(), val );           }
     inline void appendValue( float val ){    osc_message_u_appendFloat(  ptr.get(), val );           }
     inline void appendValue( int val ){      osc_message_u_appendInt32(  ptr.get(), val );           }
+    inline void appendValue( long val ){   osc_message_u_appendInt64(  ptr.get(), val );           }
+    inline void appendValue( uint32_t val ){   osc_message_u_appendUInt32(  ptr.get(), val );           }
+    
     inline void appendValue( string& val ){  osc_message_u_appendString( ptr.get(), val.c_str() );   }
     inline void appendValue( const string& val ){  osc_message_u_appendString( ptr.get(), val.c_str() );   }
     inline void appendValue( const char * val ){   osc_message_u_appendString( ptr.get(), val );     }

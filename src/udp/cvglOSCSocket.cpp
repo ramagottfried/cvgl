@@ -65,7 +65,9 @@ void cvglOSCSocket::sendBundle( OdotBundle& b)
     int res = uv_udp_try_send(&send_socket_handle, &buf, 1, (const struct sockaddr *)&send_addr);
     
     if( res <= 0 )
-        cout << uv_err_name(res) << endl;
+    {
+        cout << res << " " << (unsigned int)s_bundle.getLen() << " " << uv_err_name(res) << endl;
+    }
 }
 
 void cvglOSCSocket::alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)

@@ -64,7 +64,10 @@ void cvglMainProcess::processFrame(cv::Mat frame)
         return;
     
     preprocess( m_frame );
-    getContours( contourMesh, hullMesh, minrectMesh );
+    analyzeContour( contourMesh, hullMesh, minrectMesh );
+    
+    
+    
     //    cvx.getFlow( flowMesh );
 }
 

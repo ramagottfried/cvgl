@@ -52,21 +52,25 @@ public:
 
     void preprocess(cv::Mat& mat);
     
-    void getContours(cvglObject& outContour, cvglObject& outHull, cvglObject& minrectMesh);
-    void getContours(std::unique_ptr<cvglObject>& outContour,
+    
+    void analyzeContour(cvglObject& outContour, cvglObject& outHull, cvglObject& minrectMesh);
+    void analyzeContour(std::unique_ptr<cvglObject>& outContour,
                      std::unique_ptr<cvglObject>& outHull,
                      std::unique_ptr<cvglObject>& minrectMesh);
     
     void getFlow(std::unique_ptr<cvglObject>& outFlow);
 
     
-    void analysisThread(    std::vector< cv::Mat >               contours,
-                            std::vector< cv::Vec4i >            hierarchy,
-                            std::vector< cv::Mat >                  hullP_vec,
-                            std::vector< cv::Mat >                  hullI_vec,
-                            std::vector< std::vector<cv::Vec4i> >    defects_vec ,
-                            double halfW,
-                            double halfH );
+    void analysisThread(cv::Mat src_color_sized,
+                        cv::Mat sob,
+                        std::vector< cv::Mat >                  contours,
+                        std::vector< double >                   contour_area,
+                        std::vector< cv::Vec4i >                hierarchy,
+                        std::vector< cv::Mat >                  hullP_vec,
+                        std::vector< cv::Mat >                  hullI_vec,
+                        std::vector< std::vector<cv::Vec4i> >   defects_vec ,
+                        double halfW,
+                        double halfH );
     
     
     struct Stats {
@@ -86,13 +90,16 @@ private:
  //   cvglMainProcess& m_main;
     
     cv::Mat m_img, m_prev_frame;
-    cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray;
+    cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray, sob;
 
     float m_resize = 1;
     
     int m_thresh = 100;
     float m_minsize = 0.;
     float m_maxsize = 0.9;
+    bool m_parents_only = false;
+    
+    
     
     int m_gauss_sigma = 3;
     int m_gauss_ksize = m_gauss_sigma*5;

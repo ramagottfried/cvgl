@@ -24,6 +24,8 @@ void cvglCV::preprocess(Mat& mat)
     
     threshold( src_blur_gray, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
     
+    Sobel(src_gray, sob, CV_32F, 1, 1);
+    
     
     // add sobel here?
     
@@ -63,7 +65,7 @@ void cvglCV::getFlow( unique_ptr<cvglObject>& outFlow)
     cout << "end" << endl;
 }
 
-void cvglCV::getContours(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObject>& outHull, unique_ptr<cvglObject>& minrectMesh)
+void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObject>& outHull, unique_ptr<cvglObject>& minrectMesh)
 {
     if( threshold_output.empty() )
     {
@@ -71,7 +73,9 @@ void cvglCV::getContours(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObje
         return;
     }
     
-    vector< Mat >   contours;
+    vector< Mat >    contours;
+    vector< double > contour_area;
+
     vector< Vec4i > hierarchy;
     vector< Mat >   hullP_vec;
     vector< Mat >   hullI_vec;
@@ -100,30 +104,31 @@ void cvglCV::getContours(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObje
     {
         double contour_a = contourArea( contours[i] ) / npix;
         
-        if( (contour_a > m_minsize) && (contour_a < m_maxsize ) )
-        {
+        if( (contour_a < m_minsize) || (contour_a > m_maxsize ) || ((m_parents_only && (hierarchy[i][3] != -1))) )
+            continue;
+    
+        contour_area.emplace_back(contour_a);
+        
+        cvgl::pointMatToVertex(contours[i], outContour, halfW, halfH );
+        
+        // hull
+        Mat hullP, hullI;
+        cv::RotatedRect minRect;
+        vector<Vec4i> defects;
+        
+        cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
+        
+        cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
+        cvgl::rotatedRectToVertex(minRect, minrectMesh, halfW, halfH );
+        
+        size_t hullI_size = hullI.rows * hullI.cols;
+        if( hullI_size > 3 )
+            convexityDefects( contours[i], hullI, defects );
+        
+        hullP_vec.emplace_back( hullP );
+        hullI_vec.emplace_back( hullI );
+        defects_vec.emplace_back( defects );
             
-            cvgl::pointMatToVertex(contours[i], outContour, halfW, halfH );
-            
-            // hull
-            Mat hullP, hullI;
-            cv::RotatedRect minRect;
-            vector<Vec4i> defects;
-            
-            cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
-            
-            cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
-            cvgl::rotatedRectToVertex(minRect, minrectMesh, halfW, halfH );
-            
-            size_t hullI_size = hullI.rows * hullI.cols;
-            if( hullI_size > 3 )
-                convexityDefects( contours[i], hullI, defects );
-            
-            hullP_vec.emplace_back( hullP );
-            hullI_vec.emplace_back( hullI );
-            defects_vec.emplace_back( defects );
-            
-        }
     }
     
     // pass contour analysis data to another thread if not drawn
@@ -136,7 +141,10 @@ void cvglCV::getContours(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObje
     
     thread worker(&cvglCV::analysisThread,
                   this, // probably don't need it to be the same instance...
+                  src_color_sized,
+                  sob,
                   contours,
+                  contour_area,
                   hierarchy,
                   hullP_vec,
                   hullI_vec,
@@ -148,108 +156,63 @@ void cvglCV::getContours(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObje
     
 }
 
-void cvglCV::getContours(cvglObject& outContour, cvglObject& outHull, cvglObject& minrectMesh)
-{
-    if( threshold_output.empty() )
-    {
-        cout << "no image" << endl;
-        return;
-    }
-    
-    vector< Mat >   contours;
-    vector< Vec4i > hierarchy;
-    vector< Mat >   hullP_vec;
-    vector< Mat >   hullI_vec;
-    vector< vector<Vec4i> > defects_vec;
- 
-    findContours( threshold_output, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
-    
-    size_t npoints = 0;
-    for( auto& c : contours )
-        npoints += (c.cols * c.rows);
-
-    outContour.clear();
-    outContour.reserve( npoints );
-    
-    outHull.clear();
-    outHull.reserve( npoints );
-    
-    minrectMesh.clear();
-    minrectMesh.reserve( contours.size() * 4 );
-    
-    size_t npix = threshold_output.rows * threshold_output.cols;
-    float halfW = threshold_output.cols / 2.0f;
-    float halfH = threshold_output.rows / 2.0f;
-    
-    for( int i = 0; i < contours.size(); i++ )
-    {
-        double contour_a = contourArea( contours[i] ) / npix;
-        
-        if( (contour_a > m_minsize) && (contour_a < m_maxsize ) )
-        {
-  
-            cvgl::pointMatToVertex(contours[i], outContour, halfW, halfH );
-            
-            // hull
-            Mat hullP, hullI;
-            cv::RotatedRect minRect;
-            vector<Vec4i> defects;
-
-            cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
-            
-            cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
-            cvgl::rotatedRectToVertex(minRect, minrectMesh, halfW, halfH );
-            
-            size_t hullI_size = hullI.rows * hullI.cols;
-            if( hullI_size > 3 )
-                convexityDefects( contours[i], hullI, defects );
-            
-            hullP_vec.emplace_back( hullP );
-            hullI_vec.emplace_back( hullI );
-            defects_vec.emplace_back( defects );
-
-        }
-    }
-    
-    // pass contour analysis data to another thread if not drawn
-    // I guess it needs to be decided ahead of time what gets drawn then...
-    // most data comes from the contour, hull, and rotated rect
-    // the other data is more about averages, focus level... hmm
-    
-    
-    // object tracking IDs etc....
-
-    thread worker(&cvglCV::analysisThread,
-                  this, // probably don't need it to be the same instance...
-                  contours,
-                  hierarchy,
-                  hullP_vec,
-                  hullI_vec,
-                  defects_vec,
-                  halfW, halfH);
-    
-    worker.detach();
-
-}
-
-void cvglCV::analysisThread(vector< Mat >                  contours,
+void cvglCV::analysisThread(Mat src_color_sized,
+                            Mat sob,
+                            vector< Mat >                  contours,
+                            vector< double >               contour_area,
                             vector< cv::Vec4i >            hierarchy,
                             vector< Mat >                  hullP_vec,
                             vector< Mat >                  hullI_vec,
                             vector< vector<cv::Vec4i> >    defects_vec,
                             double halfW, double halfH )
 {
-//    cout << "worker thread " << glfwGetTime() << endl;
     OdotBundle bundle;
-    int count = 1;
-    for( auto& ptMat : hullP_vec )
-    {
-        OdotBundle b;
-        cvgl::pointMatToXYBundle(ptMat, b, halfW, halfH );
-        bundle.addMessage("/"+to_string(count++), b);
-    }
-    // do all OSC and UDP stuff on a different thread here
+    bundle.addMessage("/count", (long)contours.size());
+    
+    int nchans = src_color_sized.channels();
+    vector< double > channel_means[nchans];
+    
+    vector< double > channel_varience[nchans];
+    vector<double> focus, parimeter;
+    vector<int> child_of;
 
+    string prefix;
+    for( int i = 0; i < contours.size(); i++ )
+    {
+        
+        Mat contour_mask = Mat::zeros( src_color_sized.size(), CV_8UC1 );
+        drawContours(contour_mask, contours, i, Scalar(255), FILLED);
+        
+        cv::Rect boundRect = boundingRect( Mat(contours[i]) );
+
+        vector<Stats> stats;
+        getStatsChar(src_color_sized, sob, contour_mask, boundRect, stats);
+        
+        for(int c = 0; c < nchans; c++)
+        {
+            channel_means[c].emplace_back( stats[c].mean );
+            channel_varience[c].emplace_back( stats[c].variance );
+        }
+        
+        focus.emplace_back( stats[ src_color_sized.channels() ].variance );
+        child_of.emplace_back( hierarchy[i][3] );
+        parimeter.emplace_back( arcLength(contours[i], true) );
+        
+        
+    }
+    
+    
+    bundle.addMessage("/area", contour_area );
+    bundle.addMessage("/child_of", child_of );
+    bundle.addMessage("/parimeter", parimeter );
+    bundle.addMessage("/focus", focus );
+
+    for(int c = 0; c < nchans; c++)
+    {
+        bundle.addMessage("/mean/"+to_string(c+1), channel_means[c] );
+        bundle.addMessage("/variece/"+to_string(c+1), channel_varience[c] );
+    }
+    
     processBundle(bundle);
     
 }
