@@ -574,6 +574,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2126E8EE21AC3E02004424E3 /* old-dev */ = {
+			isa = PBXGroup;
+			children = (
+				214352FF214EDFA000329FE8 /* cvgl-bm2.cpp */,
+				21D7D46B2147E8A900345757 /* cvgl-main.cpp */,
+				21D7D46C2147E8A900345757 /* cvgl-main.hpp */,
+				2112A4EC214DA46000EC1C11 /* cvgl-blackmagic.cpp */,
+				2112A4ED214DA46000EC1C11 /* cvgl-blackmagic.hpp */,
+			);
+			path = "old-dev";
+			sourceTree = "<group>";
+		};
 		216C667A214BB6D7009BDD3B /* utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -788,15 +800,11 @@
 			isa = PBXGroup;
 			children = (
 				21D87600215A6BB30068B7BD /* cvgl_main3.cpp */,
-				214352FF214EDFA000329FE8 /* cvgl-bm2.cpp */,
 				21D875FD215A698E0068B7BD /* cvglMainProcess.cpp */,
 				21D875FE215A698E0068B7BD /* cvglMainProcess.hpp */,
 				21D7D4852149270900345757 /* vertex.vs */,
 				21D7D4862149274300345757 /* fragment.fs */,
-				21D7D46B2147E8A900345757 /* cvgl-main.cpp */,
-				21D7D46C2147E8A900345757 /* cvgl-main.hpp */,
-				2112A4EC214DA46000EC1C11 /* cvgl-blackmagic.cpp */,
-				2112A4ED214DA46000EC1C11 /* cvgl-blackmagic.hpp */,
+				2126E8EE21AC3E02004424E3 /* old-dev */,
 				216C6698214BF250009BDD3B /* osc */,
 				21C0767A214D698B000F0AA4 /* camera */,
 				21D7D495214A3F6400345757 /* cv */,

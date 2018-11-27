@@ -18,6 +18,9 @@ public:
     cvglContext context;
     cvglOSCSocket osc;
     
+    /**
+     *  drawing objects
+     */
     std::unique_ptr<cvglObject> triangle, rect, contourMesh, hullMesh, minrectMesh, flowMesh;
     std::unique_ptr<cvglTexture> frameTex, colorTex[3];
     
@@ -30,7 +33,10 @@ public:
     void processFrame(cv::Mat frame) override;
     void processBundle(OdotBundle& bndl) override;
     
+    virtual void processAnalysis(vector<cvglCVAnalysis> &ana) override;
+
     void draw();
+
     
 };
 

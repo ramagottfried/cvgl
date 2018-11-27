@@ -73,14 +73,15 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
         return;
     }
     
-    vector< Mat >    contours;
+    vector< Mat >    contours, filtered_contours;
     vector< double > contour_area;
 
     vector< Vec4i > hierarchy;
     vector< Mat >   hullP_vec;
     vector< Mat >   hullI_vec;
     vector< vector<Vec4i> > defects_vec;
-    
+    std::vector< cv::RotatedRect > minRect_vec;
+
     findContours( threshold_output, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
     
     size_t npoints = 0;
@@ -107,6 +108,8 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
         if( (contour_a < m_minsize) || (contour_a > m_maxsize ) || ((m_parents_only && (hierarchy[i][3] != -1))) )
             continue;
     
+        filtered_contours.emplace_back( contours[i] );
+        
         contour_area.emplace_back(contour_a);
         
         cvgl::pointMatToVertex(contours[i], outContour, halfW, halfH );
@@ -117,6 +120,7 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
         vector<Vec4i> defects;
         
         cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
+        minRect_vec.emplace_back( minRect );
         
         cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
         cvgl::rotatedRectToVertex(minRect, minrectMesh, halfW, halfH );
@@ -143,18 +147,135 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
                   this, // probably don't need it to be the same instance...
                   src_color_sized,
                   sob,
-                  contours,
+                  filtered_contours,
                   contour_area,
                   hierarchy,
                   hullP_vec,
                   hullI_vec,
                   defects_vec,
+                  minRect_vec,
                   halfW,
                   halfH );
     
     worker.detach();
     
 }
+
+void cvglCV::contourAnaThread( vector<cvglCVAnalysis> &new_ana, int start_idx, int end_idx,
+                      int npix,
+                      int src_width,
+                      int src_height,
+                      const cv::Mat                        &src_color_sized,
+                      const cv::Mat                        &sob,
+                      const vector< cv::Mat >              &contours,
+                      const vector< double >               &contour_area,
+                      const vector< cv::Vec4i >            &hierarchy,
+                      const vector< cv::Mat >              &hullP_vec,
+                      const vector< cv::Mat >              &hullI_vec,
+                      const vector< vector<cv::Vec4i> >    &defects_vec,
+                      const vector< cv::RotatedRect >       &minRect_vec )
+{
+    
+    for( int i = start_idx; i < end_idx; ++i )
+    {
+        new_ana[i].area = contourArea( contours[i] ) / npix;
+        
+        Mat contour_mask = Mat::zeros( src_color_sized.size(), CV_8UC1 );
+        drawContours(contour_mask, contours, i, Scalar(255), FILLED);
+        
+        // Compute the mean with the computed mask
+        //Scalar average = mean(src_color_sized, contour_mask);
+        Scalar average, stdev;
+        meanStdDev(src_color_sized, average, stdev, contour_mask );
+        new_ana[i].channel_means = average;
+        new_ana[i].channel_stdev = stdev;
+        
+        meanStdDev(sob, average, stdev, contour_mask);
+        new_ana[i].focus_mean = average;
+        new_ana[i].focus_stdev = stdev;
+        
+        cv::Rect boundRect = boundingRect( contours[i] );
+        new_ana[i].rectSize = cv::Point2d( boundRect.width / src_width, boundRect.height / src_height );
+        
+        double hh = minRect_vec[i].size.height / src_height;
+        double ww = minRect_vec[i].size.width / src_width;
+        
+        double major = max(hh, ww);
+        double minor = min(hh, ww);
+        
+        new_ana[i].minMaj = cv::Point2d( minor, major );
+        
+        double centerx = minRect_vec[i].center.x;
+        double centery = minRect_vec[i].center.y;
+        
+        new_ana[i].center = cv::Point2d( centerx / src_width, centery / src_height );
+        
+        Moments moms = moments( contours[i] );
+        
+        // Hu momemnts
+        double hu[7];
+        HuMoments(moms, hu);
+        
+        // save hu moments here ...
+        
+        double ctrdx = centerx;
+        double ctrdy = centery;
+        
+        if( moms.m00 != 0.0 )
+        {
+            ctrdx = moms.m10 / moms.m00;
+            ctrdy = moms.m01 / moms.m00;
+            
+        }
+        
+        new_ana[i].centroid = cv::Point2d( ctrdx / src_width, ctrdy / src_height );
+        
+        double r_angle = minRect_vec[i].angle;
+        double out_angle = 0.0;
+        if( minRect_vec[i].size.height > minRect_vec[i].size.width )
+        {
+            out_angle = -r_angle + 90.0;
+        }
+        else
+        {
+            out_angle = -r_angle;
+        }
+        
+        new_ana[i].angle = out_angle;
+        
+        
+        double _a = major / 2.;
+        double _b = minor / 2.;
+        double ecc = sqrt(1 - pow(_b/_a, 2));
+        new_ana[i].eccentricity = ecc;
+        
+        
+        Mat convexcontour;
+        approxPolyDP( hullP_vec[i], convexcontour, 0.001, true);
+        
+        new_ana[i].hullarea = contourArea(convexcontour) / npix ;
+        
+        new_ana[i].defect_count =  (int)defects_vec[i].size() ;
+        new_ana[i].hull_count = hullI_vec[i].size().width * hullI_vec[i].size().height ;
+        
+        new_ana[i].child_of = hierarchy[i][3];
+        new_ana[i].parimeter = arcLength(contours[i], true) ;
+        
+        double dist_sum = 0;
+        auto d = defects_vec[i].begin();
+        auto d_end = defects_vec[i].end();
+        while ( d != d_end )
+        {
+            double depth = (*d)[3] / 256.0;
+            dist_sum += depth;
+            d++;
+        }
+        
+        new_ana[i].defect_dist_sum = dist_sum;
+    }
+    
+}
+
 
 void cvglCV::analysisThread(Mat src_color_sized,
                             Mat sob,
@@ -164,56 +285,89 @@ void cvglCV::analysisThread(Mat src_color_sized,
                             vector< Mat >                  hullP_vec,
                             vector< Mat >                  hullI_vec,
                             vector< vector<cv::Vec4i> >    defects_vec,
+                            std::vector< cv::RotatedRect > minRect_vec,
                             double halfW, double halfH )
 {
-    OdotBundle bundle;
-    bundle.addMessage("/count", (long)contours.size());
+//    OdotBundle bundle;
+//    bundle.addMessage("/count", (long)contours.size());
+    
+    cvglProfile timer;
+    timer.markStart();
     
     int nchans = src_color_sized.channels();
-    vector< double > channel_means[nchans];
+    double src_width = src_color_sized.size().width;
+    double src_height = src_color_sized.size().height;
     
-    vector< double > channel_varience[nchans];
-    vector<double> focus, parimeter;
-    vector<int> child_of;
+    double npix = src_width * src_height;
 
-    string prefix;
-    for( int i = 0; i < contours.size(); i++ )
+    vector<cvglCVAnalysis> new_ana;
+    new_ana.resize( contours.size() );
+    
+    
+    vector<std::thread> threads;
+    
+    unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
+    
+    int nthreads = concurentThreadsSupported - 4; // (main, camera, udp, ... ?)
+    
+    int perThread = (int)contours.size() / nthreads;
+    int extraIdx = (int)contours.size() % nthreads;
+    //cout << "total " << contours.size() << " perthread " << perThread << " last thread " << perThread + (contours.size() % nthreads) << endl;
+    
+    int idx = 0;
+    for( ; idx < nthreads-1; idx++ )
     {
-        
-        Mat contour_mask = Mat::zeros( src_color_sized.size(), CV_8UC1 );
-        drawContours(contour_mask, contours, i, Scalar(255), FILLED);
-        
-        cv::Rect boundRect = boundingRect( Mat(contours[i]) );
+//        cout << "idx " << idx << " - " << idx * perThread << " "  << (idx+1) * perThread << endl;
+        threads.emplace_back( std::thread(&cvglCV::contourAnaThread, this,
+                                         std::ref(new_ana),
+                                         idx * perThread,
+                                         (idx+1) * perThread,
+                                         npix,
+                                         src_width,
+                                         src_height,
+                                         std::cref(src_color_sized),
+                                         std::cref(sob),
+                                         std::cref(contours),
+                                         std::cref(contour_area),
+                                         std::cref(hierarchy),
+                                         std::cref(hullP_vec),
+                                         std::cref(hullI_vec),
+                                         std::cref(defects_vec),
+                                         std::cref(minRect_vec)  ) );
+    }
+  
+    //cout << "idx " << idx << " - " << idx * perThread << " " << ((idx+1) * perThread) + extraIdx << endl;
+    contourAnaThread( std::ref(new_ana),
+                     idx * perThread,
+                     ((idx+1) * perThread) + extraIdx,
+                     npix,
+                     src_width,
+                     src_height,
+                     std::cref(src_color_sized),
+                     std::cref(sob),
+                     std::cref(contours),
+                     std::cref(contour_area),
+                     std::cref(hierarchy),
+                     std::cref(hullP_vec),
+                     std::cref(hullI_vec),
+                     std::cref(defects_vec),
+                     std::cref(minRect_vec)  );
 
-        vector<Stats> stats;
-        getStatsChar(src_color_sized, sob, contour_mask, boundRect, stats);
-        
-        for(int c = 0; c < nchans; c++)
-        {
-            channel_means[c].emplace_back( stats[c].mean );
-            channel_varience[c].emplace_back( stats[c].variance );
-        }
-        
-        focus.emplace_back( stats[ src_color_sized.channels() ].variance );
-        child_of.emplace_back( hierarchy[i][3] );
-        parimeter.emplace_back( arcLength(contours[i], true) );
-        
-        
+    
+    
+    for( auto& t : threads )
+    {
+        t.join();
     }
     
+    m_prev_ana = m_ana;
+    m_ana = new_ana;
     
-    bundle.addMessage("/area", contour_area );
-    bundle.addMessage("/child_of", child_of );
-    bundle.addMessage("/parimeter", parimeter );
-    bundle.addMessage("/focus", focus );
+    timer.markEnd();
+//    cout << "n " << m_ana.size() << " area " << m_ana[0].focus_mean << endl;
 
-    for(int c = 0; c < nchans; c++)
-    {
-        bundle.addMessage("/mean/"+to_string(c+1), channel_means[c] );
-        bundle.addMessage("/variece/"+to_string(c+1), channel_varience[c] );
-    }
     
-    processBundle(bundle);
+    processAnalysis(m_ana);
     
 }
 

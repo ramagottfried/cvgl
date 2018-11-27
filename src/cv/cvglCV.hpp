@@ -18,6 +18,29 @@
 
 class cvglMainProcess;
 
+struct Stats {
+    double min = std::numeric_limits<double>::max();
+    double max = 0;
+    double mean = 0;
+    double sum = 0;
+    double dev_sum = 0;
+    double variance = 0;
+};
+
+struct cvglCVAnalysis {
+    
+    cv::Scalar channel_means, channel_stdev, focus_mean, focus_stdev;
+    double parimeter, area, angle, eccentricity, hullarea, defect_dist_sum;
+
+    cv::Point2d centroid, center, rectSize, minMaj;
+    
+    int child_of, defect_count, hull_count;
+
+    array<double,7> hu; // << not sure how to pass a c array into this quickly
+
+};
+
+
 class cvglCV
 {
     
@@ -28,6 +51,8 @@ public:
      *
      */
     virtual void processBundle(OdotBundle &bndl) {}
+    
+    virtual void processAnalysis(vector<cvglCVAnalysis> &ana) {}
     
     void gaussSigma(int k)
     {
@@ -69,18 +94,25 @@ public:
                         std::vector< cv::Mat >                  hullP_vec,
                         std::vector< cv::Mat >                  hullI_vec,
                         std::vector< std::vector<cv::Vec4i> >   defects_vec ,
+                        std::vector< cv::RotatedRect >          minRect,
                         double halfW,
                         double halfH );
     
     
-    struct Stats {
-        double min = std::numeric_limits<double>::max();
-        double max = 0;
-        double mean = 0;
-        double sum = 0;
-        double dev_sum = 0;
-        double variance = 0;
-    };
+    void contourAnaThread( vector<cvglCVAnalysis> &new_ana, int start_idx, int end_idx,
+                          int npix,
+                          int src_width,
+                          int src_height,
+                          const cv::Mat                        &src_color_sized,
+                          const cv::Mat                        &sob,
+                          const vector< cv::Mat >              &contours,
+                          const vector< double >               &contour_area,
+                          const vector< cv::Vec4i >            &hierarchy,
+                          const vector< cv::Mat >              &hullP_vec,
+                          const vector< cv::Mat >              &hullI_vec,
+                          const vector< vector<cv::Vec4i> >    &defects_vec,
+                          const vector< cv::RotatedRect >      &minRect_vec );
+    
     
     void getStatsChar( const cv::Mat& src, const cv::Mat& sobel, const cv::Mat& mask, const cv::Rect& roi, std::vector<Stats>& _stats);
     
@@ -89,16 +121,17 @@ private:
     
  //   cvglMainProcess& m_main;
     
+    vector<cvglCVAnalysis> m_ana, m_prev_ana;
+    
     cv::Mat m_img, m_prev_frame;
     cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray, sob;
 
     float m_resize = 1;
     
     int m_thresh = 100;
-    float m_minsize = 0.;
+    float m_minsize = 0.0;
     float m_maxsize = 0.9;
     bool m_parents_only = false;
-    
     
     
     int m_gauss_sigma = 3;
@@ -107,6 +140,8 @@ private:
     cv::Mat m_di_element = getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
 
     cv::Mat m_prev_points;
+   
+    int id_used[100]; // maximum 100 for now
 };
 
 
