@@ -58,7 +58,7 @@ void cvglMainProcess::initObjs()
 void cvglMainProcess::processFrame(cv::Mat frame)
 {
     
-    m_frame = frame;
+    m_frame = frame.clone();
     
     if( !m_frame.data || !newframe || !objects_initialized  )
         return;
@@ -83,9 +83,9 @@ void cvglMainProcess::processBundle(OdotBundle& bndl)
 void cvglMainProcess::draw()
 {
     
-    if( !context.isActive() || !objects_initialized || !m_frame.data || !newframe )
+    if( !context.isActive() || !objects_initialized || !m_frame.data || !newframe ){
         return;
-    
+    }
     
     rect->bind();
     frameTex->setTexture( m_frame );

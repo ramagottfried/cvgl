@@ -22,11 +22,12 @@ int main( void )
     {
         
         app.draw();
-        
+
+        // not a good idea to check bundle in draw loop here
         auto b = app.osc.getBundle();
         if( b.size() )
             cout << b.size() << endl;
-        
+
     }
     
     app.stop();

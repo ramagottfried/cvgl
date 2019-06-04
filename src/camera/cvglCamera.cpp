@@ -174,7 +174,6 @@ int cvglCamera::blackmagicScan()
         goto bail;
     }
     
-
     // Set the callback object to the DeckLink device's input interface
     result = m_deckLinkInput->SetCallback( this );
     if (result != S_OK)

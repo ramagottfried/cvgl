@@ -8,6 +8,7 @@ using namespace std;
 void cvglCV::preprocess(Mat& mat)
 {
     m_img = mat.clone();
+    
     // later could wrap each function with a "set to output" flag, which could be used for debugging
     // or keep these all as class members and then query them as needed..
     if( m_img.empty() )
@@ -15,7 +16,7 @@ void cvglCV::preprocess(Mat& mat)
         cout << "no image" << endl;
         return;
     }
-    
+  
     cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
     cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
     GaussianBlur(src_gray, src_blur_gray, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
@@ -25,7 +26,6 @@ void cvglCV::preprocess(Mat& mat)
     threshold( src_blur_gray, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
     
     Sobel(src_gray, sob, CV_32F, 1, 1);
-    
     
     // add sobel here?
     

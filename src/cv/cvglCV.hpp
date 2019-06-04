@@ -92,7 +92,7 @@ private:
     cv::Mat m_img, m_prev_frame;
     cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray, sob;
 
-    float m_resize = 1;
+    float m_resize = 0.5;
     
     int m_thresh = 100;
     float m_minsize = 0.;
