@@ -64,9 +64,12 @@ void cvglMainProcess::processFrame(cv::Mat frame)
         return;
     
     preprocess( m_frame );
+    
+    lock_guard<mutex> lock(m_lock);
     analyzeContour( contourMesh, hullMesh, minrectMesh );
     
-    
+    // DANGER: these mesh objects are updated from the camera thread, and then read in the gl thread
+    // sometimes there is a conflict
     
     //    cvx.getFlow( flowMesh );
 }
@@ -74,8 +77,9 @@ void cvglMainProcess::processFrame(cv::Mat frame)
 
 /**
  *  virtual function callback called from detached openCV worker thread
+ *  could add mappings here
  */
-void cvglMainProcess::processBundle(OdotBundle& bndl)
+void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
 {
     osc.sendBundle(bndl);
 }
@@ -86,24 +90,30 @@ void cvglMainProcess::draw()
     if( !context.isActive() || !objects_initialized || !m_frame.data || !newframe ){
         return;
     }
-    
+
+    lock_guard<mutex> lock(m_lock);
+
     rect->bind();
     frameTex->setTexture( m_frame );
     rect->draw();
-    
+    rect->unbind();
+
     contourMesh->bind();
     colorTex[2]->bind();
-    contourMesh->draw(GL_LINE_LOOP);
-    
+    contourMesh->draw(GL_TRIANGLES);
+    contourMesh->unbind();
+
     hullMesh->bind();
     colorTex[2]->bind();
     hullMesh->draw(vector<int>({GL_LINE_LOOP, GL_POINTS}));
-    
+    hullMesh->unbind();
+
     minrectMesh->bind();
     colorTex[2]->bind();
     minrectMesh->draw(GL_LINE_LOOP);
-    
-    // context.printFPS();
+    minrectMesh->unbind();
+
+    context.printFPS();
     
     context.drawAndPoll();
     

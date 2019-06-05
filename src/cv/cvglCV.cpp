@@ -72,6 +72,7 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
         cout << "no image" << endl;
         return;
     }
+ 
     
     vector< Mat >    contours;
     vector< double > contour_area;
@@ -80,6 +81,8 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
     vector< Mat >   hullP_vec;
     vector< Mat >   hullI_vec;
     vector< vector<Vec4i> > defects_vec;
+    vector< RotatedRect > minRec_vec;
+    vector< int > contour_idx;
     
     findContours( threshold_output, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
     
@@ -108,8 +111,10 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
             continue;
     
         contour_area.emplace_back(contour_a);
+        contour_idx.emplace_back(i);
         
         cvgl::pointMatToVertex(contours[i], outContour, halfW, halfH );
+        outContour->triangulate();
         
         // hull
         Mat hullP, hullI;
@@ -119,6 +124,7 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
         cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
         
         cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
+
         cvgl::rotatedRectToVertex(minRect, minrectMesh, halfW, halfH );
         
         size_t hullI_size = hullI.rows * hullI.cols;
@@ -128,9 +134,11 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
         hullP_vec.emplace_back( hullP );
         hullI_vec.emplace_back( hullI );
         defects_vec.emplace_back( defects );
-            
+        minRec_vec.emplace_back(minRect);
+        
     }
     
+
     // pass contour analysis data to another thread if not drawn
     // I guess it needs to be decided ahead of time what gets drawn then...
     // most data comes from the contour, hull, and rotated rect
@@ -144,11 +152,13 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
                   src_color_sized,
                   sob,
                   contours,
+                  contour_idx,
                   contour_area,
                   hierarchy,
                   hullP_vec,
                   hullI_vec,
                   defects_vec,
+                  minRec_vec,
                   halfW,
                   halfH );
     
@@ -159,31 +169,65 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
 void cvglCV::analysisThread(Mat src_color_sized,
                             Mat sob,
                             vector< Mat >                  contours,
+                            vector< int >                  contour_idx,
                             vector< double >               contour_area,
                             vector< cv::Vec4i >            hierarchy,
                             vector< Mat >                  hullP_vec,
                             vector< Mat >                  hullI_vec,
                             vector< vector<cv::Vec4i> >    defects_vec,
+                            vector< cv::RotatedRect >      minRect_vec,
                             double halfW, double halfH )
 {
     OdotBundle bundle;
-    bundle.addMessage("/count", (long)contours.size());
+    
+    size_t ncontours = contour_idx.size();
+    
+  
+    OdotMessage id("/ids");
+    OdotMessage cx("/center/x");
+    OdotMessage cy("/center/y");
+    OdotMessage sx("/size/x");
+    OdotMessage sy("/size/y");
+    OdotMessage centroidx("/centroid/x");
+    OdotMessage centroidy("/centroid/y");
+    OdotMessage parimeter("/parimeter");
+    OdotMessage angle("/angle");
+    OdotMessage eccentricity("/eccentricity");
+    OdotMessage rotmin("/rotrect/minor");
+    OdotMessage rotmaj("/rotrect/major");
+    OdotMessage child_of("/parent");
+    OdotMessage focus("/focus");
+    OdotMessage convex("/convex");
+    OdotMessage hull_count("/hull/count");
+    OdotMessage hullarea("/hull/area");
+    OdotMessage defect_count("/defect/count");
+    OdotMessage defect_dist_sum("/defect/dist_sum");
+    
     
     int nchans = src_color_sized.channels();
-    vector< double > channel_means[nchans];
+    double src_width = (double)src_color_sized.size().width;
+    double src_height = (double)src_color_sized.size().height;
+    double npix = src_width * src_height;
     
+    
+    vector< double > channel_means[nchans];
     vector< double > channel_varience[nchans];
-    vector<double> focus, parimeter;
-    vector<int> child_of;
 
     string prefix;
-    for( int i = 0; i < contours.size(); i++ )
+    
+    vector<Point2f> centroids;
+    centroids.reserve( ncontours );
+
+    
+    for( int i = 0; i < ncontours; i++ )
     {
+        const Mat& contour = contours[ contour_idx[i] ];
+
         
         Mat contour_mask = Mat::zeros( src_color_sized.size(), CV_8UC1 );
         drawContours(contour_mask, contours, i, Scalar(255), FILLED);
         
-        cv::Rect boundRect = boundingRect( Mat(contours[i]) );
+        cv::Rect boundRect = boundingRect( contour );
 
         vector<Stats> stats;
         getStatsChar(src_color_sized, sob, contour_mask, boundRect, stats);
@@ -194,26 +238,233 @@ void cvglCV::analysisThread(Mat src_color_sized,
             channel_varience[c].emplace_back( stats[c].variance );
         }
         
-        focus.emplace_back( stats[ src_color_sized.channels() ].variance );
-        child_of.emplace_back( hierarchy[i][3] );
-        parimeter.emplace_back( arcLength(contours[i], true) );
+        focus.appendValue( stats[ src_color_sized.channels() ].variance );
         
+        child_of.appendValue( hierarchy[ contour_idx[i] ][3] );
+        parimeter.appendValue( arcLength(contour, true) );
+        
+        cv::RotatedRect& minRect = minRect_vec[i];
+
+        double hh = minRect.size.height / src_height;
+        double ww = minRect.size.width / src_width;
+        
+        double major = max(hh, ww);
+        double minor = min(hh, ww);
+        
+        rotmaj.appendValue( major );
+        rotmin.appendValue( minor );
+        
+        double centerx = minRect.center.x;
+        double centery = minRect.center.y;
+        
+        cx.appendValue( centerx / src_width );
+        cy.appendValue( 1. - (centery / src_height) );
+        
+        double _a = major / 2.;
+        double _b = minor / 2.;
+        double ecc = sqrt(1 - pow(_b/_a, 2));
+        
+        eccentricity.appendValue( ecc );
+        
+        
+        double r_angle = minRect.angle;
+        double out_angle = 0.0;
+        if( minRect.size.height > minRect.size.width )
+        {
+            out_angle = -r_angle + 90.0;
+        }
+        else
+        {
+            out_angle = -r_angle;
+        }
+        
+        angle.appendValue( out_angle );
+        
+        
+        sx.appendValue( boundRect.width / src_width );
+        sy.appendValue( boundRect.height / src_height );
+        
+        double ctrdx = -1;
+        double ctrdy = -1;
+        
+        Moments moms = moments( contour );
+        
+        // Hu momemnts
+        double hu[7];
+        HuMoments(moms, hu);
+        
+      //  obj.contourPts.addMessage( "/hu", vector<double>(hu, hu+7) );
+        
+        if( moms.m00 != 0.0 )
+        {
+            ctrdx = moms.m10 / moms.m00;
+            ctrdy = moms.m01 / moms.m00;
+            
+        }
+        
+        double scaled_centroidX = ctrdx / src_width;
+        double scaled_centroidY = 1. - (ctrdy / src_height);
+        
+        centroids.emplace_back(cv::Point2f(scaled_centroidX, scaled_centroidY));
+
+        centroidx.appendValue( scaled_centroidX );
+        centroidy.appendValue( scaled_centroidY );
+        
+        // centroids.push_back( Point2f(ctrdx, ctrdy) );
+        
+        convex.appendValue( cvgl::isContourConvex( contour ) );
+        
+        
+        Mat convexcontour;
+        approxPolyDP( hullP_vec[i], convexcontour, 0.001, true);
+        
+        hullarea.appendValue( contourArea(convexcontour) / npix );
+        
+        defect_count.appendValue( (int)defects_vec[i].size() );
+        
+        hull_count.appendValue( (int)hullI_vec[i].rows * (int)hullI_vec[i].cols );
+        
+        double dist_sum = 0;
+        vector<Vec4i>::iterator d = defects_vec[i].begin();
+        vector<Vec4i>::iterator d_end = defects_vec[i].end();
+        
+        while ( d != d_end )
+        {
+            Vec4i& v = (*d);
+            float depth = v[3] / 256.;
+            dist_sum += depth;
+            d++;
+        }
+        
+        defect_dist_sum.appendValue(dist_sum);
         
     }
     
+   
     
-    bundle.addMessage("/area", contour_area );
-    bundle.addMessage("/child_of", child_of );
-    bundle.addMessage("/parimeter", parimeter );
-    bundle.addMessage("/focus", focus );
+    vector<int> idlist;
+    if( m_prev_centroids.size() == 0 )
+    {
+        vector<int> new_ids( centroids.size(), -1 );
+        
+        for( int i = 0; i < centroids.size(); i++ )
+        {
+            m_id_used[i] = 1;
+            new_ids[i] = i;
+            
+            idlist.emplace_back(i);
+            
+        }
+        
+        m_prev_centroids = centroids;
+        m_prev_centroid_id = new_ids;
+    }
+    else
+    {
+        // if prev centroids are accounted for, then keep the same ids, if not found release id for prev centroid
+        vector<int> new_ids( centroids.size(), -1 );
+        
+        int closest_id = -1;
+        double radius_max = m_track_radius * src_height;
+        double min = radius_max;
+        int debug_count = 0;
+        
+        // fist check if previous points are found
+        for( int j = 0; j < m_prev_centroids.size(); j++ )
+        {
+            
+            min = radius_max;
+            closest_id = -1;
+            debug_count = 0;
+            
+            for( int i = 0; i < centroids.size(); i++ )
+            {
+                
+                double delta = norm(centroids[i] - m_prev_centroids[j]);
+                
+                // if within range and if not yet assigned, do assignment
+                if( delta <= radius_max && new_ids[i] == -1 )
+                {
+                    if( min >= delta )
+                    {
+                        min = delta;
+                        closest_id = i;
+                    }
+                }
+                
+            }
+            
+            if( closest_id > -1 )
+            {
+                new_ids[closest_id] = m_prev_centroid_id[j];
+            }
+            else
+            {
+                m_id_used[ m_prev_centroid_id[j] ] = 0;
+            }
+            
+        }
+        
+        // check for unassigned new_ids, and then find the first unused id number:
+        for( int i = 0; i < centroids.size(); i++ )
+        {
+            if( new_ids[i] == -1 )
+            {
+                for( int n = 0; n < m_maxIDs; n++ )
+                {
+                    if( m_id_used[n] == 0)
+                    {
+                        new_ids[i] = n;
+                        m_id_used[n] = 1;
+                        break;
+                    }
+                }
+            }
+            
+            idlist.emplace_back( new_ids[i] );
+            
+        }
+        
+        m_prev_centroids = centroids;
+        m_prev_centroid_id = new_ids;
+    }
+    
+    id.appendValue(idlist);
+    
+    bundle.addMessage(id);
 
+    bundle.addMessage("/count", (long)ncontours);
+    bundle.addMessage("/area", contour_area );
+
+    bundle.addMessage( child_of );
+    bundle.addMessage(parimeter );
+    bundle.addMessage(focus);
+    bundle.addMessage(cx);
+    bundle.addMessage(cy);
+    bundle.addMessage(sx);
+    bundle.addMessage(sy);
+    bundle.addMessage(centroidx);
+    bundle.addMessage(centroidy);
+    bundle.addMessage(parimeter);
+    bundle.addMessage(angle);
+    bundle.addMessage(eccentricity);
+    bundle.addMessage(rotmin);
+    bundle.addMessage(rotmaj);
+    bundle.addMessage(child_of);
+    bundle.addMessage(focus);
+    bundle.addMessage(hull_count);
+    bundle.addMessage(hullarea);
+    bundle.addMessage(defect_count);
+    bundle.addMessage(defect_dist_sum);
+    
     for(int c = 0; c < nchans; c++)
     {
         bundle.addMessage("/mean/"+to_string(c+1), channel_means[c] );
         bundle.addMessage("/variece/"+to_string(c+1), channel_varience[c] );
     }
     
-    processBundle(bundle);
+    
+    processAnalysisBundle(bundle);
     
 }
 

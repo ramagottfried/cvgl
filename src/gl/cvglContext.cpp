@@ -85,6 +85,8 @@ void cvglContext::setupWindow(int width, int height )
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT,  GL_NICEST);
     
+    glEnable(GL_DEBUG_OUTPUT);
+    
     cout << "initializing gl with size " << width << " " << height << " " << m_window << endl;
 
 }

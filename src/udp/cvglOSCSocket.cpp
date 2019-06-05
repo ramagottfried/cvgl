@@ -112,10 +112,11 @@ void cvglOSCSocket::on_read(uv_udp_t *req, ssize_t nread, const uv_buf_t *buf, c
     cvglOSCSocket * ref = (cvglOSCSocket *)req->data;
     if( ref )
     {
-        
         lock_guard<mutex> lock(ref->m_mutex);
-        if( !ref->closing )
+        if( !ref->closing ){
             ref->state_bundle.unionWith(b, true);
+            ref->state_bundle.print();
+        }
     }
     
     // free(buf->base); // freed by bundle

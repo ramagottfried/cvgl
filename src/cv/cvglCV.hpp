@@ -23,11 +23,13 @@ class cvglCV
     
 public:
     
+    cvglCV() : m_id_used(m_maxIDs) {}
+    
     /*
      *  implement in sub-class for callback to process CV bundle before output
      *
      */
-    virtual void processBundle(OdotBundle &bndl) {}
+    virtual void processAnalysisBundle(OdotBundle &bndl) {}
     
     void gaussSigma(int k)
     {
@@ -63,14 +65,15 @@ public:
     
     void analysisThread(cv::Mat src_color_sized,
                         cv::Mat sob,
-                        std::vector< cv::Mat >                  contours,
-                        std::vector< double >                   contour_area,
-                        std::vector< cv::Vec4i >                hierarchy,
-                        std::vector< cv::Mat >                  hullP_vec,
-                        std::vector< cv::Mat >                  hullI_vec,
-                        std::vector< std::vector<cv::Vec4i> >   defects_vec ,
-                        double halfW,
-                        double halfH );
+                        std::vector< cv::Mat >  contours,
+                        std::vector< int >      contour_idx,
+                        std::vector< double >   contour_area,
+                        std::vector< cv::Vec4i >    hierarchy,
+                        std::vector< cv::Mat >  hullP_vec,
+                        std::vector< cv::Mat >  hullI_vec,
+                        std::vector< std::vector<cv::Vec4i> >    defects_vec,
+                        std::vector< cv::RotatedRect> minRect_vec,
+                        double halfW, double halfH );
     
     
     struct Stats {
@@ -95,10 +98,9 @@ private:
     float m_resize = 0.5;
     
     int m_thresh = 100;
-    float m_minsize = 0.;
+    float m_minsize = 0.01;
     float m_maxsize = 0.9;
-    bool m_parents_only = false;
-    
+    bool m_parents_only = true;
     
     
     int m_gauss_sigma = 3;
@@ -107,6 +109,17 @@ private:
     cv::Mat m_di_element = getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
 
     cv::Mat m_prev_points;
+    
+    std::vector<cv::Point2f>    m_prev_centroids;
+    std::vector<int>            m_prev_centroid_id;
+    
+    
+    double m_track_radius = 0.1;
+
+    const size_t m_maxIDs = 2048;
+
+    std::vector<int> m_id_used;
+
 };
 
 

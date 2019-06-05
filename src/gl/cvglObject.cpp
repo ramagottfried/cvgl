@@ -1,5 +1,8 @@
 
 #include "cvglObject.hpp"
+#include "cvglProfile.hpp"
+
+#include "earcut.hpp"
 
 using namespace std;
 
@@ -8,6 +11,8 @@ void cvglObject::newObj()
     m_start.emplace_back( m_vertices.size() );
     m_tex.emplace_back( 0 );
     m_drawTypes.emplace_back( vector<int>({GL_TRIANGLES}) );
+    m_vert_list[ m_start.back() ] = cvglPolygon();
+    
 }
 
 void cvglObject::newObj(int drawType)
@@ -15,6 +20,7 @@ void cvglObject::newObj(int drawType)
     m_start.emplace_back( m_vertices.size() );
     m_tex.emplace_back( 0 );
     m_drawTypes.emplace_back( vector<int>({drawType}) );
+    m_vert_list[ m_start.back() ] = cvglPolygon();
 }
 
 void cvglObject::newObj(vector<int> drawTypes)
@@ -22,6 +28,7 @@ void cvglObject::newObj(vector<int> drawTypes)
     m_start.emplace_back( m_vertices.size() );
     m_tex.emplace_back( 0 );
     m_drawTypes.emplace_back( drawTypes );
+    m_vert_list[ m_start.back() ] = cvglPolygon();
 }
 
 void cvglObject::endObj()
@@ -36,6 +43,12 @@ void cvglObject::clear()
     m_vertices.clear();
     m_drawTypes.clear();
     m_tex.clear();
+    
+    m_idx_start.clear();
+    m_idx.clear();
+    m_idx_size.clear();
+    
+    m_vert_list.clear();
 }
 
 void cvglObject::reserve(size_t n)
@@ -45,11 +58,20 @@ void cvglObject::reserve(size_t n)
     m_vertices.reserve(n);
     m_drawTypes.reserve(n);
     m_tex.reserve(n);
+    
+    m_idx_start.reserve(n);
+    m_idx.reserve(n);
+    m_idx_size.reserve(n);
+    
+    m_vert_list.reserve(n);
 }
 
 void cvglObject::addVertex(cvglVertex v)
 {
     m_vertices.emplace_back(v);
+    
+    m_vert_list[ m_start.back() ].emplace_back( std::make_tuple(v.position[0], v.position[1]) );
+
 }
 
 void cvglObject::setTextureID(GLuint texID )
@@ -84,6 +106,11 @@ void cvglObject::bind()
     m_VAO.bind();
 }
 
+void cvglObject::unbind()
+{
+    m_VAO.unbind();
+}
+
 void cvglObject::draw()
 {
     if( m_draw_mode == GL_STREAM_DRAW )
@@ -111,8 +138,10 @@ void cvglObject::draw( vector<int> drawtypes )
         if( m_tex[i] )
             glBindTexture( GL_TEXTURE_2D, m_tex[i] );
         
-        for( size_t j = 0; j < drawtypes.size(); ++j  )
+        for( size_t j = 0; j < drawtypes.size(); ++j  ){
             glDrawArrays(drawtypes[j], (int)m_start[i], (int)m_size[i]);
+        }
+        
         
     }
     
@@ -120,15 +149,24 @@ void cvglObject::draw( vector<int> drawtypes )
 
 void cvglObject::draw( int drawtype )
 {
-    if( m_draw_mode == GL_STREAM_DRAW )
+    if( m_draw_mode == GL_STREAM_DRAW ){
         glBufferData(GL_ARRAY_BUFFER, sizeof(cvglVertex) * m_vertices.size(), m_vertices.data(), GL_STREAM_DRAW);
+        
+        if( m_useElementArray && m_idx.size() > 0)
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * m_idx.size(), m_idx.data(), GL_STREAM_DRAW);
+    }
     
     for( size_t i = 0; i < m_start.size(); ++i )
     {
         if( m_tex[i] )
             glBindTexture( GL_TEXTURE_2D, m_tex[i] );
         
-        glDrawArrays(drawtype, (int)m_start[i], (int)m_size[i]);
+        if( m_useElementArray && m_idx.size() > 0)
+        {
+            glDrawElements(drawtype, m_idx_size[i], GL_UNSIGNED_INT, (const GLvoid *)(m_idx_start[i] * sizeof(GLuint)) );
+        }
+        else
+            glDrawArrays(drawtype, (int)m_start[i], (int)m_size[i]);
         
     }
 }
@@ -136,6 +174,30 @@ void cvglObject::draw( int drawtype )
 
 void cvglObject::addVertexIndexArray( vector<GLuint> idx )
 {
-    m_indices.emplace_back(idx);
+   
+    m_idx_start.emplace_back( m_idx.size() );
+    
+    for( auto& n : idx )
+    {
+        m_idx.emplace_back(n + m_start.back() );
+    }
+    m_idx_size.emplace_back( (GLuint)idx.size() );
+
     m_useElementArray = true;
+}
+
+
+void cvglObject::triangulate()
+{
+    //cvglProfile timer;
+
+    if( m_size.back() > 2 ){
+        
+        //timer.markStart();
+        addVertexIndexArray( mapbox::earcut<GLuint>( vector< cvglPolygon >({ m_vert_list[ m_start.back() ] }) ) );
+        //timer.markEnd();
+
+        
+    }
+
 }

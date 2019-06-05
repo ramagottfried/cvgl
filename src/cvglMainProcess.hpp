@@ -28,9 +28,14 @@ public:
     void initObjs();
     
     void processFrame(cv::Mat frame) override;
-    void processBundle(OdotBundle& bndl) override;
+    void processAnalysisBundle(OdotBundle& bndl) override;
     
     void draw();
+    
+private:
+    
+    std::mutex m_lock;
+    
     
 };
 

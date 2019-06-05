@@ -87,6 +87,8 @@
 		11B32ECB21D97E8100AB7D7B /* osc_byteorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B32E7D21D97E8100AB7D7B /* osc_byteorder.h */; };
 		11B32ECC21D97E8100AB7D7B /* osc_hashtab.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B32E7E21D97E8100AB7D7B /* osc_hashtab.h */; };
 		11B32ECD21D97E8100AB7D7B /* osc_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B32E7F21D97E8100AB7D7B /* osc_scanner.h */; };
+		11FB9E9922A839F500599CC9 /* delabella.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11FB9E9822A839F500599CC9 /* delabella.cpp */; };
+		11FB9E9A22A839F500599CC9 /* delabella.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11FB9E9822A839F500599CC9 /* delabella.cpp */; };
 		21038D17214AECB10078F594 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D16214AECB10078F594 /* main.cpp */; };
 		2112A4B7214DA3A300EC1C11 /* cvglCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4892149426A00345757 /* cvglCallbacks.cpp */; };
 		2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21DDFACD2146CCDC001FF716 /* cvglObject.cpp */; };
@@ -258,6 +260,10 @@
 		11B32EDC21D97EB200AB7D7B /* osc_expr_rec.r */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.rez; name = osc_expr_rec.r; path = ../../libo/osc_expr_rec.r; sourceTree = "<group>"; };
 		11B32EDD21D97EB200AB7D7B /* osc_message_u.r */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.rez; name = osc_message_u.r; path = ../../libo/osc_message_u.r; sourceTree = "<group>"; };
 		11B32EDE21D97EB200AB7D7B /* osc_message_iterator_u.r */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.rez; name = osc_message_iterator_u.r; path = ../../libo/osc_message_iterator_u.r; sourceTree = "<group>"; };
+		11FB9E9522A7A48E00599CC9 /* delaunator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = delaunator.hpp; sourceTree = "<group>"; };
+		11FB9E9622A7C45200599CC9 /* earcut.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = earcut.hpp; sourceTree = "<group>"; };
+		11FB9E9722A839F400599CC9 /* delabella.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = delabella.h; sourceTree = "<group>"; };
+		11FB9E9822A839F500599CC9 /* delabella.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = delabella.cpp; sourceTree = "<group>"; };
 		21038D02214A43080078F594 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
 		21038D04214A89650078F594 /* cvglVAO.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglVAO.cpp; sourceTree = "<group>"; };
 		21038D05214A89650078F594 /* cvglVAO.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglVAO.hpp; sourceTree = "<group>"; };
@@ -588,6 +594,10 @@
 				21D7D4692147E7E000345757 /* cvglContext.hpp */,
 				21D7D4892149426A00345757 /* cvglCallbacks.cpp */,
 				21D7D48A2149426A00345757 /* cvglCallbacks.hpp */,
+				11FB9E9522A7A48E00599CC9 /* delaunator.hpp */,
+				11FB9E9622A7C45200599CC9 /* earcut.hpp */,
+				11FB9E9822A839F500599CC9 /* delabella.cpp */,
+				11FB9E9722A839F400599CC9 /* delabella.h */,
 				21038D01214A42F50078F594 /* glad */,
 			);
 			path = gl;
@@ -807,6 +817,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11FB9E9A22A839F500599CC9 /* delabella.cpp in Sources */,
 				21038D17214AECB10078F594 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -819,6 +830,7 @@
 				2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */,
 				21D87601215A6BB30068B7BD /* cvgl_main3.cpp in Sources */,
 				2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */,
+				11FB9E9922A839F500599CC9 /* delabella.cpp in Sources */,
 				2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */,
 				21AA02FF2159531600D9751F /* cvglCamera.cpp in Sources */,
 				2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */,

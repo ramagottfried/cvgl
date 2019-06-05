@@ -7,7 +7,7 @@
 		<key>cvgl-libo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>5</integer>
+			<integer>4</integer>
 		</dict>
 		<key>cvgl.xcscheme_^#shared#^_</key>
 		<dict>
@@ -17,7 +17,7 @@
 		<key>cvgl_blackmagic.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<key>o.io.opencv.xcscheme</key>
 		<dict>
@@ -27,17 +27,22 @@
 		<key>profiler.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>2</integer>
 		</dict>
 		<key>uv-test.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>4</integer>
+			<integer>3</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>112485171A9EA8F90032B37A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2112A4B5214DA3A300EC1C11</key>
 		<dict>
 			<key>primary</key>
 			<true/>
