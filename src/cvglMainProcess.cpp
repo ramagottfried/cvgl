@@ -44,8 +44,6 @@ void cvglMainProcess::initObjs()
     colorTex[1]->setTexture(1, 0, 1, 1);
     colorTex[2]->setTexture(1, 1, 1, 0.2);
     
-    glPointSize(5);
-    
     cvglProfile timer;
     objects_initialized = true;
     
@@ -53,7 +51,7 @@ void cvglMainProcess::initObjs()
 }
 
 /**
- *  virtual function callback called from camera loops to process frames with opengl
+ *  virtual function callback from camera loops
  */
 void cvglMainProcess::processFrame(cv::Mat frame)
 {
@@ -64,16 +62,49 @@ void cvglMainProcess::processFrame(cv::Mat frame)
         return;
     
     preprocess( m_frame );
-    
-    lock_guard<mutex> lock(m_lock);
-    analyzeContour( contourMesh, hullMesh, minrectMesh );
-    
-    // DANGER: these mesh objects are updated from the camera thread, and then read in the gl thread
-    // sometimes there is a conflict
+    analyzeContour();
     
     //    cvx.getFlow( flowMesh );
 }
 
+
+/**
+ *  called from camera thread
+ */
+void cvglMainProcess::processAnalysisVectors(std::vector< cv::Mat >& contours, std::vector< int >& contour_idx, std::vector< cv::Mat >& hullP_vec, std::vector< cv::RotatedRect >& minRec_vec, float& halfW, float& halfH)
+{
+    
+    // lock to prevent conflict with gl thread
+    lock_guard<mutex> lock(m_lock);
+
+    
+    size_t npoints = 0;
+    for( auto& c : contours )
+        npoints += (c.cols * c.rows);
+    
+    contourMesh->clear();
+    contourMesh->reserve( npoints );
+    
+    hullMesh->clear();
+    hullMesh->reserve( npoints );
+    
+    minrectMesh->clear();
+    minrectMesh->reserve( contours.size() * 4 );
+    
+    for( int i = 0 ; i < contour_idx.size(); i++ )
+    {
+        cvgl::pointMatToVertex( contours[ contour_idx[i] ], contourMesh, halfW, halfH );
+        contourMesh->triangulate();
+        
+        
+        //cvgl::pointMatToVertex(hullP_vec[i], hullMesh, halfW, halfH );
+        cvgl::pointMatToPolygonLineVertex(hullP_vec[i], hullMesh, halfW, halfH, 5);
+        //outHull->triangulate();
+        
+        cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
+        
+    }
+}
 
 /**
  *  virtual function callback called from detached openCV worker thread
@@ -84,6 +115,9 @@ void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
     osc.sendBundle(bndl);
 }
 
+/**
+ *  called from GL thread
+ */
 void cvglMainProcess::draw()
 {
     
@@ -105,15 +139,15 @@ void cvglMainProcess::draw()
 
     hullMesh->bind();
     colorTex[2]->bind();
-    hullMesh->draw(vector<int>({GL_LINE_LOOP, GL_POINTS}));
+    hullMesh->draw(GL_TRIANGLE_STRIP);//vector<int>({GL_TRIANGLES, GL_POINTS}));
     hullMesh->unbind();
 
     minrectMesh->bind();
-    colorTex[2]->bind();
+    colorTex[1]->bind();
     minrectMesh->draw(GL_LINE_LOOP);
     minrectMesh->unbind();
 
-    context.printFPS();
+//    context.printFPS();
     
     context.drawAndPoll();
     

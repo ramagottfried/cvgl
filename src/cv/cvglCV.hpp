@@ -25,11 +25,6 @@ public:
     
     cvglCV() : m_id_used(m_maxIDs) {}
     
-    /*
-     *  implement in sub-class for callback to process CV bundle before output
-     *
-     */
-    virtual void processAnalysisBundle(OdotBundle &bndl) {}
     
     void gaussSigma(int k)
     {
@@ -56,9 +51,25 @@ public:
     
     
     void analyzeContour(cvglObject& outContour, cvglObject& outHull, cvglObject& minrectMesh);
-    void analyzeContour(std::unique_ptr<cvglObject>& outContour,
+  /*  void analyzeContour(std::unique_ptr<cvglObject>& outContour,
                      std::unique_ptr<cvglObject>& outHull,
                      std::unique_ptr<cvglObject>& minrectMesh);
+    */
+    void analyzeContour();
+    
+    /*
+     *  implement in sub-class for callback to process CV vectors for drawing
+     *
+     */
+    virtual void processAnalysisVectors(std::vector< cv::Mat >& contours, std::vector< int >& contour_idx, std::vector< cv::Mat >& hullP_vec, std::vector< cv::RotatedRect >& minRec_vec, float& halfW, float& halfH) {};
+    
+    /*
+     *  implement in sub-class for callback to process CV bundle before output
+     *
+     */
+    virtual void processAnalysisBundle(OdotBundle &bndl) {}
+    
+    
     
     void getFlow(std::unique_ptr<cvglObject>& outFlow);
 

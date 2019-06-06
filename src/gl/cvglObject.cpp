@@ -130,6 +130,7 @@ void cvglObject::draw()
 
 void cvglObject::draw( vector<int> drawtypes )
 {
+
     if( m_draw_mode == GL_STREAM_DRAW )
         glBufferData(GL_ARRAY_BUFFER, sizeof(cvglVertex) * m_vertices.size(), m_vertices.data(), GL_STREAM_DRAW);
     
@@ -149,6 +150,7 @@ void cvglObject::draw( vector<int> drawtypes )
 
 void cvglObject::draw( int drawtype )
 {
+
     if( m_draw_mode == GL_STREAM_DRAW ){
         glBufferData(GL_ARRAY_BUFFER, sizeof(cvglVertex) * m_vertices.size(), m_vertices.data(), GL_STREAM_DRAW);
         
@@ -197,7 +199,13 @@ void cvglObject::triangulate()
         addVertexIndexArray( mapbox::earcut<GLuint>( vector< cvglPolygon >({ m_vert_list[ m_start.back() ] }) ) );
         //timer.markEnd();
 
-        
     }
 
 }
+
+/*
+void cvglObject::lineToPolygon()
+{
+    for( auto& )
+}
+*/

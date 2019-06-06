@@ -22,5 +22,7 @@ namespace cvgl
     void pointMatToXYBundle(const cv::Mat& points, OdotBundle& b, const float halfScreenW, const float halfScreenH );
     void pointMatToXYBundle(const cv::Mat& points, OdotBundle& b, const float halfScreenW, const float halfScreenH );
     
+    void pointMatToPolygonLineVertex(const cv::Mat& points, std::unique_ptr<cvglObject>& vertexObj, const float halfScreenW, const float halfScreenH, const float thickness = 1 );
+
 }
 

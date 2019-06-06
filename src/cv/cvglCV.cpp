@@ -65,7 +65,7 @@ void cvglCV::getFlow( unique_ptr<cvglObject>& outFlow)
     cout << "end" << endl;
 }
 
-void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglObject>& outHull, unique_ptr<cvglObject>& minrectMesh)
+void cvglCV::analyzeContour()
 {
     if( threshold_output.empty() )
     {
@@ -86,22 +86,11 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
     
     findContours( threshold_output, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
     
-    size_t npoints = 0;
-    for( auto& c : contours )
-        npoints += (c.cols * c.rows);
-    
-    outContour->clear();
-    outContour->reserve( npoints );
-    
-    outHull->clear();
-    outHull->reserve( npoints );
-    
-    minrectMesh->clear();
-    minrectMesh->reserve( contours.size() * 4 );
-    
+
     size_t npix = threshold_output.rows * threshold_output.cols;
     float halfW = threshold_output.cols / 2.0f;
     float halfH = threshold_output.rows / 2.0f;
+
     
     for( int i = 0; i < contours.size(); i++ )
     {
@@ -112,10 +101,7 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
     
         contour_area.emplace_back(contour_a);
         contour_idx.emplace_back(i);
-        
-        cvgl::pointMatToVertex(contours[i], outContour, halfW, halfH );
-        outContour->triangulate();
-        
+      
         // hull
         Mat hullP, hullI;
         cv::RotatedRect minRect;
@@ -123,9 +109,6 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
         
         cvgl::minAreaRectHull( contours[i], minRect, hullP, hullI );
         
-        cvgl::pointMatToVertex(hullP, outHull, halfW, halfH );
-
-        cvgl::rotatedRectToVertex(minRect, minrectMesh, halfW, halfH );
         
         size_t hullI_size = hullI.rows * hullI.cols;
         if( hullI_size > 3 )
@@ -138,7 +121,9 @@ void cvglCV::analyzeContour(unique_ptr<cvglObject>& outContour, unique_ptr<cvglO
         
     }
     
+    processAnalysisVectors(contours, contour_idx, hullP_vec, minRec_vec, halfW, halfH);
 
+    
     // pass contour analysis data to another thread if not drawn
     // I guess it needs to be decided ahead of time what gets drawn then...
     // most data comes from the contour, hull, and rotated rect
