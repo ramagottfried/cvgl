@@ -18,7 +18,9 @@ void cvglCV::preprocess(Mat& mat)
     }
   
     cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
+    
     cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
+    
     GaussianBlur(src_gray, src_blur_gray, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
     erode( src_blur_gray, src_blur_gray, m_er_element );
     dilate( src_blur_gray, src_blur_gray, m_di_element );

@@ -141,9 +141,10 @@ void cvglMainProcess::draw()
 
     contourMesh->bind();
     colorTex[2]->bind();
- //   glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     contourMesh->draw(GL_TRIANGLES);
-   // glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+   
+    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
     contourMesh->unbind();
 
