@@ -97,8 +97,7 @@ void cvglObject::initStaticDraw()
     m_draw_mode = GL_STATIC_DRAW;
     m_VAO.bind();
     glBufferData(GL_ARRAY_BUFFER, sizeof(cvglVertex) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW);
-    glBindVertexArray(0);
-    
+    m_VAO.unbind();
 }
 
 void cvglObject::bind()
@@ -110,6 +109,8 @@ void cvglObject::unbind()
 {
     m_VAO.unbind();
 }
+
+
 
 void cvglObject::draw()
 {
@@ -160,8 +161,10 @@ void cvglObject::draw( int drawtype )
     
     for( size_t i = 0; i < m_start.size(); ++i )
     {
-        if( m_tex[i] )
+        if( m_tex[i] ){
+            cout << "binding texture " << m_tex[i] << endl;
             glBindTexture( GL_TEXTURE_2D, m_tex[i] );
+        }
         
         if( m_useElementArray && m_idx.size() > 0)
         {
@@ -203,9 +206,3 @@ void cvglObject::triangulate()
 
 }
 
-/*
-void cvglObject::lineToPolygon()
-{
-    for( auto& )
-}
-*/

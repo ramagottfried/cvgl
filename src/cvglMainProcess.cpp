@@ -40,12 +40,14 @@ void cvglMainProcess::initObjs()
     rect->endObj();
     rect->initStaticDraw();
     
-    colorTex[0]->setTexture(0, 1, 1, 0.5);
+    colorTex[0]->setTexture(0, 0, 0, 0.5);
     colorTex[1]->setTexture(1, 0, 1, 1);
     colorTex[2]->setTexture(1, 1, 1, 0.2);
     
     cvglProfile timer;
     objects_initialized = true;
+    
+    context.clearColor(0, 0, 0, 1);
     
     cout << objects_initialized << endl;
 }
@@ -76,7 +78,6 @@ void cvglMainProcess::processAnalysisVectors(std::vector< cv::Mat >& contours, s
     
     // lock to prevent conflict with gl thread
     lock_guard<mutex> lock(m_lock);
-
     
     size_t npoints = 0;
     for( auto& c : contours )
@@ -96,13 +97,15 @@ void cvglMainProcess::processAnalysisVectors(std::vector< cv::Mat >& contours, s
         cvgl::pointMatToVertex( contours[ contour_idx[i] ], contourMesh, halfW, halfH );
         contourMesh->triangulate();
         
+        cvgl::pointMatToPolygonLineVertex(hullP_vec[i], hullMesh, halfW, halfH, 2);
         
-        //cvgl::pointMatToVertex(hullP_vec[i], hullMesh, halfW, halfH );
-        cvgl::pointMatToPolygonLineVertex(hullP_vec[i], hullMesh, halfW, halfH, 5);
-        //outHull->triangulate();
+       // cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
         
-        cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
+        Point2f rectPts[4];
+        minRec_vec[i].points( rectPts );
+        vector<Point2f> rect_v(rectPts, rectPts+4);
         
+        cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, halfW, halfH, 10);
     }
 }
 
@@ -126,28 +129,36 @@ void cvglMainProcess::draw()
     }
 
     lock_guard<mutex> lock(m_lock);
+    // could alternatively skip overlay in cases where the camera and gl are in conflict, rather than waiting...
 
+    context.clear();
+    
     rect->bind();
     frameTex->setTexture( m_frame );
+    //colorTex[0]->bind();
     rect->draw();
     rect->unbind();
 
     contourMesh->bind();
     colorTex[2]->bind();
+ //   glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     contourMesh->draw(GL_TRIANGLES);
-    contourMesh->unbind();
+   // glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-    hullMesh->bind();
-    colorTex[2]->bind();
-    hullMesh->draw(GL_TRIANGLE_STRIP);//vector<int>({GL_TRIANGLES, GL_POINTS}));
-    hullMesh->unbind();
+    contourMesh->unbind();
 
     minrectMesh->bind();
     colorTex[1]->bind();
-    minrectMesh->draw(GL_LINE_LOOP);
+    minrectMesh->draw(GL_LINES);
     minrectMesh->unbind();
+    
+    hullMesh->bind();
+    colorTex[1]->bind();
+    hullMesh->draw(GL_TRIANGLE_STRIP);//vector<int>({GL_TRIANGLES, GL_POINTS}));
+    hullMesh->unbind();
 
-//    context.printFPS();
+
+    //context.printFPS();
     
     context.drawAndPoll();
     

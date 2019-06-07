@@ -11,7 +11,6 @@ public:
     cvglTexture()
     {
         glGenTextures(1, &m_tex);
-      //  glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_tex);
         
         // wrap parameters
@@ -31,6 +30,7 @@ public:
     ~cvglTexture()
     {
         glDeleteTextures(1, &m_tex);
+        m_tex = 0;
     }
     
     void bind()
@@ -42,6 +42,7 @@ public:
     void setTexture(cv::Mat bgr_mat)
     {
         glBindTexture(GL_TEXTURE_2D, m_tex);
+        
         glTexImage2D(GL_TEXTURE_2D,     // Type of texture
                      0,                 // Pyramid level (for mip-mapping) - 0 is the top level
                      GL_RGB,            // Internal colour format to convert to
@@ -113,6 +114,6 @@ public:
     inline GLuint getTexID(){ return m_tex; }
     
 private:
-    GLuint m_tex;
+    GLuint m_tex = 0;
     
 };

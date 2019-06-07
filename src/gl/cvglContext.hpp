@@ -16,7 +16,6 @@
 
 #include "opencv2/core/utility.hpp"
 
-
 class cvglContext
 {
 public:
@@ -39,7 +38,6 @@ public:
         return (glfwGetCurrentContext() != NULL);
     }
     
-   
     
     inline void clearColor(float r, float b, float g, float a)
     {
@@ -48,7 +46,7 @@ public:
     
     inline void clear()
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
     
     inline void drawAndPoll()
@@ -95,7 +93,7 @@ public:
     }
     
     inline bool isClosing() { return m_should_close; }
-    
+
 private:
     
     GLFWwindow* m_window = nullptr;
@@ -106,10 +104,6 @@ private:
     double m_aspectRatio = 1.0;
     GLint m_scaleAttrib;
     
-    GLuint m_vao;
-    
-    GLuint m_tex;
-
     bool m_should_close = false;
 
     
@@ -119,4 +113,3 @@ private:
     double accumulator_alpha = 0.1;
 
 };
-

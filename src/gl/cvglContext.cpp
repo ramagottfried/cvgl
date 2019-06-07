@@ -44,6 +44,13 @@ cvglContext::~cvglContext()
 }
 
 
+
+void context_error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Error: %s\n", description);
+}
+
+
 void cvglContext::setupWindow(int width, int height )
 {
     cout << "setting up window " << width <<  " " << height << endl;
@@ -85,7 +92,7 @@ void cvglContext::setupWindow(int width, int height )
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT,  GL_NICEST);
     
-    glEnable(GL_DEBUG_OUTPUT);
+    glfwSetErrorCallback(context_error_callback);
     
     cout << "initializing gl with size " << width << " " << height << " " << m_window << endl;
 

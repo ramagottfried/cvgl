@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 
 #include "cvglVertex.hpp"
+#include <iostream>
+#include <chrono>
 
 class cvglVAO
 {
@@ -43,7 +45,6 @@ public:
         glBindVertexArray(m_vao);
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-
     }
     
     void unbind()
@@ -55,9 +56,9 @@ public:
     
     
 private:
-    GLuint m_vao;
-    GLuint m_vbo;
-    GLuint m_ebo;
+    GLuint m_vao = 0;
+    GLuint m_vbo = 0;
+    GLuint m_ebo = 0;
 
 };
 

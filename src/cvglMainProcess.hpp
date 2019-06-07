@@ -13,7 +13,7 @@ class cvglMainProcess : public cvglCamera, public cvglCV
 {
     
 public:
-    cvglMainProcess() {}
+//    cvglMainProcess() {}
     
     cvglContext context;
     cvglOSCSocket osc;
