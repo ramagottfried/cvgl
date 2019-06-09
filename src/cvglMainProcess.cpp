@@ -22,10 +22,10 @@ void cvglMainProcess::initObjs()
     colorTex[0] =  unique_ptr<cvglTexture>(new cvglTexture);
     colorTex[1] =  unique_ptr<cvglTexture>(new cvglTexture);
     colorTex[2] =  unique_ptr<cvglTexture>(new cvglTexture);
-    
+
     triangle->newObj(GL_LINE_LOOP);
     triangle->addVertex(cvglVertex({-0.5f, -0.5f, 0.0f,  0,  1 }));
-    triangle->addVertex(cvglVertex({0.5f, -0.5f, 0.0f,   1,  0.5 }));
+    triangle->addVertex(cvglVertex({ 0.5f, -0.5f, 0.0f,  1,  0.5 }));
     triangle->addVertex(cvglVertex({ 0.0f,  0.5f, 0.0f,  0., 0 }));
     triangle->endObj();
     triangle->initStaticDraw();
@@ -57,13 +57,15 @@ void cvglMainProcess::initObjs()
  */
 void cvglMainProcess::processFrame(cv::Mat frame)
 {
-    
+    lock_guard<mutex> lock(m_lock);
+    newframe = true;
     m_frame = frame.clone();
     
-    if( !m_frame.data || !newframe || !objects_initialized  )
+    if( !m_frame.data || !objects_initialized )
         return;
     
     preprocess( m_frame );
+
     //    cvx.getFlow( flowMesh );
 
     processAnalysisVectors( analyzeContour() );
@@ -74,7 +76,6 @@ void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &ana
 {
     
     // lock to prevent conflict with gl thread
-    lock_guard<mutex> lock(m_lock);
     
     size_t npoints = 0;
     for( auto& c : analysis.contours )
@@ -104,6 +105,8 @@ void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &ana
         
         cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, analysis.halfW, analysis.halfH, 10);
     }
+    
+
 }
 
 /**
@@ -120,49 +123,45 @@ void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
  */
 void cvglMainProcess::draw()
 {
-    
+    lock_guard<mutex> lock(m_lock);
+
     if( !context.isActive() || !objects_initialized || !m_frame.data || !newframe ){
         return;
     }
 
-    lock_guard<mutex> lock(m_lock);
     // could alternatively skip overlay in cases where the camera and gl are in conflict, rather than waiting...
 
     context.clear();
-    
+ 
     rect->bind();
     frameTex->setTexture( m_frame );
-    colorTex[0]->bind();
     rect->draw();
     rect->unbind();
-
+    
     contourMesh->bind();
     
-    colorTex[0]->bind();
     contourMesh->draw(GL_TRIANGLES);
-   /*
     colorTex[2]->bind();
+    
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     contourMesh->draw(GL_TRIANGLES);
-   */
- //   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-
+    
     contourMesh->unbind();
 
+    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    
     minrectMesh->bind();
     colorTex[1]->bind();
     minrectMesh->draw(GL_LINES);
     minrectMesh->unbind();
     
     hullMesh->bind();
-    colorTex[1]->bind();
+    colorTex[2]->bind();
     hullMesh->draw(GL_TRIANGLE_STRIP);//vector<int>({GL_TRIANGLES, GL_POINTS}));
     hullMesh->unbind();
-
-
-    //context.printFPS();
     
     context.drawAndPoll();
     
     newframe = false;
+    //cout << " << end draw, newframe " << newframe << "\n" << endl;
 }

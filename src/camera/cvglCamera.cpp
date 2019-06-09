@@ -41,12 +41,14 @@ cvglCamera::cvglCamera() : m_refCount(1)
 // opencv camera callback
 void cvglCamera::cvCamLoop()
 {
+    cv::Mat _frame;
+
     cout << m_stop_cv_loop << endl;
     while( cap.isOpened() && m_stop_cv_loop == false )
     {
-        cap >> m_frame;
-        newframe = true;
-        processFrame( m_frame );
+        cap >> _frame;
+//        newframe = true; // this is always true for the process frame, so should be moved to main process
+        processFrame( _frame );
     }
     
 }
@@ -396,19 +398,15 @@ HRESULT STDMETHODCALLTYPE cvglCamera::VideoInputFrameArrived (IDeckLinkVideoInpu
     }
     // printf("%-40s %s\n", "Current Video Input Pixel Format:", getFourCCName(kPixelFormatMappings, videoFrame->GetPixelFormat()));
     
-    
-    
     if( data )
     {
-        
         cv::Mat mat = cv::Mat((int)videoFrame->GetHeight(), (int)videoFrame->GetWidth(), CV_8UC2, data);
         cv::Mat mRGB;
         cv::cvtColor(mat, mRGB, cv::COLOR_YUV2BGR_UYVY);
         
-        newframe = true;
+//        newframe = true;
         processFrame( mRGB );
     }
-    
     
     return S_OK;
 }

@@ -13,15 +13,16 @@ class cvglMainProcess : public cvglCamera, public cvglCV
 {
     
 public:
-//    cvglMainProcess() {}
     
     cvglContext context;
     cvglOSCSocket osc;
     
-    std::unique_ptr<cvglObject> triangle, rect, contourMesh, hullMesh, minrectMesh, flowMesh;
-    std::unique_ptr<cvglTexture> frameTex, colorTex[3];
+    bool drawFrame;
+    std::unique_ptr<cvglObject> triangle, contourMesh, hullMesh, minrectMesh, flowMesh, rect;
+    std::unique_ptr<cvglTexture> colorTex[3], frameTex;
     
     cv::Mat m_frame;
+    bool newframe = false;
     
     bool objects_initialized = false;
    

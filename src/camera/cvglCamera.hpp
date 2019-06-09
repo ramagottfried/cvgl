@@ -58,9 +58,6 @@ public:
 
 private:
     
-    
-    cv::Mat m_frame;
-
     int m_width = 0;
     int m_height = 0;
 
