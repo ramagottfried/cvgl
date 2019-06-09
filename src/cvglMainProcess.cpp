@@ -40,9 +40,9 @@ void cvglMainProcess::initObjs()
     rect->endObj();
     rect->initStaticDraw();
     
-    colorTex[0]->setTexture(0, 0, 0, 0.5);
+    colorTex[0]->setTexture(0, 0, 0, 0.75);
     colorTex[1]->setTexture(1, 0, 1, 1);
-    colorTex[2]->setTexture(1, 1, 1, 0.2);
+    colorTex[2]->setTexture(1, 1, 1, 0.9);
     
     cvglProfile timer;
     objects_initialized = true;
@@ -64,23 +64,20 @@ void cvglMainProcess::processFrame(cv::Mat frame)
         return;
     
     preprocess( m_frame );
-    analyzeContour();
-    
     //    cvx.getFlow( flowMesh );
+
+    processAnalysisVectors( analyzeContour() );
 }
 
 
-/**
- *  called from camera thread
- */
-void cvglMainProcess::processAnalysisVectors(std::vector< cv::Mat >& contours, std::vector< int >& contour_idx, std::vector< cv::Mat >& hullP_vec, std::vector< cv::RotatedRect >& minRec_vec, float& halfW, float& halfH)
+void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &analysis)
 {
     
     // lock to prevent conflict with gl thread
     lock_guard<mutex> lock(m_lock);
     
     size_t npoints = 0;
-    for( auto& c : contours )
+    for( auto& c : analysis.contours )
         npoints += (c.cols * c.rows);
     
     contourMesh->clear();
@@ -90,22 +87,22 @@ void cvglMainProcess::processAnalysisVectors(std::vector< cv::Mat >& contours, s
     hullMesh->reserve( npoints );
     
     minrectMesh->clear();
-    minrectMesh->reserve( contours.size() * 4 );
+    minrectMesh->reserve( analysis.contours.size() * 4 );
     
-    for( int i = 0 ; i < contour_idx.size(); i++ )
+    for( int i = 0 ; i < analysis.contour_idx.size(); i++ )
     {
-        cvgl::pointMatToVertex( contours[ contour_idx[i] ], contourMesh, halfW, halfH );
+        cvgl::pointMatToVertex( analysis.contours[ analysis.contour_idx[i] ], contourMesh, analysis.halfW, analysis.halfH );
         contourMesh->triangulate();
         
-        cvgl::pointMatToPolygonLineVertex(hullP_vec[i], hullMesh, halfW, halfH, 2);
+        cvgl::pointMatToPolygonLineVertex(analysis.hullP_vec[i], hullMesh, analysis.halfW, analysis.halfH, 2);
         
        // cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
         
         Point2f rectPts[4];
-        minRec_vec[i].points( rectPts );
+        analysis.minRec_vec[i].points( rectPts );
         vector<Point2f> rect_v(rectPts, rectPts+4);
         
-        cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, halfW, halfH, 10);
+        cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, analysis.halfW, analysis.halfH, 10);
     }
 }
 
@@ -135,16 +132,20 @@ void cvglMainProcess::draw()
     
     rect->bind();
     frameTex->setTexture( m_frame );
-    //colorTex[0]->bind();
+    colorTex[0]->bind();
     rect->draw();
     rect->unbind();
 
     contourMesh->bind();
+    
+    colorTex[0]->bind();
+    contourMesh->draw(GL_TRIANGLES);
+   /*
     colorTex[2]->bind();
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     contourMesh->draw(GL_TRIANGLES);
-   
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+   */
+ //   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
     contourMesh->unbind();
 

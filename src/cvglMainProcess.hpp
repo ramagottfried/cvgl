@@ -30,7 +30,7 @@ public:
     void processFrame(cv::Mat frame) override;
     void processAnalysisBundle(OdotBundle& bndl) override;
     
-    void processAnalysisVectors(std::vector< cv::Mat >& contours, std::vector< int >& contour_idx, std::vector< cv::Mat >& hullP_vec, std::vector< cv::RotatedRect >& minRec_vec, float& halfW, float& halfH) override;
+    void processAnalysisVectors(const cvglAnalysisReturnStruct& analysis);
     
     void draw();
     
@@ -38,7 +38,7 @@ private:
     
     std::mutex m_lock;
     
-    
 };
+
 
 

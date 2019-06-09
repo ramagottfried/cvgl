@@ -18,6 +18,8 @@
 
 class cvglMainProcess;
 
+
+
 class cvglCV
 {
     
@@ -55,13 +57,24 @@ public:
                      std::unique_ptr<cvglObject>& outHull,
                      std::unique_ptr<cvglObject>& minrectMesh);
     */
-    void analyzeContour();
+    
+    
+    struct cvglAnalysisReturnStruct {
+        std::vector< cv::Mat > contours;
+        std::vector< int > contour_idx;
+        std::vector< cv::Mat > hullP_vec;
+        std::vector< cv::RotatedRect > minRec_vec;
+        float halfW;
+        float halfH;
+    };
+    
+    cvglAnalysisReturnStruct analyzeContour();
     
     /*
      *  implement in sub-class for callback to process CV vectors for drawing
      *
      */
-    virtual void processAnalysisVectors(std::vector< cv::Mat >& contours, std::vector< int >& contour_idx, std::vector< cv::Mat >& hullP_vec, std::vector< cv::RotatedRect >& minRec_vec, float& halfW, float& halfH) {};
+   // virtual void processAnalysisVectors(std::vector< cv::Mat >& contours, std::vector< int >& contour_idx, std::vector< cv::Mat >& hullP_vec, std::vector< cv::RotatedRect >& minRec_vec, float& halfW, float& halfH) {};
     
     /*
      *  implement in sub-class for callback to process CV bundle before output
@@ -111,7 +124,7 @@ private:
     int m_thresh = 100;
     float m_minsize = 0.01;
     float m_maxsize = 0.9;
-    bool m_parents_only = true;
+    bool m_parents_only = 0;
     
     
     int m_gauss_sigma = 3;

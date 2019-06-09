@@ -67,12 +67,12 @@ void cvglCV::getFlow( unique_ptr<cvglObject>& outFlow)
     cout << "end" << endl;
 }
 
-void cvglCV::analyzeContour()
+cvglCV::cvglAnalysisReturnStruct cvglCV::analyzeContour()
 {
     if( threshold_output.empty() )
     {
         cout << "no image" << endl;
-        return;
+        return cvglCV::cvglAnalysisReturnStruct();
     }
  
     
@@ -123,7 +123,7 @@ void cvglCV::analyzeContour()
         
     }
     
-    processAnalysisVectors(contours, contour_idx, hullP_vec, minRec_vec, halfW, halfH);
+   // processAnalysisVectors(contours, contour_idx, hullP_vec, minRec_vec, halfW, halfH);
 
     
     // pass contour analysis data to another thread if not drawn
@@ -150,6 +150,8 @@ void cvglCV::analyzeContour()
                   halfH );
     
     worker.detach();
+    
+    return cvglAnalysisReturnStruct({contours, contour_idx, hullP_vec, minRec_vec, halfW, halfH});
     
 }
 
@@ -447,7 +449,7 @@ void cvglCV::analysisThread(Mat src_color_sized,
     for(int c = 0; c < nchans; c++)
     {
         bundle.addMessage("/mean/"+to_string(c+1), channel_means[c] );
-        bundle.addMessage("/variece/"+to_string(c+1), channel_varience[c] );
+        bundle.addMessage("/varience/"+to_string(c+1), channel_varience[c] );
     }
     
     
