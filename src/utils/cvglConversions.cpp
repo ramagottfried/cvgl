@@ -83,11 +83,27 @@ namespace cvgl
         }
     }
     
-    
     cv::Point2f normalized( cv::Point2f pt )
     {
         return pt / sqrt(pt.x*pt.x + pt.y*pt.y );
     }
+    
+    cv::Point2f normalize( cv::Point2f pt )
+    {
+        return pt / sqrt(pt.x*pt.x + pt.y*pt.y );
+    }
+    
+    cv::Point2f direction( cv::Point2f a, cv::Point2f b )
+    {
+        return normalized( a - b );
+    }
+    
+    cv::Point2f normal( cv::Point2f pt )
+    {
+        return cv::Point2f(-pt.y, pt.x);
+    }
+    
+    
     
     std::array<cv::Point2f,2> getOffsetLinePoints( cv::Point2f p0, cv::Point2f p1, cv::Point2f p2, float thickness )
     {
@@ -101,19 +117,23 @@ namespace cvgl
         //        -if there are no segments before or after this one, use the line itself
         //        -otherwise, add the two normalized lines and average them by normalizing again
         Point2f tangent1 = (p0 == p1) ? line : normalized( normalized(p1-p0) + line );
-//        Point2f tangent2 = (p2 == p3) ? line : normalized( normalized(p3-p2) + line );
         
-        //                    Point2f a = prevPt - (normal * halfThickness);
-        //                    Point2f b = prevPt + (normal * halfThickness);
-        //
+        if( (p0 == p1) )
+            cout << " prob not " << (p0 == p1) << endl;
+//        Point2f tangent2 = (p2 == p3) ? line : normalized( normalized(p3-p2) + line );
+
+//        Point2f a = p1 - (normal * (thickness * 0.5));
+//        Point2f b = p1 + (normal * (thickness * 0.5));
+//
         // 4) find the miter line, which is the normal of the tangent
         Point2f miter1 = Point2f(-tangent1.y, tangent1.x);
+        // cout << "tangent " << tangent1 << " m " << miter1 << endl;
 //        Point2f miter2 = Point2f(-tangent2.y, tangent2.x);
         
         // find length of miter by projecting the miter onto the normal,
         // take the length of the projection, invert it and multiply it by the thickness:
         //        length = thickness * ( 1 / |normal|.|miter| )
-        float length1 = thickness / normal.dot(miter1);
+        float length1 = thickness / miter1.dot(normal);
 //        float length2 = thickness / normal.dot(miter2);
         
         Point2f a =  p1 - length1 * miter1;
@@ -220,7 +240,7 @@ namespace cvgl
     {
         const float halfThickness = thickness * 0.5;
         //  std::vector<GLuint> index_array;
-        
+        cout << "pointsToPolygonLineVertex" << endl;
         std::deque<Point2f> lineTurn, firstSegment;
         
         Point2f p0, p1, p2;
@@ -241,23 +261,13 @@ namespace cvgl
                 p1 = lineTurn[1];
                 p2 = lineTurn[2];
                 
-                auto adj_pts = getOffsetLinePoints(p0, p1, p2, halfThickness);
-
-                vertexObj->addVertex( cvglVertex({
-                    static_cast<float>((adj_pts[0].x - halfScreenW) / halfScreenW),
-                    static_cast<float>(-(adj_pts[0].y - halfScreenH) / halfScreenH)
-                }));
-                vertexObj->addVertex( cvglVertex({
-                    static_cast<float>((adj_pts[1].x - halfScreenW) / halfScreenW),
-                    static_cast<float>(-(adj_pts[1].y - halfScreenH) / halfScreenH)
-                }));
-                
-                
-                if( i == maxIdx && closed)
+                if(p1 != p2)
                 {
-                    // last point, add thickness to last point, or do something if closed loop
-                    adj_pts = getOffsetLinePoints(p1, p2, firstSegment[0], halfThickness);
-
+                    
+                    auto adj_pts = getOffsetLinePoints(p0, p1, p2, halfThickness);
+                    
+                    cout << adj_pts[0] << " " << adj_pts[1] << endl;
+                    
                     vertexObj->addVertex( cvglVertex({
                         static_cast<float>((adj_pts[0].x - halfScreenW) / halfScreenW),
                         static_cast<float>(-(adj_pts[0].y - halfScreenH) / halfScreenH)
@@ -267,38 +277,205 @@ namespace cvgl
                         static_cast<float>(-(adj_pts[1].y - halfScreenH) / halfScreenH)
                     }));
                     
-                    // last point, add thickness to last point, or do something if closed loop
-                    adj_pts = getOffsetLinePoints(p2, firstSegment[0], firstSegment[1], halfThickness);
-
-                    vertexObj->addVertex( cvglVertex({
-                        static_cast<float>((adj_pts[0].x - halfScreenW) / halfScreenW),
-                        static_cast<float>(-(adj_pts[0].y - halfScreenH) / halfScreenH)
-                    }));
                     
-                    vertexObj->addVertex( cvglVertex({
-                        static_cast<float>((adj_pts[1].x - halfScreenW) / halfScreenW),
-                        static_cast<float>(-(adj_pts[1].y - halfScreenH) / halfScreenH)
-                    }));
-                    
-                    // last point, add thickness to last point, or do something if closed loop
-                    adj_pts = getOffsetLinePoints(firstSegment[0], firstSegment[1], firstSegment[2], halfThickness);
-                    
-                    vertexObj->addVertex( cvglVertex({
-                        static_cast<float>((adj_pts[0].x - halfScreenW) / halfScreenW),
-                        static_cast<float>(-(adj_pts[0].y - halfScreenH) / halfScreenH)
-                    }));
-                    
-                    vertexObj->addVertex( cvglVertex({
-                        static_cast<float>((adj_pts[1].x - halfScreenW) / halfScreenW),
-                        static_cast<float>(-(adj_pts[1].y - halfScreenH) / halfScreenH)
-                    }));
-                    
+                    if( i == maxIdx && closed)
+                    {
+                        // last point, add thickness to last point, or do something if closed loop
+                        adj_pts = getOffsetLinePoints(p1, p2, firstSegment[0], halfThickness);
+                        cout << adj_pts[0] << " " << adj_pts[1] << endl;
+                        
+                        vertexObj->addVertex( cvglVertex({
+                            static_cast<float>((adj_pts[0].x - halfScreenW) / halfScreenW),
+                            static_cast<float>(-(adj_pts[0].y - halfScreenH) / halfScreenH)
+                        }));
+                        vertexObj->addVertex( cvglVertex({
+                            static_cast<float>((adj_pts[1].x - halfScreenW) / halfScreenW),
+                            static_cast<float>(-(adj_pts[1].y - halfScreenH) / halfScreenH)
+                        }));
+                        
+                        // last point, add thickness to last point, or do something if closed loop
+                        adj_pts = getOffsetLinePoints(p2, firstSegment[0], firstSegment[1], halfThickness);
+                        cout << adj_pts[0] << " " << adj_pts[1] << endl;
+                        
+                        vertexObj->addVertex( cvglVertex({
+                            static_cast<float>((adj_pts[0].x - halfScreenW) / halfScreenW),
+                            static_cast<float>(-(adj_pts[0].y - halfScreenH) / halfScreenH)
+                        }));
+                        
+                        vertexObj->addVertex( cvglVertex({
+                            static_cast<float>((adj_pts[1].x - halfScreenW) / halfScreenW),
+                            static_cast<float>(-(adj_pts[1].y - halfScreenH) / halfScreenH)
+                        }));
+                        
+                        // last point, add thickness to last point, or do something if closed loop
+                        adj_pts = getOffsetLinePoints(firstSegment[0], firstSegment[1], firstSegment[2], halfThickness);
+                        cout << adj_pts[0] << " " << adj_pts[1] << endl;
+                        
+                        vertexObj->addVertex( cvglVertex({
+                            static_cast<float>((adj_pts[0].x - halfScreenW) / halfScreenW),
+                            static_cast<float>(-(adj_pts[0].y - halfScreenH) / halfScreenH)
+                        }));
+                        
+                        vertexObj->addVertex( cvglVertex({
+                            static_cast<float>((adj_pts[1].x - halfScreenW) / halfScreenW),
+                            static_cast<float>(-(adj_pts[1].y - halfScreenH) / halfScreenH)
+                        }));
+                        
+                    }
                 }
+                
                 
                 lineTurn.pop_front();
             }
               
         }
+        vertexObj->endObj();
+    }
+    
+    pair<Point2f, float> computeMiter(cv::Point2f lineA, cv::Point2f lineB, float halfThickness)
+    {
+//        cout << "computeMiter" << lineA << " " << lineB << endl;
+        auto tangent = normalized( lineA + lineB );
+        auto miter = normal(tangent);
+        auto tmp = normal(lineA);
+        
+        auto miterLen = halfThickness / miter.dot(tmp);
+        
+  //      cout << "results " << tangent << " " << miter << " " << tmp << " " << miterLen << "\n" << endl;
+
+        return make_pair(miter, miterLen);
+    }
+    
+    vector< pair<Point2f, float> > getNormals( vector<Point2f> points, const bool closed )
+    {
+        vector< pair<Point2f, float> > normals;
+        const auto nullPt = Point2f(-111,-111);
+        auto curNormal = nullPt;
+        
+        if( closed )
+            points.emplace_back( points.front() );
+        
+        int npoints = (int)points.size();
+
+        for(int i = 1; i < npoints; i++)
+        {
+            auto last = points[i-1];
+            auto cur = points[i];
+            auto next = i < npoints-1 ? points[i+1] : nullPt;
+            
+            auto lineA = direction(cur, last);
+            
+            if( curNormal == nullPt )
+                curNormal = normal(lineA);
+        
+            if( i == 1 )
+                normals.emplace_back( curNormal, 1 );
+
+            if( next == nullPt )
+            {
+                curNormal = normal(lineA); // pretty sure this isn't necessary
+                normals.emplace_back( curNormal, 1 );
+            }
+            else
+            {
+                if( next == cur )
+                {
+                    curNormal = normal(lineA); // pretty sure this isn't necessary
+                    normals.emplace_back( curNormal, 1.0 );
+                }
+                else
+                {
+                    auto lineB = direction(next, cur);
+                    normals.emplace_back( computeMiter(lineA, lineB, 1.0) );
+                }
+                
+                
+            }
+            
+        }
+        
+        if( npoints > 2 && closed )
+        {
+            auto last2 = points[npoints-2];
+            auto cur2 = points[0];
+            auto next2 = points[1];
+            
+            auto lineA = direction(cur2, last2);
+
+            auto lineB = direction(next2, cur2);
+            curNormal = normal(lineA);
+
+//            cout << "lineB" << next2 << " " << cur2 << endl;
+
+            auto miterLen2 = computeMiter(lineA, lineB, 1.0);
+            normals[0] = miterLen2;
+            /*
+            normals.back() = miterLen2;
+            normals.pop_back(); // ?
+             */
+        }
+        
+        return normals;
+    }
+    
+    void linePointsToPolygon(const vector<Point2f>& points, unique_ptr<cvglObject>& vertexObj, const float halfScreenW, const float halfScreenH, const float thickness, const bool closed )
+    {
+        const float halfThickness = thickness * 0.5;
+
+        auto normalMiters = getNormals(points, closed);
+        
+    //    cout << normalMiters.size() << " " << points.size() << endl;
+
+        int npoints = (int)points.size();
+        
+        vertexObj->newObj();
+        for(int i = 0; i < npoints; i++)
+        {
+            auto normLen = normalMiters[i];
+            auto norm = normLen.first;
+            auto len = normLen.second;
+       //     cout << "norm >> " << norm << " " << len << endl;
+
+            auto refPt = points[i];
+            
+            auto p1 = refPt + norm * len * halfThickness;
+            auto p2 = refPt + norm * -len * halfThickness;
+
+//            cout << "points " << p1 << " " << p2 << endl;
+            vertexObj->addVertex( cvglVertex({
+                static_cast<float>((p1.x - halfScreenW) / halfScreenW),
+                static_cast<float>(-(p1.y - halfScreenH) / halfScreenH)
+            }));
+            
+            vertexObj->addVertex( cvglVertex({
+                static_cast<float>((p2.x - halfScreenW) / halfScreenW),
+                static_cast<float>(-(p2.y - halfScreenH) / halfScreenH)
+            }));
+          
+        }
+        
+        if( closed )
+        {
+            auto normLen = normalMiters.front();
+            auto norm = normLen.first;
+            auto len = normLen.second;
+            
+            auto refPt = points.front();
+            
+            auto p1 = refPt + norm * len * halfThickness;
+            auto p2 = refPt + norm * -len * halfThickness;
+            
+            vertexObj->addVertex( cvglVertex({
+                static_cast<float>((p1.x - halfScreenW) / halfScreenW),
+                static_cast<float>(-(p1.y - halfScreenH) / halfScreenH)
+            }));
+            
+            vertexObj->addVertex( cvglVertex({
+                static_cast<float>((p2.x - halfScreenW) / halfScreenW),
+                static_cast<float>(-(p2.y - halfScreenH) / halfScreenH)
+            }));
+        }
+        
         vertexObj->endObj();
     }
     

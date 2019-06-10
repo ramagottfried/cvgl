@@ -88,7 +88,7 @@ void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &ana
     hullMesh->reserve( npoints );
     
     minrectMesh->clear();
-    minrectMesh->reserve( analysis.contours.size() * 4 );
+    minrectMesh->reserve( analysis.contours.size() * 4 * 2 );
     
     for( int i = 0 ; i < analysis.contour_idx.size(); i++ )
     {
@@ -103,7 +103,9 @@ void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &ana
         analysis.minRec_vec[i].points( rectPts );
         vector<Point2f> rect_v(rectPts, rectPts+4);
         
-        cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, analysis.halfW, analysis.halfH, 10);
+        cvgl::linePointsToPolygon(rect_v, minrectMesh, analysis.halfW, analysis.halfH, 1, true);
+        
+        //cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, analysis.halfW, analysis.halfH, 10);
     }
     
 
@@ -137,28 +139,28 @@ void cvglMainProcess::draw()
     frameTex->setTexture( m_frame );
     rect->draw();
     rect->unbind();
-    
+  
     contourMesh->bind();
-    
+  
     contourMesh->draw(GL_TRIANGLES);
     colorTex[2]->bind();
-    
+  
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     contourMesh->draw(GL_TRIANGLES);
-    
+  
     contourMesh->unbind();
-
+ 
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-    
-    minrectMesh->bind();
-    colorTex[1]->bind();
-    minrectMesh->draw(GL_LINES);
-    minrectMesh->unbind();
-    
     hullMesh->bind();
     colorTex[2]->bind();
     hullMesh->draw(GL_TRIANGLE_STRIP);//vector<int>({GL_TRIANGLES, GL_POINTS}));
     hullMesh->unbind();
+  
+ //   glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    minrectMesh->bind();
+    colorTex[1]->bind();
+    minrectMesh->draw(GL_TRIANGLE_STRIP);
+    minrectMesh->unbind();
     
     context.drawAndPoll();
     
