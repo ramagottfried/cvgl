@@ -97,12 +97,12 @@ public:
 private:
     
     GLFWwindow* m_window = nullptr;
-    GLuint m_shaderProgram;
-    GLuint m_vertexShader;
-    GLuint m_fragmentShader;
+    GLuint m_shaderProgram = 0;
+    GLuint m_vertexShader = 0;
+    GLuint m_fragmentShader = 0;
     
     double m_aspectRatio = 1.0;
-    GLint m_scaleAttrib;
+    GLint m_scaleAttrib = 0;
     
     bool m_should_close = false;
 

@@ -222,7 +222,7 @@ void OdotMessage::appendValue( const OdotBundle& bndl )
     osc_message_u_appendBndl_u( ptr.get(), (t_osc_bndl_u *)OdotBundle( bndl ).release() );
 }
 
-vector<OdotAtom> OdotMessage::getAtoms()
+vector<OdotAtom> OdotMessage::getAtoms() const
 {
     vector<OdotAtom> atom_array;
     for( int i = 0; i < osc_message_u_getArgCount( ptr.get() ); i++ )

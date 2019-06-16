@@ -162,7 +162,6 @@ void cvglObject::draw( int drawtype )
     for( size_t i = 0; i < m_start.size(); ++i )
     {
         if( m_tex[i] ){
-            cout << "binding texture " << m_tex[i] << endl;
             glBindTexture( GL_TEXTURE_2D, m_tex[i] );
         }
         
@@ -182,13 +181,34 @@ void cvglObject::addVertexIndexArray( vector<GLuint> idx )
    
     m_idx_start.emplace_back( m_idx.size() );
     
-    for( auto& n : idx )
+    const size_t start_pt = m_start.back();
+    for( const auto& n : idx )
     {
-        m_idx.emplace_back(n + m_start.back() );
+        m_idx.emplace_back(n + start_pt );
     }
+    
     m_idx_size.emplace_back( (GLuint)idx.size() );
 
     m_useElementArray = true;
+    
+}
+
+void cvglObject::rewriteVerticesWithIds( vector<GLuint> idx )
+{
+    size_t n_verts = idx.size();
+    auto prev_size = m_vertices.size() - m_size.back();
+    m_vertices.resize(prev_size + n_verts);
+    
+    auto vert_list = m_vert_list[ m_start.back() ];
+    size_t v_idx = m_start.back();
+    
+    for( const auto& i : idx )
+    {
+        m_vertices[v_idx++] = cvglVertex({ (float)get<0>(vert_list[i]), (float)get<1>(vert_list[i]) });
+    }
+    
+    m_size.back() = n_verts;
+
 }
 
 
@@ -198,9 +218,13 @@ void cvglObject::triangulate()
 
     if( m_size.back() > 2 ){
         
-        //timer.markStart();
-        addVertexIndexArray( mapbox::earcut<GLuint>( vector< cvglPolygon >({ m_vert_list[ m_start.back() ] }) ) );
+      //  timer.markStart();
+        auto _vec = mapbox::earcut<GLuint>( vector< cvglPolygon >({ m_vert_list[ m_start.back() ] }) );
+//        cout << _vec.size() << endl;;
         //timer.markEnd();
+
+        if( _vec.size() > 2 && _vec.size() % 3 == 0 )
+            rewriteVerticesWithIds( _vec );
 
     }
 

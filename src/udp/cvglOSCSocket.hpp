@@ -11,12 +11,20 @@ class cvglOSCSocket
 public:    
     cvglOSCSocket();
     ~cvglOSCSocket();
-    void stop();
+    void close();
     static void alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf);
     static void on_send(uv_udp_send_t *req, int status);
+    
+    /**
+     *  on_read
+     *  receives messages via UDP, and 
+     */
+    
     static void on_read(uv_udp_t *req, ssize_t nread, const uv_buf_t *buf, const struct sockaddr *addr, unsigned flags);
-    void sendBundle( OdotBundle& b);
+    void sendBundle( OdotBundle& b, bool slip = false );
     OdotBundle getBundle();
+    
+    virtual void processBundleUpdate( OdotBundle & b ) {}
     
 private:
     

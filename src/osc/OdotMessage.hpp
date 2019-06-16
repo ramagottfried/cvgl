@@ -50,7 +50,7 @@ public:
     
     OdotAtom operator[](int i) const;
     
-    vector<OdotAtom> getAtoms();
+    vector<OdotAtom> getAtoms() const;
     
     inline string getString(int argIndex = 0) const { return ((*this)[argIndex]).getString(); }
     inline float getFloat(int argIndex = 0) const { return  osc_atom_u_getFloat( osc_message_u_getArg( ptr.get(), argIndex ) ); }

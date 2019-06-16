@@ -16,11 +16,13 @@ void processInput(GLFWwindow *window)
 
 void global_resize_callback( GLFWwindow* win, int w, int h)
 {
+    //std::cout << windowReg[win] << " " << win << " " << w << " " << h << std::endl;
     windowReg[win]->resize_callback(w, h);
 }
 
 
 void logWindow(GLFWwindow* win, cvglContext* context)
 {
+    //std::cout << "win ptr " << win << " " << context << std::endl;
     windowReg.emplace( win, context );
 }

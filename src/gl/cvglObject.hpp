@@ -30,9 +30,11 @@ public:
     void draw( int drawtype );
     void initStaticDraw();
     
-    void addVertexIndexArray( std::vector<GLuint> idx ); // not implemented yet
-    
     void triangulate();
+    
+    void addVertexIndexArray( std::vector<GLuint> idx );
+    void rewriteVerticesWithIds( std::vector<GLuint> idx );
+    
 private:
     cvglVAO m_VAO;
     GLuint m_draw_mode = GL_STREAM_DRAW;

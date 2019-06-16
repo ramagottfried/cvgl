@@ -16,13 +16,14 @@ public:
         // wrap parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        
+
         // interpolation
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
         // Mipmap not sure if this is supposed to be used with the interpolation or not
         glGenerateMipmap(GL_TEXTURE_2D);
+        
         
         glBindTexture(GL_TEXTURE_2D, 0);
     }

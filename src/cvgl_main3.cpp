@@ -18,21 +18,15 @@ int main( void )
     app.initObjs();
     app.start();
     
+    // main GL loop
     while( !app.context.shouldClose() )
     {
-        
         app.draw();
-
-        // not a good idea to check bundle in draw loop here
-        auto b = app.osc.getBundle();
-        if( b.size() )
-            cout << b.size() << endl;
-
     }
     
     app.stop();
     
-    app.osc.stop();
+   // app.osc.stop();
     
     return 0;
 }

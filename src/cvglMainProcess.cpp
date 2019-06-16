@@ -4,6 +4,7 @@
 using namespace std;
 using namespace cv;
 
+
 /**
  *  initObjects()
  *  init function to setup VBOs for GL objects, must be called after context setup is complete
@@ -22,6 +23,7 @@ void cvglMainProcess::initObjs()
     colorTex[0] =  unique_ptr<cvglTexture>(new cvglTexture);
     colorTex[1] =  unique_ptr<cvglTexture>(new cvglTexture);
     colorTex[2] =  unique_ptr<cvglTexture>(new cvglTexture);
+    contourTex =  unique_ptr<cvglTexture>(new cvglTexture);
 
     triangle->newObj(GL_LINE_LOOP);
     triangle->addVertex(cvglVertex({-0.5f, -0.5f, 0.0f,  0,  1 }));
@@ -44,32 +46,100 @@ void cvglMainProcess::initObjs()
     colorTex[1]->setTexture(1, 0, 1, 1);
     colorTex[2]->setTexture(1, 1, 1, 0.9);
     
+    contourTex->setTexture(0, 0, 0, 0.75);
+    
     cvglProfile timer;
     objects_initialized = true;
     
     context.clearColor(0, 0, 0, 1);
     
+    
     cout << objects_initialized << endl;
 }
+
+void cvglMainProcess::processBundleUpdate( OdotBundle & b )
+{
+    lock_guard<mutex> lock_osc(m_osc_lock);
+    auto msgs = b.getMessageArray();
+    cvglCV::setParams(msgs);
+
+    setGLparams(msgs);
+
+    // to do:
+    // pass to cv object to parse into parameters
+    // pass to (this) gl routine to set GL parameters
+    
+    
+    
+//    for( auto& m : b.getMessageArray() )
+//    {
+//        auto& addr = m.getAddress();
+//        if( addr == )
+//    }
+    
+}
+
+/**
+ *  sets GL parameters from bundle -> note::: must be set on the GL thread!
+ *  so we need to store the GL params and only set them from the GL draw
+ */
+void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
+{
+    for( auto& m : b )
+    {
+        const string& addr = m.getAddress();
+        
+        if( addr == "/contour/color" )
+        {
+            std::vector<float> _rgba;
+            for( auto & a : m.getAtoms() )
+            {
+                _rgba.emplace_back( a.getFloat() );
+            }
+            
+            for( int i = (int)_rgba.size()-1; i < 4; i++)
+            {
+                _rgba.emplace_back(1);
+            }
+            
+            m_contour_rgba = _rgba;
+        }
+        else if( addr == "/thresh" )
+        {
+            
+        }
+        else if( addr == "/parentsonly" )
+        {
+        }
+    }
+}
+
+
 
 /**
  *  virtual function callback from camera loops
  */
 void cvglMainProcess::processFrame(cv::Mat frame)
 {
-    lock_guard<mutex> lock(m_lock);
+    lock_guard<mutex> lock(m_gl_lock);
     newframe = true;
     m_frame = frame.clone();
     
     if( !m_frame.data || !objects_initialized )
         return;
     
-    preprocess( m_frame );
+    lock_guard<mutex> lock_osc(m_osc_lock);
 
+    //preprocess( m_frame );
+    //preprocessDifference( m_frame );
+    preprocessCanny( m_frame );
+    
     //    cvx.getFlow( flowMesh );
-
-    processAnalysisVectors( analyzeContour() );
+    auto vecs = analyzeContour();
+    
+    processAnalysisVectors( vecs );
 }
+
 
 
 void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &analysis)
@@ -117,7 +187,7 @@ void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &ana
  */
 void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
 {
-    osc.sendBundle(bndl);
+    sendBundle(bndl);
 }
 
 /**
@@ -125,7 +195,7 @@ void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
  */
 void cvglMainProcess::draw()
 {
-    lock_guard<mutex> lock(m_lock);
+    lock_guard<mutex> lock(m_gl_lock);
 
     if( !context.isActive() || !objects_initialized || !m_frame.data || !newframe ){
         return;
@@ -139,16 +209,18 @@ void cvglMainProcess::draw()
     frameTex->setTexture( m_frame );
     rect->draw();
     rect->unbind();
-  
+
     contourMesh->bind();
-  
+    contourTex->setTexture(m_contour_rgba);
     contourMesh->draw(GL_TRIANGLES);
+    
+    /*
     colorTex[2]->bind();
-  
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     contourMesh->draw(GL_TRIANGLES);
-  
-    contourMesh->unbind();
+  */
+    
+ //   contourMesh->unbind();
  
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
     hullMesh->bind();
@@ -163,6 +235,8 @@ void cvglMainProcess::draw()
     minrectMesh->unbind();
     
     context.drawAndPoll();
+    
+//    context.printFPS();
     
     newframe = false;
     //cout << " << end draw, newframe " << newframe << "\n" << endl;

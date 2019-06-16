@@ -13,13 +13,18 @@ void cvglCV::preprocess(Mat& mat)
     // or keep these all as class members and then query them as needed..
     if( m_img.empty() )
     {
-        cout << "no image" << endl;
+        cout << "no image, huh?" << endl;
         return;
     }
   
     cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
     
     cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
+    
+    if( m_invert )
+    {
+        
+    }
     
     GaussianBlur(src_gray, src_blur_gray, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
     erode( src_blur_gray, src_blur_gray, m_er_element );
@@ -38,6 +43,117 @@ void cvglCV::preprocess(Mat& mat)
     //  toDisplay = threshold_output;
     
 }
+
+
+void cvglCV::preprocessDifference(Mat& mat)
+{
+    
+    if( mat.empty() )
+    {
+        return;
+    }
+    
+    m_img = mat.clone();
+    
+    if( m_prev_frame.empty() )
+    {
+        m_prev_frame = m_img.clone();
+    }
+    
+    Mat diff = m_prev_frame - m_img;
+    
+   // mat = diff;
+    
+    m_prev_frame = m_img.clone();
+    
+
+    cv::resize(diff, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
+    
+    cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
+    
+    
+    
+    if( m_invert )
+    {
+        
+    }
+    
+    GaussianBlur(src_gray, src_blur_gray, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
+    erode( src_blur_gray, src_blur_gray, m_er_element );
+    dilate( src_blur_gray, src_blur_gray, m_di_element );
+    
+    threshold( src_blur_gray, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
+    
+    Sobel(src_gray, sob, CV_32F, 1, 1);
+    
+    // add sobel here?
+    
+    // canny? for focus part?
+    
+    // optical flow? ... maybe CNN later?
+    
+    //  toDisplay = threshold_output;
+    
+}
+
+void cvglCV::preprocessCanny(Mat& mat)
+{
+    
+    if( mat.empty() )
+    {
+        return;
+    }
+    
+    m_img = mat.clone();
+    
+    if( m_prev_frame.empty() )
+    {
+        m_prev_frame = m_img.clone();
+    }
+    
+    m_prev_frame = m_img.clone();
+    
+    cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
+    cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
+    
+    mat = src_gray;
+    
+    if( m_invert )
+    {
+        
+    }
+    
+    GaussianBlur(src_gray, src_blur_gray, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
+    erode( src_blur_gray, src_blur_gray, m_er_element );
+    dilate( src_blur_gray, src_blur_gray, m_di_element );
+    
+    Mat can;
+    cv::Canny(src_blur_gray, can, m_canny_min, m_canny_max, 3);
+    
+    Mat can_blur;
+    GaussianBlur(can, can_blur, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
+    erode( can_blur, can_blur, m_er_element );
+    dilate( can_blur, can_blur, m_di_element );
+
+//    src_gray = can;
+    
+    threshold( can_blur, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
+    
+    Sobel(src_gray, sob, CV_32F, 1, 1);
+    
+    
+    cv::cvtColor(src_gray+can, mat, cv::COLOR_GRAY2RGB);
+
+    // add sobel here?
+    
+    // canny? for focus part?
+    
+    // optical flow? ... maybe CNN later?
+    
+    //  toDisplay = threshold_output;
+    
+}
+
 
 void cvglCV::getFlow( unique_ptr<cvglObject>& outFlow)
 {
