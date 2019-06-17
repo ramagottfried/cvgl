@@ -37,6 +37,10 @@ public:
 
     virtual void processFrame( cv::Mat frame ) {}
     
+    inline void setProcessFrameCallback( std::function<void (cv::Mat frame)> & cb )
+    {
+        m_processFrameCallback = cb;
+    }
     
     HRESULT STDMETHODCALLTYPE QueryInterface (REFIID iid, LPVOID *ppv) override;
     ULONG   STDMETHODCALLTYPE AddRef () override;
@@ -57,6 +61,8 @@ public:
     bool newframe = false;
 
 private:
+    
+    std::function<void (cv::Mat frame)> m_processFrameCallback;
     
     int m_width = 0;
     int m_height = 0;

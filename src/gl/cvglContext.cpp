@@ -7,15 +7,17 @@ using namespace std;
 
 void cvglContext::resize_callback(int w, int h)
 {
-    if( m_scaleAttrib )
+    
+    if( m_transformAttrib )
     {
         double aspect = (double)w / (double)h;
         double adjust = aspect /  m_aspectRatio ;
         
         std::cout << "new aspect " << aspect << " src aspect " << m_aspectRatio << " adjust Y " << adjust << std::endl;
 
-        
-            glUniform3f(m_scaleAttrib, 1, adjust, 1 );
+        m_transform_matrix = glm::scale( glm::mat4(1.0f), glm::vec3(1.0f, adjust, 1.0f) );
+    
+        glUniformMatrix4fv(m_transformAttrib, 1, GL_FALSE, &m_transform_matrix[0][0]);
 
     }
 
@@ -182,9 +184,9 @@ int cvglContext::loadShaders(const char * vertex_src, const char * fragment_src)
     
     glUseProgram(m_shaderProgram);
     
-    m_scaleAttrib = glGetUniformLocation(m_shaderProgram, "scalar");
+    m_transformAttrib = glGetUniformLocation(m_shaderProgram, "transform_matrix");
     
-    if( m_scaleAttrib == -1 )
+    if( m_transformAttrib == -1 )
     {
         cout << "failed to find m_scaleAttrib " << endl;
     //    return 0;
@@ -192,7 +194,7 @@ int cvglContext::loadShaders(const char * vertex_src, const char * fragment_src)
     
     glBindFragDataLocation(m_shaderProgram, 0, "outColor");
 
-    glUniform3f(m_scaleAttrib, 1.0f, 1.0f, 1.0f );
+    glUniformMatrix4fv(m_transformAttrib, 1, GL_FALSE, &m_transform_matrix[0][0]);
     
     glDetachShader(m_shaderProgram, m_vertexShader);
     glDetachShader(m_shaderProgram, m_fragmentShader);

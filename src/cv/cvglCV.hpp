@@ -173,7 +173,7 @@ private:
     float m_resize = 0.5;
     
     bool m_invert = false;
-    int m_thresh = 0;
+    int m_thresh = 30;
     float m_minsize = 0.00;
     float m_maxsize = 0.9;
     bool m_parents_only = 0;

@@ -31,7 +31,6 @@ public:
     //void setMatTexture(cv::Mat mat);
     
     inline GLuint getShader(){ return m_shaderProgram; }
-    inline void setScalarAttribute(GLuint attrID) { m_scaleAttrib = attrID; }
     
     inline bool isActive()
     {
@@ -102,7 +101,9 @@ private:
     GLuint m_fragmentShader = 0;
     
     double m_aspectRatio = 1.0;
-    GLint m_scaleAttrib = 0;
+
+    GLint m_transformAttrib = 0;
+    glm::mat4 m_transform_matrix = glm::mat4(1.0f);
     
     bool m_should_close = false;
 

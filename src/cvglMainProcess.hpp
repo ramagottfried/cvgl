@@ -17,12 +17,10 @@ public:
     cvglContext context;
     // cvglOSCSocket osc;
     
-    bool drawFrame;
-    std::unique_ptr<cvglObject> triangle, contourMesh, hullMesh, minrectMesh, flowMesh, rect;
-    std::unique_ptr<cvglTexture> colorTex[3], frameTex, contourTex;
+    std::unique_ptr<cvglObject>     rect, contourMesh, hullMesh, minrectMesh, flowMesh;
+    std::unique_ptr<cvglTexture>    frameTex, contourTex, contourTriTex, hullTex, minrectTex, flowTex;
     
     cv::Mat m_frame;
-    bool newframe = false;
     
     bool objects_initialized = false;
    
@@ -45,14 +43,29 @@ public:
     
     void setGLparams( const vector<OdotMessage> & b );
 
+    std::vector<float> getRGBA( const OdotMessage & msg );
     
 private:
     
     std::mutex m_gl_lock, m_osc_lock;
     
-
+    bool m_draw_frame = true;
+    
+    bool m_draw_contour = true;
+    bool m_draw_contour_triangles = false;
+    
+    bool m_draw_hull = true;
+    bool m_draw_minrect = true;
+    
     std::vector<float> m_contour_rgba;
+    std::vector<float> m_contour_triangles_rgb;
 
+    std::vector<float> m_hull_rgba;
+    std::vector<float> m_minrect_rgba;
+
+    float m_hull_line_thickness = 1;
+    float m_minrect_line_thickness = 1;
+    float m_contour_line_thickness = 1;
     
 };
 
