@@ -149,9 +149,9 @@ void cvglMainProcess::processFrame(cv::Mat frame)
     
     lock_guard<mutex> lock_osc(m_osc_lock);
 
-    preprocess( m_frame );
+    //preprocess( m_frame );
     //preprocessDifference( m_frame );
-    //preprocessCanny( m_frame );
+    preprocessCanny( m_frame );
     
     //    cvx.getFlow( flowMesh );
     auto vecs = analyzeContour();

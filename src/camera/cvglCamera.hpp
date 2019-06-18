@@ -20,7 +20,6 @@ public:
     virtual ~cvglCamera(void) override
     {
         stop();
-        
         Release();
     }
     
