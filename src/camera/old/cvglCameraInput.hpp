@@ -78,7 +78,7 @@ private:
     bool blackmagic = false;
     
     Blackmagic_cb *         m_blackmagic_callback;
-    IDeckLinkAttributes*    deckLinkAttributes = NULL;
+    IDeckLinkProfileAttributes*    deckLinkAttributes = NULL;
     IDeckLink*              deckLink = NULL;
     IDeckLinkInput*         deckLinkInput = NULL;
     

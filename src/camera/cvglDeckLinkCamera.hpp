@@ -6,40 +6,28 @@
 #include "DeckLinkAPI.h"
 #include "platform.h"
 
-#include "opencv2/highgui.hpp"
-#include "opencv2/core/utility.hpp"
-#include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
+#include "cvglCameraBase.hpp"
 
 
-class cvglCamera : public IDeckLinkInputCallback
+class cvglDeckLinkCamera : public cvglCameraBase, public IDeckLinkInputCallback
 {
 public:
-    cvglCamera();
+    cvglDeckLinkCamera(int index = 1);
     
-    virtual ~cvglCamera(void) override
+    virtual ~cvglDeckLinkCamera(void) override
     {
         stop();
         Release();
     }
     
-    int blackmagicScan();
-
-    void bmCamLoop();
-    void cvCamLoop();
+    int blackmagicScan( int index );
+    int blackmagicScanAll();
     
     void start();
     void pause();
     void stop();
     
-    void stopBMD();
-
-    virtual void processFrame( cv::Mat frame ) {}
-    
-    inline void setProcessFrameCallback( std::function<void (cv::Mat frame)> & cb )
-    {
-        m_processFrameCallback = cb;
-    }
     
     HRESULT STDMETHODCALLTYPE QueryInterface (REFIID iid, LPVOID *ppv) override;
     ULONG   STDMETHODCALLTYPE AddRef () override;
@@ -53,35 +41,18 @@ public:
                                                       IDeckLinkAudioInputPacket* audioPacket ) override;
     
     
-    inline bool hasCamera() { return m_opencamera; }
-    inline int getWidth() { return m_width; }
-    inline int getHeight() { return m_height; }
-    
-    bool newframe = false;
-
 private:
     
-    std::function<void (cv::Mat frame)> m_processFrameCallback;
-    
-    int m_width = 0;
-    int m_height = 0;
-
-    cv::VideoCapture cap;
-    std::thread m_cvCam_thread;
-    
     bool blackmagic = false;
-    bool m_opencamera = false;
-    bool m_stop_cv_loop = false;
-    
     
     INT32_SIGNED m_refCount;
     
     std::mutex m_mutex;
     
     bool init_softlock = true;
+    bool m_isplaying = false;
     
-
-    IDeckLinkAttributes*    m_deckLinkAttributes = NULL;
+    IDeckLinkProfileAttributes*    m_deckLinkAttributes = NULL;
     IDeckLink*              m_deckLink = NULL;
     IDeckLinkInput*         m_deckLinkInput = NULL;
     

@@ -22,10 +22,9 @@ cvglOSCSocket::cvglOSCSocket()
     uv_ip4_addr("0.0.0.0", m_send_port, &bind_addr);
     uv_udp_bind(&send_socket_handle, (const struct sockaddr *)&bind_addr, 0);
     
-    cout << "starting loop " << endl;
     
     thread udp_thread( uv_run, loop, UV_RUN_DEFAULT );
-    cout << "starting loop " <<  loop << endl;
+    cout << "starting UDP loop " <<  loop << endl;
 
     // sets send port, adjust somewhere else if needed
     uv_ip4_addr(send_ip_addr.c_str(), m_send_port, &send_addr);

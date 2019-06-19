@@ -5,7 +5,7 @@ using namespace std;
 
 cvglCamera::cvglCamera() : m_refCount(1)
 {
-    if( blackmagicScan() == 0 )
+    if( blackmagicScanAll() == 0 )
     {
         blackmagic = true;
         
@@ -78,6 +78,7 @@ void cvglCamera::pause()
 
 void cvglCamera::stopBMD()
 {
+    
     if( m_deckLinkInput )
     {
         // Stop capture
@@ -153,7 +154,7 @@ int cvglCamera::blackmagicScan()
     }
     
     // Obtain the Attributes interface for the DeckLink device
-    result = m_deckLink->QueryInterface(IID_IDeckLinkAttributes, (void**)&m_deckLinkAttributes);
+    result = m_deckLink->QueryInterface(IID_IDeckLinkProfileAttributes, (void**)&m_deckLinkAttributes);
     if (result != S_OK)
     {
         fprintf(stderr, "Could not obtain the IDeckLinkAttributes interface - result = %08x\n", result);
@@ -217,6 +218,145 @@ bail:
     
 }
 
+
+int cvglCamera::blackmagicScanAll()
+{
+    
+    IDeckLinkIterator * deckLinkIterator = NULL;
+    HRESULT             result;
+    BOOL                supported;
+    INT8_UNSIGNED       returnCode = 1;
+    
+    Initialize();
+    
+    // Create an IDeckLinkIterator object to enumerate all DeckLink cards in the system
+    if (GetDeckLinkIterator(&deckLinkIterator) != S_OK)
+    {
+        fprintf(stderr, "A DeckLink iterator could not be created.  The DeckLink drivers may not be installed.\n");
+        goto bail;
+    }
+    
+    while( deckLinkIterator->Next(&m_deckLink) == S_OK )
+    {
+        CFStringRef name;
+        m_deckLink->GetDisplayName(&name);
+        const char *cs = CFStringGetCStringPtr( name, kCFStringEncodingMacRoman ) ;
+        cout << "device check : " << cs << endl;
+        CFRelease(name);
+        
+        if( m_deckLink->QueryInterface(IID_IDeckLinkProfileAttributes, (void**)&m_deckLinkAttributes) == S_OK &&
+           m_deckLinkAttributes->GetFlag(BMDDeckLinkSupportsInputFormatDetection, &supported) == S_OK &&
+           supported &&
+           m_deckLink->QueryInterface(IID_IDeckLinkInput, (void**)&m_deckLinkInput) == S_OK )
+        {
+            
+            if( m_deckLinkInput->EnableVideoInput(bmdModeNTSC, bmdFormat8BitYUV, bmdVideoInputEnableFormatDetection) == S_OK)
+            {
+                if( m_deckLinkInput->StartStreams() == S_OK )
+                {
+  
+                    // in preview, the no input source is triggered in the frame callback
+                    //  BOOL hasValidInputSource = (videoFrame->GetFlags() & bmdFrameHasNoInputSource) != 0 ? NO : YES;
+                    
+                    cout << "enabled input" << endl;
+                    // m_deckLinkInput->StopStreams();
+                }
+            }
+            
+            
+//            uint32_t nfram;
+//            int64_t supportedInputConnections;
+//            m_deckLinkAttributes->GetInt(BMDDeckLinkVideoInputConnections, &supportedInputConnections);
+//
+//            m_deckLinkInput->GetAvailableVideoFrameCount(&nfram);
+//            cout << nfram << " " << supportedInputConnections << endl;
+//
+//            // ;
+//
+        }
+    }
+    
+    if( deckLinkIterator )
+        deckLinkIterator->Release();
+
+    return -1;
+        
+    // Obtain the first DeckLink device
+    result = deckLinkIterator->Next(&m_deckLink);
+    if (result != S_OK)
+    {
+        fprintf(stderr, "Could not find DeckLink device - result = %08x\n", result);
+        goto bail;
+    }
+    
+    // Obtain the Attributes interface for the DeckLink device
+    result = m_deckLink->QueryInterface(IID_IDeckLinkProfileAttributes, (void**)&m_deckLinkAttributes);
+    if (result != S_OK)
+    {
+        fprintf(stderr, "Could not obtain the IDeckLinkAttributes interface - result = %08x\n", result);
+        goto bail;
+    }
+    
+    // Determine whether the DeckLink device supports input format detection
+    result = m_deckLinkAttributes->GetFlag(BMDDeckLinkSupportsInputFormatDetection, &supported);
+    if ((result != S_OK) || (supported == false))
+    {
+        fprintf(stderr, "Device does not support automatic mode detection\n");
+        goto bail;
+    }
+    
+    // Obtain the input interface for the DeckLink device
+    result = m_deckLink->QueryInterface(IID_IDeckLinkInput, (void**)&m_deckLinkInput);
+    if (result != S_OK)
+    {
+        fprintf(stderr, "Could not obtain the Im_deckLinkInput interface - result = %08x\n", result);
+        goto bail;
+    }
+    
+    // Set the callback object to the DeckLink device's input interface
+    result = m_deckLinkInput->SetCallback( this );
+    if (result != S_OK)
+    {
+        fprintf(stderr, "Could not set callback - result = %08x\n", result);
+        goto bail;
+    }
+    
+    // set to 8 bit YUV
+    result = m_deckLinkInput->EnableVideoInput(bmdModeNTSC, bmdFormat8BitYUV, bmdVideoInputEnableFormatDetection);
+    if (result != S_OK)
+    {
+        fprintf(stderr, "Could not enable video input - result = %08x\n", result);
+        goto bail;
+    }
+    
+    printf("Starting streams\n");
+    
+    // Start capture
+    result = m_deckLinkInput->StartStreams();
+    if (result != S_OK)
+    {
+        fprintf(stderr, "Could not start capture - result = %08x\n", result);
+        goto bail;
+    }
+    
+    printf("Monitoring... Press <RETURN> to exit\n");
+    
+    // unlock when the image size is updated (hopefully)
+    m_mutex.lock();
+    
+    // getchar();
+    // return success
+    
+    deckLinkIterator->Release();
+    
+    return 0;
+    
+bail:
+    stopBMD();
+    
+    return returnCode;
+    
+}
 
 /* DeckLink */
 

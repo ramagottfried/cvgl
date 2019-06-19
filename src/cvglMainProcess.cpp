@@ -94,6 +94,10 @@ void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
         {
             m_draw_frame = m.getInt() > 1;
         }
+        else if( addr == "/use/camera" )
+        {
+            m_use_camera_id = m.getInt();
+        }
         else if( addr == "/enable/contour" )
         {
             m_draw_contour = m.getInt() > 1;
@@ -136,28 +140,65 @@ void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
 
 
 /**
- *  virtual function callback from camera loops
+ *  callback from camera loops
  */
-void cvglMainProcess::processFrame(cv::Mat frame)
+void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 {
-    lock_guard<mutex> lock(m_gl_lock);
-    newframe = true;
-    m_frame = frame.clone();
+    if( m_use_camera_id == camera_id )
+    {
+        lock_guard<mutex> lock(m_gl_lock);
+        m_newframe = true;
+        m_frame = frame.clone();
+        
+        if( !m_frame.data || !objects_initialized )
+            return;
+        
+        lock_guard<mutex> lock_osc(m_osc_lock);
+        
+        //preprocess( m_frame );
+        //preprocessDifference( m_frame );
+        preprocessCanny( m_frame );
+        
+        //    cvx.getFlow( flowMesh );
+        auto vecs = analyzeContour();
+        
+        processAnalysisVectors( vecs );
+    }
     
-    if( !m_frame.data || !objects_initialized )
-        return;
-    
-    lock_guard<mutex> lock_osc(m_osc_lock);
-
-    //preprocess( m_frame );
-    //preprocessDifference( m_frame );
-    preprocessCanny( m_frame );
-    
-    //    cvx.getFlow( flowMesh );
-    auto vecs = analyzeContour();
-    
-    processAnalysisVectors( vecs );
 }
+
+
+/**
+ *  callback from camera loops
+ */
+void cvglMainProcess::processFrameCV(cv::Mat & frame, int camera_id )
+{
+    
+    // cout << camera_id << endl;
+    
+    if( m_use_camera_id == camera_id )
+    {
+        lock_guard<mutex> lock(m_gl_lock);
+        m_newframe = true;
+        m_frame = frame.clone();
+        
+        if( !m_frame.data || !objects_initialized )
+            return;
+        
+        lock_guard<mutex> lock_osc(m_osc_lock);
+        
+        preprocess( m_frame );
+        //preprocessDifference( m_frame );
+        //preprocessCanny( m_frame );
+        
+        //    cvx.getFlow( flowMesh );
+        auto vecs = analyzeContour();
+        
+        processAnalysisVectors( vecs );
+    }
+    
+}
+
 
 
 
@@ -214,17 +255,15 @@ void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
  */
 void cvglMainProcess::draw()
 {
-    lock_guard<mutex> lock(m_gl_lock);
+    lock_guard<mutex> lock(m_gl_lock); // lock or wait for gl_lock and then lock
 
-    if( !context.isActive() || !objects_initialized || !m_frame.data || !newframe ){
+    if( !context.isActive() || !objects_initialized || !m_frame.data || !m_newframe ){
         return;
     }
 
-    // could alternatively skip overlay in cases where the camera and gl are in conflict, rather than waiting...
-
     context.clear();
  
-    if( m_draw_frame )
+    if( m_draw_frame && m_use_camera_id > 0 )
     {
         rect->bind();
         frameTex->setTexture( m_frame );
@@ -265,6 +304,6 @@ void cvglMainProcess::draw()
     
 //    context.printFPS();
     
-    newframe = false;
+    m_newframe = false;
     //cout << " << end draw, newframe " << newframe << "\n" << endl;
 }
