@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1149621D22C0AD6100F5B267 /* cvglUDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1149621B22C0AD6100F5B267 /* cvglUDPServer.cpp */; };
 		1151F2D522B9196C0099655F /* DeckLinkAPIDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2D422B9196C0099655F /* DeckLinkAPIDispatch.cpp */; };
 		1151F2D822B96C5D0099655F /* cvglDeckLinkCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2D622B96C5D0099655F /* cvglDeckLinkCamera.cpp */; };
 		1151F2DB22B96F720099655F /* cvglCVCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2D922B96F720099655F /* cvglCVCamera.cpp */; };
 		1151F2DF22B980990099655F /* cvglCameraBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2DD22B980990099655F /* cvglCameraBase.cpp */; };
+		116743A622C0C1A6008923FF /* udp-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 116743A522C0C1A6008923FF /* udp-test.cpp */; };
+		116743A922C0C28A008923FF /* cvglUDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1149621B22C0AD6100F5B267 /* cvglUDPServer.cpp */; };
 		118EDE3A21D98AB500F391D0 /* Info.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 118EDE3921D9866300F391D0 /* Info.plist */; };
 		11E7DFFC22AE51E90092490D /* osc_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E7DFAE22AE51E70092490D /* osc_scanner.h */; };
 		11E7DFFD22AE51E90092490D /* osc_timetag.c in Sources */ = {isa = PBXBuildFile; fileRef = 11E7DFAF22AE51E70092490D /* osc_timetag.c */; };
@@ -99,7 +102,6 @@
 		2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669D214BF299009BDD3B /* OdotAtom.cpp */; };
 		2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A6214BF299009BDD3B /* OdotBundle_s.cpp */; };
 		2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A7214BF299009BDD3B /* OdotExpr.cpp */; };
-		2112A4BF214DA3A300EC1C11 /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
 		2112A4C1214DA3A300EC1C11 /* cvglTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D48C214946E700345757 /* cvglTexture.cpp */; };
 		2112A4C2214DA3A300EC1C11 /* cvglContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4682147E7E000345757 /* cvglContext.cpp */; };
 		2112A4C3214DA3A300EC1C11 /* cvglConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C667F214BB794009BDD3B /* cvglConversions.cpp */; };
@@ -117,8 +119,6 @@
 		2112A4D3214DA3A300EC1C11 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2104B06221415CD700C2CF41 /* OpenGL.framework */; };
 		2112A4E6214DA3A300EC1C11 /* vertex.vs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4852149270900345757 /* vertex.vs */; };
 		2112A4E7214DA3A300EC1C11 /* fragment.fs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21D7D4862149274300345757 /* fragment.fs */; };
-		216C6692214BE7B0009BDD3B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6691214BE7B0009BDD3B /* main.cpp */; };
-		216C6696214BE7B8009BDD3B /* cvglOSCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */; };
 		216C66A9214BF299009BDD3B /* OdotBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669B214BF299009BDD3B /* OdotBundle.cpp */; };
 		216C66AB214BF299009BDD3B /* OdotAtom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669D214BF299009BDD3B /* OdotAtom.cpp */; };
 		216C66AD214BF299009BDD3B /* OdotMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A0214BF299009BDD3B /* OdotMessage.cpp */; };
@@ -165,6 +165,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1149621B22C0AD6100F5B267 /* cvglUDPServer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglUDPServer.cpp; sourceTree = "<group>"; };
+		1149621C22C0AD6100F5B267 /* cvglUDPServer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglUDPServer.hpp; sourceTree = "<group>"; };
 		1151F2D422B9196C0099655F /* DeckLinkAPIDispatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeckLinkAPIDispatch.cpp; path = "../../../Blackmagic DeckLink SDK 11.2/Mac/include/DeckLinkAPIDispatch.cpp"; sourceTree = "<group>"; };
 		1151F2D622B96C5D0099655F /* cvglDeckLinkCamera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglDeckLinkCamera.cpp; sourceTree = "<group>"; };
 		1151F2D722B96C5D0099655F /* cvglDeckLinkCamera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglDeckLinkCamera.hpp; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 		1151F2DA22B96F720099655F /* cvglCVCamera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCVCamera.hpp; sourceTree = "<group>"; };
 		1151F2DD22B980990099655F /* cvglCameraBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglCameraBase.cpp; sourceTree = "<group>"; };
 		1151F2DE22B980990099655F /* cvglCameraBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCameraBase.hpp; sourceTree = "<group>"; };
+		116743A522C0C1A6008923FF /* udp-test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "udp-test.cpp"; sourceTree = "<group>"; };
 		118EDE3921D9866300F391D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		11E7DFAE22AE51E70092490D /* osc_scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = osc_scanner.h; path = ../../libo/osc_scanner.h; sourceTree = "<group>"; };
 		11E7DFAF22AE51E70092490D /* osc_timetag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = osc_timetag.c; path = ../../libo/osc_timetag.c; sourceTree = "<group>"; };
@@ -265,16 +268,13 @@
 		21038D14214AECB10078F594 /* profiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = profiler; sourceTree = BUILT_PRODUCTS_DIR; };
 		21038D16214AECB10078F594 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2104B06221415CD700C2CF41 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		2112A4EB214DA3A300EC1C11 /* cvgl_blackmagic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cvgl_blackmagic; sourceTree = BUILT_PRODUCTS_DIR; };
+		2112A4EB214DA3A300EC1C11 /* CVGL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CVGL; sourceTree = BUILT_PRODUCTS_DIR; };
 		214352FC214EDDFA00329FE8 /* blackmagic_cb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = blackmagic_cb.cpp; sourceTree = "<group>"; };
 		214352FD214EDDFA00329FE8 /* blackmagic_cb.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = blackmagic_cb.hpp; sourceTree = "<group>"; };
 		216C667D214BB6F2009BDD3B /* cvglProfile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglProfile.hpp; sourceTree = "<group>"; };
 		216C667F214BB794009BDD3B /* cvglConversions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglConversions.cpp; sourceTree = "<group>"; };
 		216C6680214BB794009BDD3B /* cvglConversions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglConversions.hpp; sourceTree = "<group>"; };
 		216C6682214BB8F5009BDD3B /* cvglPrint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cvglPrint.h; sourceTree = "<group>"; };
-		216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglOSCSocket.cpp; sourceTree = "<group>"; };
-		216C6685214BC62E009BDD3B /* cvglOSCSocket.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglOSCSocket.hpp; sourceTree = "<group>"; };
-		216C668A214BE42A009BDD3B /* uv-temp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "uv-temp.h"; sourceTree = "<group>"; };
 		216C668F214BE7B0009BDD3B /* uv-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "uv-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		216C6691214BE7B0009BDD3B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		216C6699214BF299009BDD3B /* OdotHash.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OdotHash.hpp; sourceTree = "<group>"; };
@@ -374,7 +374,7 @@
 				21038D14214AECB10078F594 /* profiler */,
 				216C668F214BE7B0009BDD3B /* uv-test */,
 				216C66BA214BF2BD009BDD3B /* libcvgl-libo.a */,
-				2112A4EB214DA3A300EC1C11 /* cvgl_blackmagic */,
+				2112A4EB214DA3A300EC1C11 /* CVGL */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -418,9 +418,8 @@
 		216C6683214BC61E009BDD3B /* udp */ = {
 			isa = PBXGroup;
 			children = (
-				216C6684214BC62E009BDD3B /* cvglOSCSocket.cpp */,
-				216C6685214BC62E009BDD3B /* cvglOSCSocket.hpp */,
-				216C668A214BE42A009BDD3B /* uv-temp.h */,
+				1149621B22C0AD6100F5B267 /* cvglUDPServer.cpp */,
+				1149621C22C0AD6100F5B267 /* cvglUDPServer.hpp */,
 			);
 			path = udp;
 			sourceTree = "<group>";
@@ -429,6 +428,7 @@
 			isa = PBXGroup;
 			children = (
 				216C6691214BE7B0009BDD3B /* main.cpp */,
+				116743A522C0C1A6008923FF /* udp-test.cpp */,
 			);
 			path = "uv-test";
 			sourceTree = "<group>";
@@ -711,7 +711,7 @@
 			);
 			name = cvgl_blackmagic;
 			productName = "openCV-test";
-			productReference = 2112A4EB214DA3A300EC1C11 /* cvgl_blackmagic */;
+			productReference = 2112A4EB214DA3A300EC1C11 /* CVGL */;
 			productType = "com.apple.product-type.tool";
 		};
 		216C668E214BE7B0009BDD3B /* uv-test */ = {
@@ -814,7 +814,6 @@
 				2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */,
 				2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */,
 				2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */,
-				2112A4BF214DA3A300EC1C11 /* cvglOSCSocket.cpp in Sources */,
 				2112A4C1214DA3A300EC1C11 /* cvglTexture.cpp in Sources */,
 				2112A4C2214DA3A300EC1C11 /* cvglContext.cpp in Sources */,
 				21D87602215A6D070068B7BD /* cvglMainProcess.cpp in Sources */,
@@ -825,6 +824,7 @@
 				2112A4C5214DA3A300EC1C11 /* cvglConvexHull.cpp in Sources */,
 				1151F2D822B96C5D0099655F /* cvglDeckLinkCamera.cpp in Sources */,
 				2112A4C7214DA3A300EC1C11 /* OdotMessage.cpp in Sources */,
+				1149621D22C0AD6100F5B267 /* cvglUDPServer.cpp in Sources */,
 				2112A4C8214DA3A300EC1C11 /* cvglVAO.cpp in Sources */,
 				2112A4C9214DA3A300EC1C11 /* cvglCV.cpp in Sources */,
 				2112A4CA214DA3A300EC1C11 /* OdotHash.cpp in Sources */,
@@ -840,11 +840,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				216C66AB214BF299009BDD3B /* OdotAtom.cpp in Sources */,
-				216C6692214BE7B0009BDD3B /* main.cpp in Sources */,
+				116743A922C0C28A008923FF /* cvglUDPServer.cpp in Sources */,
 				216C66B1214BF299009BDD3B /* OdotHash.cpp in Sources */,
+				116743A622C0C1A6008923FF /* udp-test.cpp in Sources */,
 				216C66B3214BF299009BDD3B /* OdotBundle_s.cpp in Sources */,
 				216C66B5214BF299009BDD3B /* OdotExpr.cpp in Sources */,
-				216C6696214BE7B8009BDD3B /* cvglOSCSocket.cpp in Sources */,
 				216C66A9214BF299009BDD3B /* OdotBundle.cpp in Sources */,
 				216C66AD214BF299009BDD3B /* OdotMessage.cpp in Sources */,
 				216C66AF214BF299009BDD3B /* OdotSelect.cpp in Sources */,
@@ -1076,7 +1076,7 @@
 					"-lopencv_imgproc",
 					"-lglfw",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = CVGL;
 				SDKROOT = macosx;
 				VALID_ARCHS = x86_64;
 			};
@@ -1103,7 +1103,7 @@
 					"-lopencv_imgproc",
 					"-lglfw",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = CVGL;
 				SDKROOT = macosx;
 				VALID_ARCHS = x86_64;
 			};

@@ -34,7 +34,7 @@ void cvglCVCamera::cvCamLoop()
         }
         
     }
-    
+    cout << "cameraLoop end" << endl;
 }
 
 void cvglCVCamera::start()
@@ -51,6 +51,8 @@ void cvglCVCamera::pause(bool state)
 
 void cvglCVCamera::stop()
 {
+    cout << "stop()" << endl;
+
     // signal cv thread stop
     m_stop_cv_loop = true;
     
@@ -58,6 +60,7 @@ void cvglCVCamera::stop()
         m_cvCam_thread.join();
     
     // close camera after join
-    cap.release();
+    if( cap.isOpened() )
+        cap.release();
 }
 

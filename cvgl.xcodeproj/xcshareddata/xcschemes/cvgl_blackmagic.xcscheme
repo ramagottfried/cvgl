@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2112A4B5214DA3A300EC1C11"
-               BuildableName = "cvgl_blackmagic"
+               BuildableName = "CVGL"
                BlueprintName = "cvgl_blackmagic"
                ReferencedContainer = "container:cvgl.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2112A4B5214DA3A300EC1C11"
-            BuildableName = "cvgl_blackmagic"
+            BuildableName = "CVGL"
             BlueprintName = "cvgl_blackmagic"
             ReferencedContainer = "container:cvgl.xcodeproj">
          </BuildableReference>
@@ -42,7 +42,7 @@
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2112A4B5214DA3A300EC1C11"
-            BuildableName = "cvgl_blackmagic"
+            BuildableName = "CVGL"
             BlueprintName = "cvgl_blackmagic"
             ReferencedContainer = "container:cvgl.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2112A4B5214DA3A300EC1C11"
-            BuildableName = "cvgl_blackmagic"
+            BuildableName = "CVGL"
             BlueprintName = "cvgl_blackmagic"
             ReferencedContainer = "container:cvgl.xcodeproj">
          </BuildableReference>

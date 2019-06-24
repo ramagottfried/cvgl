@@ -116,7 +116,7 @@ void cvglCV::preprocessCanny(Mat& mat)
     cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
     cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
     
-    mat = src_gray;
+   // mat = src_gray;
     
     if( m_invert )
     {
@@ -142,15 +142,9 @@ void cvglCV::preprocessCanny(Mat& mat)
     Sobel(src_gray, sob, CV_32F, 1, 1);
     
     
-    cv::cvtColor(src_gray+can, mat, cv::COLOR_GRAY2RGB);
+   // cv::cvtColor(src_gray+can, mat, cv::COLOR_GRAY2RGB);
 
-    // add sobel here?
-    
-    // canny? for focus part?
-    
-    // optical flow? ... maybe CNN later?
-    
-    //  toDisplay = threshold_output;
+   
     
 }
 
@@ -271,8 +265,8 @@ cvglCV::cvglAnalysisReturnStruct cvglCV::analyzeContour()
     
 }
 
-void cvglCV::analysisThread(Mat src_color_sized,
-                            Mat sob,
+void cvglCV::analysisThread(Mat _src_color_sized,
+                            Mat _sob,
                             vector< Mat >                  contours,
                             vector< int >                  contour_idx,
                             vector< double >               contour_area,
@@ -309,9 +303,9 @@ void cvglCV::analysisThread(Mat src_color_sized,
     OdotMessage defect_dist_sum("/defect/dist_sum");
     
     
-    int nchans = src_color_sized.channels();
-    double src_width = (double)src_color_sized.size().width;
-    double src_height = (double)src_color_sized.size().height;
+    int nchans = _src_color_sized.channels();
+    double src_width = (double)_src_color_sized.size().width;
+    double src_height = (double)_src_color_sized.size().height;
     double npix = src_width * src_height;
     
     
@@ -329,13 +323,12 @@ void cvglCV::analysisThread(Mat src_color_sized,
         const Mat& contour = contours[ contour_idx[i] ];
 
         
-        Mat contour_mask = Mat::zeros( src_color_sized.size(), CV_8UC1 );
+        Mat contour_mask = Mat::zeros( _src_color_sized.size(), CV_8UC1 );
         drawContours(contour_mask, contours, i, Scalar(255), FILLED);
         
         cv::Rect boundRect = boundingRect( contour );
 
-        vector<Stats> stats;
-        getStatsChar(src_color_sized, sob, contour_mask, boundRect, stats);
+        vector<Stats> stats = getStatsChar( _src_color_sized, _sob, contour_mask, boundRect );
         
         for(int c = 0; c < nchans; c++)
         {
@@ -343,7 +336,7 @@ void cvglCV::analysisThread(Mat src_color_sized,
             channel_varience[c].emplace_back( stats[c].variance );
         }
         
-        focus.appendValue( stats[ src_color_sized.channels() ].variance );
+        focus.appendValue( stats[ _src_color_sized.channels() ].variance );
         
         child_of.appendValue( hierarchy[ contour_idx[i] ][3] );
         parimeter.appendValue( arcLength(contour, true) );
@@ -574,7 +567,7 @@ void cvglCV::analysisThread(Mat src_color_sized,
 }
 
 
-void cvglCV::getStatsChar( const Mat& src, const Mat& sobel, const Mat& mask, const cv::Rect& roi, vector<Stats>& _stats)
+vector<cvglCV::Stats> cvglCV::getStatsChar( const Mat& src, const Mat& sobel, const Mat& mask, const cv::Rect& roi)
 {
     //const int plane, T& min, T& max, T& varience
     
@@ -582,7 +575,7 @@ void cvglCV::getStatsChar( const Mat& src, const Mat& sobel, const Mat& mask, co
     if( src.size() != mask.size() )
     {
         printf("size mismatch\n");
-        return;
+        return vector<Stats>();
     }
     
     int nchans = src.channels();
@@ -650,7 +643,9 @@ void cvglCV::getStatsChar( const Mat& src, const Mat& sobel, const Mat& mask, co
         }
     }
     
-    int size = index.size();
+    size_t size = index.size();
+    if( size == 0 )
+        ;//cout << "size zero" << endl;
     
     for( int c = 0; c < nchans; ++c)
     {
@@ -686,7 +681,7 @@ void cvglCV::getStatsChar( const Mat& src, const Mat& sobel, const Mat& mask, co
     
     stats[focus].variance = stats[focus].dev_sum / size;
     
-    _stats = stats;
+    return stats;
     
 }
 

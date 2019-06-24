@@ -1,34 +1,45 @@
 
 #include "cvglOSCSocket.hpp"
 
+
+#include <sys/socket.h>
+
 using namespace std;
 
 cvglOSCSocket::cvglOSCSocket()
 {
-    loop = uv_default_loop();
+    m_loop = uv_default_loop();
     
-    uv_udp_init(loop, &recv_socket_handle);
-    recv_socket_handle.data = this;
+    uv_udp_init(m_loop, &m_recv_socket_handle);
+    m_recv_socket_handle.data = this;
     
     cout << this << endl;
     
     struct sockaddr_in recv_addr;
     uv_ip4_addr("0.0.0.0", m_recv_port, &recv_addr);
-    uv_udp_bind(&recv_socket_handle, (const struct sockaddr *)&recv_addr, UV_UDP_REUSEADDR);
-    uv_udp_recv_start(&recv_socket_handle, alloc_buffer, on_read);
+    uv_udp_bind(&m_recv_socket_handle, (const struct sockaddr *)&recv_addr, UV_UDP_REUSEADDR);
+    uv_udp_recv_start(&m_recv_socket_handle, alloc_buffer, on_read);
     
-    uv_udp_init(loop, &send_socket_handle);
-    struct sockaddr_in bind_addr;
-    uv_ip4_addr("0.0.0.0", m_send_port, &bind_addr);
-    uv_udp_bind(&send_socket_handle, (const struct sockaddr *)&bind_addr, 0);
-    
-    
-    thread udp_thread( uv_run, loop, UV_RUN_DEFAULT );
-    cout << "starting UDP loop " <<  loop << endl;
+    uv_udp_init(m_loop, &m_send_socket_handle);
+
+    uv_ip4_addr(m_send_ip_addr.c_str(), m_send_port, &m_send_addr);
+
+
+//    struct sockaddr_in bind_addr;
+   // uv_udp_bind(&m_send_socket_handle, (const struct sockaddr *)&bind_addr, 0);
+    //uv_udp_set_broadcast(&m_send_socket_handle, 1);
+
+   
+
+    thread udp_thread( uv_run, m_loop, UV_RUN_DEFAULT );
+    cout << "starting UDP loop " <<  m_loop << endl;
 
     // sets send port, adjust somewhere else if needed
-    uv_ip4_addr(send_ip_addr.c_str(), m_send_port, &send_addr);
 
+
+   
+    
+    
     udp_thread.detach();
     
     
@@ -37,25 +48,40 @@ cvglOSCSocket::cvglOSCSocket()
 cvglOSCSocket::~cvglOSCSocket()
 {
     cout << "~" << endl;
-    if( !closing )
+    if( !m_closing )
     {
         cout << "attepting to close, but better if you call the close() function before going out of scope" << endl;
         lock_guard<mutex> lock(m_mutex);
-        closing = true;
-        uv_udp_recv_stop(&recv_socket_handle);
-        uv_stop(loop);
+        m_closing = true;
+        uv_udp_recv_stop(&m_recv_socket_handle);
+        uv_stop(m_loop);
     }
 }
 
 void cvglOSCSocket::close()
 {
-    cout << "calling close on loop " <<  loop << endl;
+    cout << "calling close on UDP loop " <<  m_loop << endl;
 
     lock_guard<mutex> lock(m_mutex);
-    closing = true;
-    uv_udp_recv_stop(&recv_socket_handle);
-    uv_stop(loop);
+    m_closing = true;
+    uv_udp_recv_stop(&m_recv_socket_handle);
+    uv_stop(m_loop);
 }
+
+
+void on_send_cb(uv_udp_send_t *req, int status)
+{
+    cout << "on_send" << endl;
+    
+    if( req )
+        delete req;
+    
+    if (status) {
+        cout << "Send error " << uv_err_name(status) << endl;
+        return;
+    }
+}
+
 
 // SLIP codes
 #define END             0300    // indicates end of packet
@@ -63,7 +89,7 @@ void cvglOSCSocket::close()
 #define ESC_END         0334    // ESC ESC_END means END data byte
 #define ESC_ESC         0335    // ESC ESC_ESC means ESC data byte
 
-void cvglOSCSocket::sendBundle( OdotBundle& b, bool slip )
+void cvglOSCSocket::sendBundle( OdotBundle b, bool slip )
 {
 
     OdotBundle_s s_bundle = b.serialize();
@@ -98,7 +124,7 @@ void cvglOSCSocket::sendBundle( OdotBundle& b, bool slip )
             uv_buf_t buf = uv_buf_init( (char *)cat_buf.data(), (uint32_t)cat_buf.size() );
             cout << "slip send size " << cat_buf.size() << endl;
             
-            int res = uv_udp_try_send(&send_socket_handle, &buf, 1, (const struct sockaddr *)&send_addr);
+            int res = uv_udp_try_send(&m_send_socket_handle, &buf, 1, (const struct sockaddr *)&m_send_addr);
             
             if( res <= 0 )
             {
@@ -118,10 +144,10 @@ void cvglOSCSocket::sendBundle( OdotBundle& b, bool slip )
       //  cat_buf.emplace_back(END);
 //        cat_buf.emplace_back(ESC_END);
 
-        uv_buf_t buf = uv_buf_init( (char *)cat_buf.data(), (uint32_t)cat_buf.size() );
+        uv_buf_t buf = uv_buf_init( (char *)cat_buf.data(), (unsigned int)cat_buf.size() );
         cout << "slip send size " << cat_buf.size() << endl;
         
-        int res = uv_udp_try_send(&send_socket_handle, &buf, 1, (const struct sockaddr *)&send_addr);
+        int res = uv_udp_try_send(&m_send_socket_handle, &buf, 1, (const struct sockaddr *)&m_send_addr);
         
         if( res <= 0 )
         {
@@ -137,14 +163,19 @@ void cvglOSCSocket::sendBundle( OdotBundle& b, bool slip )
         uv_buf_t buf = uv_buf_init( (char *)s_bundle.getPtr(), (unsigned int)s_bundle.getLen() );
        // cout << "send size " << (unsigned int)s_bundle.getLen() << endl;
         
-        
         // fail silently
-        int res = uv_udp_try_send(&send_socket_handle, &buf, 1, (const struct sockaddr *)&send_addr);
+        int res = uv_udp_try_send(&m_send_socket_handle, &buf, 1, (const struct sockaddr *)&m_send_addr);
         
-        if( res <= 0 )
+       // uv_udp_send_t * send_req = new uv_udp_send_t;
+        
+        //int res = uv_udp_send(send_req, &m_send_socket_handle, &buf, 1, (const struct sockaddr *)&m_send_addr, on_send_cb);
+
+        if( res < 0 )
         {
             cout << res << " " << (unsigned int)s_bundle.getLen() << " " << uv_err_name(res) << endl;
             cout << "n objects " << b.getMessage("/count").getInt() << endl;
+            cout << this << endl;
+            
             
         }
     }
@@ -159,8 +190,13 @@ void cvglOSCSocket::alloc_buffer(uv_handle_t* handle, size_t suggested_size, uv_
 
 void cvglOSCSocket::on_send(uv_udp_send_t *req, int status)
 {
+    cout << "on_send" << endl;
+    
+    if( req )
+        delete req;
+    
     if (status) {
-        fprintf(stderr, "Send error %s\n", uv_err_name(status));
+        cout << "Send error " << uv_err_name(status) << endl;
         return;
     }
 }
@@ -194,10 +230,10 @@ void cvglOSCSocket::on_read(uv_udp_t *req, ssize_t nread, const uv_buf_t *buf, c
     if( ref && b.size() > 0 )
     {
         lock_guard<mutex> lock(ref->m_mutex);
-        if( !ref->closing ){
-            ref->state_bundle.unionWith(b, true);
+        if( !ref->m_closing ){
+            ref->m_state_bundle.unionWith(b, true);
             // ref->state_bundle.print();
-            ref->processBundleUpdate( ref->state_bundle );
+            ref->processBundleUpdate( ref->m_state_bundle );
         }
         
         
@@ -211,7 +247,7 @@ OdotBundle cvglOSCSocket::getBundle()
 {
     lock_guard<mutex> lock(m_mutex);
     // should we clear the bundle here?
-    OdotBundle tmp = state_bundle;
-    state_bundle.clear();
+    OdotBundle tmp = m_state_bundle;
+    m_state_bundle.clear();
     return tmp;
 }

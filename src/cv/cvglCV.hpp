@@ -13,8 +13,6 @@
 #include "cvglConversions.hpp"
 #include "cvglConvexHull.hpp"
 
-#include "cvglOSCSocket.hpp"
-
 class cvglMainProcess;
 
 
@@ -98,8 +96,8 @@ public:
     void getFlow(std::unique_ptr<cvglObject>& outFlow);
 
     
-    void analysisThread(cv::Mat src_color_sized,
-                        cv::Mat sob,
+    void analysisThread(cv::Mat _src_color_sized,
+                        cv::Mat _sob,
                         std::vector< cv::Mat >  contours,
                         std::vector< int >      contour_idx,
                         std::vector< double >   contour_area,
@@ -120,7 +118,7 @@ public:
         double variance = 0;
     };
     
-    void getStatsChar( const cv::Mat& src, const cv::Mat& sobel, const cv::Mat& mask, const cv::Rect& roi, std::vector<Stats>& _stats);
+    std::vector<Stats> getStatsChar( const cv::Mat& src, const cv::Mat& sobel, const cv::Mat& mask, const cv::Rect& roi);
     
     void setParams( const vector<OdotMessage> & b )
     {

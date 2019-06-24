@@ -7,6 +7,23 @@ using namespace cv;
 
 namespace cvgl
 {
+    
+    std::vector<float> getRGBA( const OdotMessage & msg )
+    {
+        std::vector<float> _rgba;
+        for( auto & a : msg.getAtoms() )
+        {
+            _rgba.emplace_back( a.getFloat() );
+        }
+        
+        for( int i = (int)_rgba.size()-1; i < 4; i++)
+        {
+            _rgba.emplace_back(1);
+        }
+        
+        return _rgba;
+    }
+    
     template<typename T>
     void pointMatToVertex(const Mat& points, cvglObject& vertexObj, const float halfScreenW, const float halfScreenH )
     {

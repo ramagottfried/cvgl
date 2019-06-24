@@ -24,10 +24,11 @@ int main( void )
     if( cvcam.hasCamera() )
     {
         cout << "doing cv camera " << endl;
-        cvcam.setProcessFrameCallback( [&app](cv::Mat& mat){ app.processFrameCV(mat, 2); } );
-        if( !bm_cam.hasCamera() )
+        cvcam.setProcessFrameCallback( [&app](cv::Mat& mat){ app.processFrame(mat, 2); } );
+        if( !bm_cam.hasCamera() ){
             app.context.setupWindow( cvcam.getWidth(), cvcam.getHeight() );
-        
+            app.useCameraID(2);
+        }
         cvcam.start();
     }
     else
@@ -45,19 +46,18 @@ int main( void )
     
     app.initObjs();
     
-    
+    cout << "starting draw loop " << endl;
+
     // main GL loop
     while( !app.context.shouldClose() )
     {
         app.draw();
     }
     
-    cvcam.stop();
-    bm_cam.stop();
+  //  cvcam.stop();
+//    bm_cam.stop();
     
     app.stop();
-    
-   // app.osc.stop();
     
     return 0;
 }

@@ -4,19 +4,17 @@
 #include "cvglContext.hpp"
 #include "cvglCV.hpp"
 #include "cvglObject.hpp"
-#include "cvglOSCSocket.hpp"
+#include "cvglUDPServer.hpp"
 
 //#include "cvglCameraInput.hpp"
 //#include "cvglCamera.hpp"
 
-class cvglMainProcess :  public cvglCV, public cvglOSCSocket //public cvglCamera,
+class cvglMainProcess :  public cvglCV, public cvglUDPServer //public cvglCamera,
 {
     
 public:
     
     cvglContext context;
-        
-    // cvglOSCSocket osc;
     
     std::unique_ptr<cvglObject>     rect, contourMesh, hullMesh, minrectMesh, flowMesh;
     std::unique_ptr<cvglTexture>    frameTex, contourTex, contourTriTex, hullTex, minrectTex, flowTex;
@@ -38,10 +36,10 @@ public:
     
     inline void stop()
     {
-        cvglOSCSocket::close();
+        cvglUDPServer::close();
     }
     
-    virtual void processBundleUpdate( OdotBundle & b ) override;
+    virtual void receivedBundle( OdotBundle & b ) override;
     
     void setGLparams( const vector<OdotMessage> & b );
 
@@ -52,6 +50,7 @@ public:
 private:
     
     int m_use_camera_id = 1;
+    int m_use_preprocess = 2;
     
     std::mutex m_gl_lock, m_osc_lock;
     
@@ -59,7 +58,7 @@ private:
     
     bool m_draw_frame = true;
     
-    bool m_draw_contour = true;
+    bool m_draw_contour = false;
     bool m_draw_contour_triangles = false;
     
     bool m_draw_hull = true;

@@ -5,22 +5,6 @@ using namespace std;
 using namespace cv;
 
 
-std::vector<float> cvglMainProcess::getRGBA( const OdotMessage & msg )
-{
-    std::vector<float> _rgba;
-    for( auto & a : msg.getAtoms() )
-    {
-        _rgba.emplace_back( a.getFloat() );
-    }
-    
-    for( int i = (int)_rgba.size()-1; i < 4; i++)
-    {
-        _rgba.emplace_back(1);
-    }
-    
-    return _rgba;
-}
-
 /**
  *  initObjects()
  *  init function to setup VBOs for GL objects, must be called after context setup is complete
@@ -68,11 +52,10 @@ void cvglMainProcess::initObjs()
     cout << objects_initialized << endl;
 }
 
-void cvglMainProcess::processBundleUpdate( OdotBundle & b )
+void cvglMainProcess::receivedBundle( OdotBundle & b )
 {
     lock_guard<mutex> lock_osc(m_osc_lock);
     auto msgs = b.getMessageArray();
-    
     
     cvglCV::setParams(msgs);
 
@@ -92,19 +75,23 @@ void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
         
         if( addr == "/video/enable" )
         {
-            m_draw_frame = m.getInt() > 1;
+            m_draw_frame = m.getInt() > 0;
         }
         else if( addr == "/use/camera" )
         {
             m_use_camera_id = m.getInt();
         }
+        else if( addr == "/use/preprocess" )
+        {
+            m_use_preprocess = m.getInt();
+        }
         else if( addr == "/enable/contour" )
         {
-            m_draw_contour = m.getInt() > 1;
+            m_draw_contour = m.getInt() > 0;
         }
         else if( addr == "/contour/color" )
         {
-            m_contour_rgba = getRGBA(m);
+            m_contour_rgba = cvgl::getRGBA(m);
         }
         else if( addr == "/contour/width" )
         {
@@ -112,11 +99,11 @@ void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
         }
         else if( addr == "/enable/hull" )
         {
-            m_draw_hull = m.getInt() > 1;
+            m_draw_hull = m.getInt() > 0;
         }
         else if( addr == "/hull/color" )
         {
-            m_hull_rgba = getRGBA(m);;
+            m_hull_rgba = cvgl::getRGBA(m);;
         }
         else if( addr == "/hull/width" )
         {
@@ -124,11 +111,11 @@ void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
         }
         else if( addr == "/enable/minrect" )
         {
-            m_draw_minrect = m.getInt() > 1;
+            m_draw_minrect = m.getInt() > 0;
         }
         else if( addr == "/minrect/color" )
         {
-            m_minrect_rgba = getRGBA(m);;
+            m_minrect_rgba = cvgl::getRGBA(m);;
         }
         else if( addr == "/minrect/width" )
         {
@@ -147,6 +134,7 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
     if( m_use_camera_id == camera_id )
     {
         lock_guard<mutex> lock(m_gl_lock);
+     //   cout << "> processFrame LOCK" << endl;
         m_newframe = true;
         m_frame = frame.clone();
         
@@ -155,14 +143,28 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
         
         lock_guard<mutex> lock_osc(m_osc_lock);
         
-        //preprocess( m_frame );
-        //preprocessDifference( m_frame );
-        preprocessCanny( m_frame );
+        switch (m_use_preprocess) {
+            case 0:
+                preprocess( m_frame );
+                break;
+            case 1:
+                preprocessDifference( m_frame );
+                break;
+            case 2:
+                preprocessCanny( m_frame );
+                break;
+            default:
+                break;
+        }
+        
+        
         
         //    cvx.getFlow( flowMesh );
         auto vecs = analyzeContour();
         
         processAnalysisVectors( vecs );
+ //       cout << "< processFrame unlock" << endl;
+
     }
     
 }
@@ -188,6 +190,8 @@ void cvglMainProcess::processFrameCV(cv::Mat & frame, int camera_id )
         lock_guard<mutex> lock_osc(m_osc_lock);
         
         preprocess( m_frame );
+        
+        
         //preprocessDifference( m_frame );
         //preprocessCanny( m_frame );
         
@@ -205,7 +209,7 @@ void cvglMainProcess::processFrameCV(cv::Mat & frame, int camera_id )
 void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &analysis)
 {
     
-    // lock to prevent conflict with gl thread
+    // lock to prevent conflict with gl thread (locked in processFrame)
     
     size_t npoints = 0;
     for( auto& c : analysis.contours )
@@ -255,9 +259,13 @@ void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
  */
 void cvglMainProcess::draw()
 {
+    //cout << ">> draw LOCK" << endl;
     lock_guard<mutex> lock(m_gl_lock); // lock or wait for gl_lock and then lock
 
+    // this can get slowed down if a new frame comes in while the old one is still being drawn?
+    
     if( !context.isActive() || !objects_initialized || !m_frame.data || !m_newframe ){
+        //cout << "<< draw unlock" << endl;
         return;
     }
 
@@ -302,8 +310,10 @@ void cvglMainProcess::draw()
     
     context.drawAndPoll();
     
-//    context.printFPS();
+   // context.printFPS();
     
     m_newframe = false;
+  //  cout << "<< draw unlock" << endl;
+
     //cout << " << end draw, newframe " << newframe << "\n" << endl;
 }

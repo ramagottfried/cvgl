@@ -17,8 +17,10 @@ OdotBundle_s::OdotBundle_s( const OdotBundle_s& src )
     ptr = odot::newOdotBundlePtr_s( b );
 }
 
-OdotBundle_s::OdotBundle_s( t_osc_bndl_s * src ) // direct wrapper
+OdotBundle_s::OdotBundle_s( t_osc_bndl_s * src ) // direct wrapper, owns pointer!
 {
+//    t_osc_bundle_s *dst = NULL;
+//    osc_bundle_s_deepCopy(&dst, src);
     ptr = odot::newOdotBundlePtr_s( src );
 }
 

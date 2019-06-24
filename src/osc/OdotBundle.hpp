@@ -13,7 +13,7 @@
 
 #include "OdotSelect.hpp"
 
-using namespace std;
+//using namespace std;
 
 class OdotBundle {
 
@@ -25,7 +25,7 @@ public:
     OdotBundle( const OdotBundle_s& src );
     OdotBundle( const t_osc_bndl_s *src );
     OdotBundle( const OdotMessage& msg );
-    OdotBundle( vector<OdotMessage > msg_vec );
+    OdotBundle( std::vector<OdotMessage > msg_vec );
     
     OdotBundle( const string& str );
     
@@ -111,7 +111,7 @@ public:
         
         //addMessage( address.c_str(), args... );
     }
-    void addMessage( vector<OdotMessage > msg_vec );
+    void addMessage( std::vector<OdotMessage > msg_vec );
     
     void removeMessage( const string& addr );
     void removeMessage( t_osc_msg_u * msg );
@@ -150,10 +150,10 @@ public:
     OdotBundle getBundleContainingMessage( OdotMessage& msg ) const;
     //OdotBundle getBundleContainingMessageValue( const char * address, OdotAtom& val ) const;
 
-    vector<OdotMessage> getMessageArray() const;
+    std::vector<OdotMessage> getMessageArray() const;
 
-    vector<OdotMessage> matchAddress( const char * address, int fullmatch = 1) const;
-    inline vector<OdotMessage> matchAddress( const string& address, int fullmatch = 1) const { return matchAddress(address.c_str(), fullmatch); }
+    std::vector<OdotMessage> matchAddress( const char * address, int fullmatch = 1) const;
+    inline std::vector<OdotMessage> matchAddress( const string& address, int fullmatch = 1) const { return matchAddress(address.c_str(), fullmatch); }
     
     /* ======= Info ======= */
 
@@ -171,7 +171,7 @@ public:
     void print_imp( t_osc_bndl_u * bndl, int level = 0 ) const;
     
     void getPrintString(string &str, int level = 0 );
-    void getPrintStringArray(vector<string >& str, int level = 0 );
+    void getPrintStringArray(std::vector<string >& str, int level = 0 );
 
     /* ======= Export ======= */
     
@@ -204,12 +204,12 @@ private:
     
     OdotBundle getBundleContainingMessage_imp( t_osc_bndl_u * bndl, const char * address ) const;
     OdotBundle getBundleContainingMessage_imp( t_osc_bndl_u * bndl, OdotMessage& msg ) const;
-    OdotMessage getMessage_recursive( t_osc_bndl_u * bndl, const vector<string>& addr_vec, int level ) const;
+    OdotMessage getMessage_recursive( t_osc_bndl_u * bndl, const std::vector<string>& addr_vec, int level ) const;
 
-    void assignToBundleMember_recusive( t_osc_bndl_u *bndl, const vector<string>& addr_vec, int level, t_osc_msg_u * msg );
-    void assignToBundleMember_createEmpties( t_osc_bundle_u *bndl, const vector<string>& addr_vec, int level, t_osc_msg_u * value );
+    void assignToBundleMember_recusive( t_osc_bndl_u *bndl, const std::vector<string>& addr_vec, int level, t_osc_msg_u * msg );
+    void assignToBundleMember_createEmpties( t_osc_bundle_u *bndl, const std::vector<string>& addr_vec, int level, t_osc_msg_u * value );
 
-    vector<string> split(string data, string token) const;
+    std::vector<string> split(string data, string token) const;
     
 };
 

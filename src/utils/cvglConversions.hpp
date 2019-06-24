@@ -30,5 +30,9 @@ namespace cvgl
 
     cv::Point getNormal( cv::Point p1, cv::Point p2 );
 
+    
+    std::vector<float> getRGBA( const OdotMessage & msg );
+   
+    
 }
 
