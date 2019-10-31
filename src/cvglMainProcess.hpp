@@ -52,7 +52,7 @@ private:
     int m_use_camera_id = 1;
     int m_use_preprocess = 2;
     
-    std::mutex m_gl_lock, m_osc_lock;
+    std::timed_mutex m_gl_lock, m_osc_lock;
     
     bool m_newframe = false;
     

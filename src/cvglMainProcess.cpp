@@ -54,7 +54,7 @@ void cvglMainProcess::initObjs()
 
 void cvglMainProcess::receivedBundle( OdotBundle & b )
 {
-    lock_guard<mutex> lock_osc(m_osc_lock);
+    lock_guard<timed_mutex> lock_osc(m_osc_lock);
     auto msgs = b.getMessageArray();
     
     cvglCV::setParams(msgs);
@@ -133,7 +133,7 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 {
     if( m_use_camera_id == camera_id )
     {
-        lock_guard<mutex> lock(m_gl_lock);
+        lock_guard<timed_mutex> lock(m_gl_lock);
      //   cout << "> processFrame LOCK" << endl;
         m_newframe = true;
         m_frame = frame.clone();
@@ -141,7 +141,7 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
         if( !m_frame.data || !objects_initialized )
             return;
         
-        lock_guard<mutex> lock_osc(m_osc_lock);
+        lock_guard<timed_mutex> lock_osc(m_osc_lock);
         
         switch (m_use_preprocess) {
             case 0:
@@ -180,14 +180,14 @@ void cvglMainProcess::processFrameCV(cv::Mat & frame, int camera_id )
     
     if( m_use_camera_id == camera_id )
     {
-        lock_guard<mutex> lock(m_gl_lock);
+        lock_guard<timed_mutex> lock(m_gl_lock);
         m_newframe = true;
         m_frame = frame.clone();
         
         if( !m_frame.data || !objects_initialized )
             return;
         
-        lock_guard<mutex> lock_osc(m_osc_lock);
+        lock_guard<timed_mutex> lock_osc(m_osc_lock);
         
         preprocess( m_frame );
         
@@ -260,7 +260,18 @@ void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
 void cvglMainProcess::draw()
 {
     //cout << ">> draw LOCK" << endl;
-    lock_guard<mutex> lock(m_gl_lock); // lock or wait for gl_lock and then lock
+   // auto start = std::chrono::system_clock::now();
+    
+    lock_guard<timed_mutex> lock(m_gl_lock); // lock or wait for gl_lock and then lock
+/*
+    if( !m_gl_lock.try_lock_for(std::chrono::milliseconds(10000) ) )
+    {
+        cout << "failed to lock" << endl;
+        return;
+    }
+  */
+    
+ //   cout << (start - std::chrono::system_clock::now()).count()  << endl;
 
     // this can get slowed down if a new frame comes in while the old one is still being drawn?
     
@@ -315,5 +326,6 @@ void cvglMainProcess::draw()
     m_newframe = false;
   //  cout << "<< draw unlock" << endl;
 
+ //   m_gl_lock.unlock();
     //cout << " << end draw, newframe " << newframe << "\n" << endl;
 }
