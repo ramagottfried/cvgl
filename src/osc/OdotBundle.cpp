@@ -11,7 +11,7 @@
 #include <sstream>
 
 extern "C" {
-    int odot_expr_error_handler(void *context, const char * const errorstr)
+    int odot_expr_error_handler(void *context, t_osc_err errorcode, const char * const errorstr)
     {
         cout << errorstr << endl;
         return 0;
@@ -41,6 +41,16 @@ OdotBundle::OdotBundle( const OdotBundle* src )
     t_osc_bndl_u *b = nullptr;
     osc_bundle_u_copy( &b, src->ptr.get() );
     ptr = odot::newOdotBundlePtr( b );
+    osc_error_setHandler( odot_expr_error_handler );
+}
+
+// takes ownership if not const
+OdotBundle::OdotBundle( t_osc_bndl_u * src )
+{
+//    D_(cout << __func__  << "copy from odot pointer \n";)
+    //t_osc_bndl_u *b = nullptr;
+    //osc_bundle_u_copy( &b, (t_osc_bndl_u *)src );
+    ptr = odot::newOdotBundlePtr( src );
     osc_error_setHandler( odot_expr_error_handler );
 }
 
