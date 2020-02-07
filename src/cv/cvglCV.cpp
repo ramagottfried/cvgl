@@ -211,22 +211,14 @@ void cvglCV::analyzeContour()
     m_data = AnalysisData();
     
     
-//    vector< Mat >    contours;
-//    vector< double > contour_area;
-
-//    vector< Vec4i > hierarchy;
-//    vector< Mat >   hullP_vec;
-//    vector< Mat >   hullI_vec;
-//    vector< vector<Vec4i> > defects_vec;
-//    vector< RotatedRect > minRec_vec;
-//    vector< int > contour_idx;
-    
     findContours( threshold_output, m_data.contours, m_data.hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
     
     size_t npix = threshold_output.rows * threshold_output.cols;
     
     m_data.halfW = threshold_output.cols / 2.0f;
     m_data.halfH = threshold_output.rows / 2.0f;
+    
+    vector< double > contour_area;
     
     for( int i = 0; i < m_data.contours.size(); i++ )
     {
@@ -235,7 +227,7 @@ void cvglCV::analyzeContour()
         if( (contour_a < m_minsize) || (contour_a > m_maxsize ) || ((m_parents_only && (m_data.hierarchy[i][3] != -1))) )
             continue;
     
-        m_data.contour_area.emplace_back(contour_a);
+        contour_area.emplace_back(contour_a);
         m_data.contour_idx.emplace_back(i);
       
         // hull
@@ -257,46 +249,19 @@ void cvglCV::analyzeContour()
         
     }
     
-    m_data.ncontours = m_data.contour_idx.size();
-
-   // processAnalysisVectors(contours, contour_idx, hullP_vec, minRec_vec, halfW, halfH);
-
     
-    // pass contour analysis data to another thread if not drawn
-    // I guess it needs to be decided ahead of time what gets drawn then...
-    // most data comes from the contour, hull, and rotated rect
-    // the other data is more about averages, focus level... hmm
+    m_data.initSizeFromIdx();
+    m_data.contour_area = Eigen::Map<Eigen::ArrayXd, Eigen::Aligned>(contour_area.data(), contour_area.size());
     
-    
-    // object tracking IDs etc....
-    /*
-    thread worker(&cvglCV::analysisThread,
-                  this, // probably don't need it to be the same instance...
-                  src_color_sized,
-                  sob,
-                  contours,
-                  contour_idx,
-                  contour_area,
-                  hierarchy,
-                  hullP_vec,
-                  hullI_vec,
-                  defects_vec,
-                  minRec_vec,
-                  halfW,
-                  halfH );
-    */
-    
-    // stateful, this is probably since we know that it is only called from the camera thread, and only one camera at a time
-    thread worker(&cvglCV::analysisThread2, this);
+    // very stateful, this is probably ok since we know that it is only called from the camera thread, and only one camera at a time
+    thread worker(&cvglCV::analysisThread, this);
     
     worker.detach();
-    
-   // return cvglAnalysisReturnStruct({contours, contour_idx, hullP_vec, minRec_vec, halfW, halfH});
     
 }
 
 
-void cvglCV::analysisThread2()
+void cvglCV::analysisThread()
 {
     
     int nchans = src_color_sized.channels();
@@ -310,7 +275,6 @@ void cvglCV::analysisThread2()
 
     string prefix;
     
-    //vector<Point2f> data.centroids;
     m_data.centroids.reserve( m_data.ncontours );
 
     
@@ -333,10 +297,10 @@ void cvglCV::analysisThread2()
 //            channel_varience[c].emplace_back( stats[c].variance );
 //        }
 //
-        m_data.focus.emplace_back( stats[ src_color_sized.channels() ].variance );
+        m_data.focus(i) = stats[ src_color_sized.channels() ].variance;
         
-        m_data.parent.emplace_back( m_data.hierarchy[ m_data.contour_idx[i] ][3] );
-        m_data.parimeter.emplace_back( arcLength(contour, true) );
+        m_data.parent(i) = m_data.hierarchy[ m_data.contour_idx[i] ][3] ;
+        m_data.parimeter(i) = arcLength(contour, true) ;
         
         cv::RotatedRect& minRect = m_data.minRect_vec[i];
 
@@ -346,20 +310,20 @@ void cvglCV::analysisThread2()
         double major = max(hh, ww);
         double minor = min(hh, ww);
         
-        m_data.rotrect_minor.emplace_back(minor);
-        m_data.rotrect_major.emplace_back(major);
+        m_data.rotrect_minor(i) = minor;
+        m_data.rotrect_major(i) = major;
         
         double centerx = minRect.center.x;
         double centery = minRect.center.y;
         
-        m_data.center_x.emplace_back( centerx / src_width );
-        m_data.center_y.emplace_back( 1. - (centery / src_height) );
+        m_data.center_x(i) =  centerx / src_width ;
+        m_data.center_y(i) =  1. - (centery / src_height) ;
         
         double _a = major / 2.;
         double _b = minor / 2.;
         double ecc = sqrt(1 - pow(_b/_a, 2));
         
-        m_data.eccentricity.emplace_back( ecc );
+        m_data.eccentricity(i) =  ecc ;
         
         
         double r_angle = minRect.angle;
@@ -373,11 +337,11 @@ void cvglCV::analysisThread2()
             out_angle = -r_angle;
         }
         
-        m_data.angle.emplace_back( out_angle );
+        m_data.angle(i) = out_angle ;
         
         
-        m_data.size_x.emplace_back( boundRect.width / src_width );
-        m_data.size_y.emplace_back( boundRect.height / src_height );
+        m_data.size_x(i) =  boundRect.width / src_width ;
+        m_data.size_y(i) =  boundRect.height / src_height ;
         
         double ctrdx = -1;
         double ctrdy = -1;
@@ -402,22 +366,22 @@ void cvglCV::analysisThread2()
         
         m_data.centroids.emplace_back(cv::Point2f(scaled_centroidX, scaled_centroidY));
 
-        m_data.centroid_x.emplace_back( scaled_centroidX );
-        m_data.centroid_y.emplace_back( scaled_centroidY );
+        m_data.centroid_x(i) =  scaled_centroidX ;
+        m_data.centroid_y(i) =  scaled_centroidY ;
         
         // centroids.push_back( Point2f(ctrdx, ctrdy) );
         
-        m_data.convex.emplace_back( cvgl::isContourConvex( contour ) );
+        m_data.convex(i) = cvgl::isContourConvex( contour ) ;
         
         
         Mat convexcontour;
         approxPolyDP( m_data.hullP_vec[i], convexcontour, 0.001, true);
         
-        m_data.hull_area.emplace_back( contourArea(convexcontour) / npix );
+        m_data.hull_area(i) =  contourArea(convexcontour) / npix ;
         
-        m_data.defect_count.emplace_back( (int)m_data.defects_vec[i].size() );
+        m_data.defect_count(i) =  (int)m_data.defects_vec[i].size() ;
         
-        m_data.hull_count.emplace_back( (int)m_data.hullI_vec[i].rows * (int)m_data.hullI_vec[i].cols );
+        m_data.hull_count(i) =  (int)m_data.hullI_vec[i].rows * (int)m_data.hullI_vec[i].cols ;
         
         double dist_sum = 0;
         vector<Vec4i>::iterator d =  m_data.defects_vec[i].begin();
@@ -431,12 +395,13 @@ void cvglCV::analysisThread2()
             d++;
         }
         
-         m_data.defect_dist_sum.emplace_back(dist_sum);
+         m_data.defect_dist_sum(i) = dist_sum;
         
     }
     
    
-    
+    vector<int> idlist;
+
     if( m_prev_centroids.size() == 0 )
     {
         vector<int> new_ids( m_data.centroids.size(), -1 );
@@ -446,7 +411,7 @@ void cvglCV::analysisThread2()
             m_id_used[i] = 1;
             new_ids[i] = i;
             
-            m_data.id.emplace_back(i);
+            idlist.emplace_back(i);
             
         }
         
@@ -515,7 +480,7 @@ void cvglCV::analysisThread2()
                 }
             }
             
-            m_data.id.emplace_back( new_ids[i] );
+            idlist.emplace_back( new_ids[i] );
             
         }
         
@@ -523,7 +488,8 @@ void cvglCV::analysisThread2()
         m_prev_centroid_id = new_ids;
     }
     
-    
+    m_data.id = Eigen::Map<Eigen::ArrayXi, Eigen::Aligned>(idlist.data(), idlist.size());
+
     processAnalysis(m_data);
     
 }

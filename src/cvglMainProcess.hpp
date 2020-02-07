@@ -1,13 +1,10 @@
 #pragma once
 
-#include "cvglProfile.hpp"
 #include "cvglContext.hpp"
 #include "cvglCV.hpp"
 #include "cvglObject.hpp"
 #include "cvglUDPServer.hpp"
 
-//#include "cvglCameraInput.hpp"
-//#include "cvglCamera.hpp"
 
 class cvglMainProcess :  public cvglCV, public cvglUDPServer //public cvglCamera,
 {
@@ -31,7 +28,7 @@ public:
     void processFrame(cv::Mat & frame, int camera_id ) ;
     void analysisToGL(const AnalysisData& analysis);
 
-    // --- called from cv worker thread to output to Max ---
+    // --- called from cv analysis worker thread to output to Max ---
     void processAnalysis(AnalysisData& data) override;
     
     // --- called from udp thread ---
@@ -73,9 +70,7 @@ private:
     float m_hull_line_thickness = 1;
     float m_minrect_line_thickness = 1;
     float m_contour_line_thickness = 1;
-    
-    cvglProfile profile;
-    
+        
 };
 
 

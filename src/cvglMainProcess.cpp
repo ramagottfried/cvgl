@@ -44,7 +44,6 @@ void cvglMainProcess::initObjs()
     
    
     
-    cvglProfile timer;
     objects_initialized = true;
     
     context.clearColor(0, 0, 0, 1);
@@ -138,13 +137,10 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
             return;
         
         m_newframe = true;
-
-        // takes ownership of frame in local storage m_img
-        setFrame(frame);
+        setFrame(frame); // takes ownership of frame in local storage m_img
         
         lock_guard<timed_mutex> lock_osc(m_osc_lock);
         
-
         switch (m_use_preprocess) {
             case 0:
                 preprocess();
@@ -161,13 +157,7 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
         //    cvx.getFlow( flowMesh );
       
         analyzeContour();
-    //    profile.markEnd("analyzeCon");
-
-//        profile.markStart();
         analysisToGL( m_data );
-        
-        profile.markEnd("processVec");
-
 
     }
     
@@ -293,7 +283,7 @@ void cvglMainProcess::draw()
     if( m_draw_frame && m_use_camera_id > 0 )
     {
         rect->bind();
-        frameTex->setTexture( m_img );
+        frameTex->setTexture( getFrame() );
         rect->draw();
     }
 

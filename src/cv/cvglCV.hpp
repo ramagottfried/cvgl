@@ -69,7 +69,8 @@ public:
     void getFlow(std::unique_ptr<cvglObject>& outFlow);
     
     
-    void analysisThread2();
+    void analysisThread();
+    /*
     void analysisThread(cv::Mat _src_color_sized,
                         cv::Mat _sob,
                         std::vector< cv::Mat >  contours,
@@ -91,15 +92,22 @@ public:
         double dev_sum = 0;
         double variance = 0;
     };
+    */
     
     std::vector<PixStats> getStatsChar( const cv::Mat& src, const cv::Mat& sobel, const cv::Mat& mask, const cv::Rect& roi);
     
+    
+    inline const cv::Mat& getFrame()
+    {
+        return m_img;
+    }
     
     // setters
     void setCVParams( const vector<OdotMessage> & b );
     
     inline void setFrame( cv::Mat & frame )
     {
+        m_img.release();
         m_img = std::move(frame);
     }
     
