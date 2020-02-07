@@ -9,8 +9,8 @@ int main( void )
     
     cvglMainProcess app;
     
-    cvglDeckLinkCamera bm_cam(3);
-    cvglCVCamera cvcam(0);
+    cvglDeckLinkCamera bm_cam(1);
+   // cvglCVCamera cvcam(0);
     
     if( bm_cam.hasCamera() )
     {
@@ -19,9 +19,8 @@ int main( void )
         app.context.setupWindow( bm_cam.getWidth(), bm_cam.getHeight() );
         bm_cam.start();
 
-    }
-  
-    if( cvcam.hasCamera() )
+    }/*
+    else if( cvcam.hasCamera() )
     {
         cout << "doing cv camera " << endl;
         cvcam.setProcessFrameCallback( [&app](cv::Mat& mat){ app.processFrame(mat, 2); } );
@@ -30,7 +29,7 @@ int main( void )
             app.useCameraID(2);
         }
         cvcam.start();
-    }
+    }*/
     else
     {
         app.close();
@@ -57,7 +56,7 @@ int main( void )
   //  cvcam.stop();
 //    bm_cam.stop();
     
-    app.stop();
+    app.close();
     
     return 0;
 }

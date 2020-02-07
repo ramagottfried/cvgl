@@ -29,11 +29,16 @@ void cvglCVCamera::cvCamLoop()
         if( !m_paused )
         {
             cap >> _frame;
+            
+            /**
+                note: processFrameCallback may take ownership of Mat
+             */
             if( m_processFrameCallback )
                 m_processFrameCallback( _frame );
         }
         
     }
+    
     cout << "cameraLoop end" << endl;
 }
 

@@ -14,36 +14,36 @@ class cvglMainProcess :  public cvglCV, public cvglUDPServer //public cvglCamera
     
 public:
     
+    // GL context
     cvglContext context;
+    
+    // globals
     
     std::unique_ptr<cvglObject>     rect, contourMesh, hullMesh, minrectMesh, flowMesh;
     std::unique_ptr<cvglTexture>    frameTex, contourTex, contourTriTex, hullTex, minrectTex, flowTex;
     
-    cv::Mat m_frame;
-    
     bool objects_initialized = false;
-   
-    void initObjs();
     
-    void processFrame(cv::Mat & frame, int camera_id ) ;
-    void processFrameCV(cv::Mat & frame, int camera_id ) ;
+    // methods
+    
 
-    void processAnalysisBundle(OdotBundle& bndl) override;
+    // --- called from camera thread ---
+    void processFrame(cv::Mat & frame, int camera_id ) ;
+    void analysisToGL(const AnalysisData& analysis);
+
+    // --- called from cv worker thread to output to Max ---
+    void processAnalysis(AnalysisData& data) override;
     
-    void processAnalysisVectors(const cvglAnalysisReturnStruct& analysis);
-    
-    void draw();
-    
-    inline void stop()
-    {
-        cvglUDPServer::close();
-    }
-    
-    virtual void receivedBundle( OdotBundle & b ) override;
-    
+    // --- called from udp thread ---
+    void receivedBundle( OdotBundle & b ) override;
     void setGLparams( const vector<OdotMessage> & b );
 
-    std::vector<float> getRGBA( const OdotMessage & msg );
+    // --- called from gl thread (main thread) ---
+    void draw();
+    void initObjs();
+    
+    
+//    std::vector<float> getRGBA( const OdotMessage & msg );
     
     inline void useCameraID( int i ){ m_use_camera_id = i; }
     
@@ -73,6 +73,8 @@ private:
     float m_hull_line_thickness = 1;
     float m_minrect_line_thickness = 1;
     float m_contour_line_thickness = 1;
+    
+    cvglProfile profile;
     
 };
 

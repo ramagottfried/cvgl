@@ -24,6 +24,8 @@ public:
     void start();
     void close();
     
+    inline void stop(){ close(); }
+    
     void sendBundle( OdotBundle & b );
 
     virtual void receivedBundle( OdotBundle & b ) {}

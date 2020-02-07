@@ -381,9 +381,13 @@ HRESULT STDMETHODCALLTYPE cvglDeckLinkCamera::VideoInputFrameArrived (IDeckLinkV
         cv::Mat mRGB;
         cv::cvtColor(mat, mRGB, cv::COLOR_YUV2BGR_UYVY);
         
-        //        newframe = true;
+        /**
+                note: processFrameCallback may take ownership of Mat
+         */
         if( blackmagic && m_processFrameCallback )
             m_processFrameCallback( mRGB );
+        
+       
     }
     
     return S_OK;

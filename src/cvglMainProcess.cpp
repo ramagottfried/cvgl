@@ -57,15 +57,14 @@ void cvglMainProcess::receivedBundle( OdotBundle & b )
     lock_guard<timed_mutex> lock_osc(m_osc_lock);
     auto msgs = b.getMessageArray();
     
-    cvglCV::setParams(msgs);
+    setCVParams(msgs);
 
     setGLparams(msgs);
     
 }
 
 /**
- *  sets GL parameters from bundle -> note::: must be set on the GL thread!
- *  so we need to store the GL params and only set them from the GL draw
+ *  note: must be be set  with m_osc_lock mutex since reader is on a gl thread
  */
 void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
 {
@@ -127,43 +126,48 @@ void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
 
 
 /**
- *  callback from camera loops
+ *  callback from camera thread
  */
 void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 {
     if( m_use_camera_id == camera_id )
     {
         lock_guard<timed_mutex> lock(m_gl_lock);
-     //   cout << "> processFrame LOCK" << endl;
-        m_newframe = true;
-        m_frame = frame.clone();
-        
-        if( !m_frame.data || !objects_initialized )
+    
+        if( !frame.data || !objects_initialized )
             return;
+        
+        m_newframe = true;
+
+        // takes ownership of frame in local storage m_img
+        setFrame(frame);
         
         lock_guard<timed_mutex> lock_osc(m_osc_lock);
         
+
         switch (m_use_preprocess) {
             case 0:
-                preprocess( m_frame );
+                preprocess();
                 break;
             case 1:
-                preprocessDifference( m_frame );
+                preprocessDifference();
                 break;
             case 2:
-                preprocessCanny( m_frame );
+                preprocessCanny(); // << really slow! (now a bit faster after using move above)
                 break;
             default:
                 break;
         }
-        
-        
-        
         //    cvx.getFlow( flowMesh );
-        auto vecs = analyzeContour();
+      
+        analyzeContour();
+    //    profile.markEnd("analyzeCon");
+
+//        profile.markStart();
+        analysisToGL( m_data );
         
-        processAnalysisVectors( vecs );
- //       cout << "< processFrame unlock" << endl;
+        profile.markEnd("processVec");
+
 
     }
     
@@ -173,6 +177,7 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 /**
  *  callback from camera loops
  */
+/*
 void cvglMainProcess::processFrameCV(cv::Mat & frame, int camera_id )
 {
     
@@ -203,11 +208,12 @@ void cvglMainProcess::processFrameCV(cv::Mat & frame, int camera_id )
     
 }
 
+*/
 
 
-
-void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &analysis)
+void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
 {
+    
     
     // lock to prevent conflict with gl thread (locked in processFrame)
     
@@ -226,6 +232,7 @@ void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &ana
     
     for( int i = 0 ; i < analysis.contour_idx.size(); i++ )
     {
+        
         cvgl::pointMatToVertex( analysis.contours[ analysis.contour_idx[i] ], contourMesh, analysis.halfW, analysis.halfH );
         contourMesh->triangulate();
         
@@ -234,7 +241,7 @@ void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &ana
        // cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
         
         Point2f rectPts[4];
-        analysis.minRec_vec[i].points( rectPts );
+        analysis.minRect_vec[i].points( rectPts );
         vector<Point2f> rect_v(rectPts, rectPts+4);
         
         cvgl::linePointsToPolygon(rect_v, minrectMesh, analysis.halfW, analysis.halfH, m_minrect_line_thickness, true);
@@ -249,9 +256,10 @@ void cvglMainProcess::processAnalysisVectors(const cvglAnalysisReturnStruct &ana
  *  virtual function callback called from detached openCV worker thread
  *  could add mappings here
  */
-void cvglMainProcess::processAnalysisBundle(OdotBundle& bndl)
+void cvglMainProcess::processAnalysis(AnalysisData& data)
 {
-    sendBundle(bndl);
+//    sendBundle(bndl);
+    // call cues here and *then* send bundle    
 }
 
 /**
@@ -275,7 +283,7 @@ void cvglMainProcess::draw()
 
     // this can get slowed down if a new frame comes in while the old one is still being drawn?
     
-    if( !context.isActive() || !objects_initialized || !m_frame.data || !m_newframe ){
+    if( !context.isActive() || !objects_initialized || !m_img.data || !m_newframe ){
         //cout << "<< draw unlock" << endl;
         return;
     }
@@ -285,7 +293,7 @@ void cvglMainProcess::draw()
     if( m_draw_frame && m_use_camera_id > 0 )
     {
         rect->bind();
-        frameTex->setTexture( m_frame );
+        frameTex->setTexture( m_img );
         rect->draw();
     }
 
@@ -324,8 +332,5 @@ void cvglMainProcess::draw()
    // context.printFPS();
     
     m_newframe = false;
-  //  cout << "<< draw unlock" << endl;
 
- //   m_gl_lock.unlock();
-    //cout << " << end draw, newframe " << newframe << "\n" << endl;
 }
