@@ -54,9 +54,10 @@ public:
     // virtual void processAnalysisVectors(std::vector< cv::Mat >& contours, std::vector< int >& contour_idx, std::vector< cv::Mat >& hullP_vec, std::vector< cv::RotatedRect >& minRec_vec, float& halfW, float& halfH) {};
     
     
-    // >> new idea: send AnalysisData struct instead of bundle
-    // maybe send it as OSC after, but not necessarily
-    virtual void processAnalysis(AnalysisData &data) {}
+    /**
+        called from worker thread, when m_data has been set
+     */
+    virtual void processAnalysis() {}
 
     /*
      *  implement in sub-class for callback to process CV bundle before output

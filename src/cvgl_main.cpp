@@ -10,7 +10,7 @@ int main( void )
     cvglMainProcess app;
     
     cvglDeckLinkCamera bm_cam(1);
-   // cvglCVCamera cvcam(0);
+    cvglCVCamera cvcam(0);
     
     if( bm_cam.hasCamera() )
     {
@@ -19,7 +19,7 @@ int main( void )
         app.context.setupWindow( bm_cam.getWidth(), bm_cam.getHeight() );
         bm_cam.start();
 
-    }/*
+    }
     else if( cvcam.hasCamera() )
     {
         cout << "doing cv camera " << endl;
@@ -29,7 +29,7 @@ int main( void )
             app.useCameraID(2);
         }
         cvcam.start();
-    }*/
+    }
     else
     {
         app.close();

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		112CA0F823F311CA00C77524 /* cvglCues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA0F623F311CA00C77524 /* cvglCues.cpp */; };
+		112CA0FB23F3128400C77524 /* cvglHelperFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA0F923F3128400C77524 /* cvglHelperFunctions.cpp */; };
+		112CA0FF23F312E300C77524 /* cvglMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA0FD23F312E300C77524 /* cvglMixer.cpp */; };
+		112CA10223F3140E00C77524 /* cvglRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA10023F3140E00C77524 /* cvglRandom.cpp */; };
+		112CA10423F3232000C77524 /* plastisphereCue0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA10323F3232000C77524 /* plastisphereCue0.cpp */; };
 		1132E0A423EC8D1F00B81F65 /* cvglAnalysisData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1132E0A223EC8D1F00B81F65 /* cvglAnalysisData.cpp */; };
 		1149621D22C0AD6100F5B267 /* cvglUDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1149621B22C0AD6100F5B267 /* cvglUDPServer.cpp */; };
 		1151F2D522B9196C0099655F /* DeckLinkAPIDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2D422B9196C0099655F /* DeckLinkAPIDispatch.cpp */; };
@@ -166,6 +171,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		112CA0F623F311CA00C77524 /* cvglCues.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglCues.cpp; sourceTree = "<group>"; };
+		112CA0F723F311CA00C77524 /* cvglCues.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCues.hpp; sourceTree = "<group>"; };
+		112CA0F923F3128400C77524 /* cvglHelperFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglHelperFunctions.cpp; sourceTree = "<group>"; };
+		112CA0FA23F3128400C77524 /* cvglHelperFunctions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglHelperFunctions.hpp; sourceTree = "<group>"; };
+		112CA0FD23F312E300C77524 /* cvglMixer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglMixer.cpp; sourceTree = "<group>"; };
+		112CA0FE23F312E300C77524 /* cvglMixer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglMixer.hpp; sourceTree = "<group>"; };
+		112CA10023F3140E00C77524 /* cvglRandom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglRandom.cpp; sourceTree = "<group>"; };
+		112CA10123F3140E00C77524 /* cvglRandom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglRandom.hpp; sourceTree = "<group>"; };
+		112CA10323F3232000C77524 /* plastisphereCue0.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = plastisphereCue0.cpp; path = plasisphere/plastisphereCue0.cpp; sourceTree = "<group>"; };
 		1132E0A223EC8D1F00B81F65 /* cvglAnalysisData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglAnalysisData.cpp; sourceTree = "<group>"; };
 		1132E0A323EC8D1F00B81F65 /* cvglAnalysisData.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglAnalysisData.hpp; sourceTree = "<group>"; };
 		1149621B22C0AD6100F5B267 /* cvglUDPServer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglUDPServer.cpp; sourceTree = "<group>"; };
@@ -361,7 +375,6 @@
 		1124850F1A9EA8F90032B37A = {
 			isa = PBXGroup;
 			children = (
-				1132E0A523EDBC0700B81F65 /* cues */,
 				118EDE3921D9866300F391D0 /* Info.plist */,
 				21DDFAC92146CC53001FF716 /* src */,
 				216C66BE214BF2E1009BDD3B /* libo */,
@@ -383,9 +396,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		112CA0FC23F312C900C77524 /* mixer */ = {
+			isa = PBXGroup;
+			children = (
+				112CA0FD23F312E300C77524 /* cvglMixer.cpp */,
+				112CA0FE23F312E300C77524 /* cvglMixer.hpp */,
+			);
+			path = mixer;
+			sourceTree = "<group>";
+		};
 		1132E0A523EDBC0700B81F65 /* cues */ = {
 			isa = PBXGroup;
 			children = (
+				112CA0F623F311CA00C77524 /* cvglCues.cpp */,
+				112CA0F723F311CA00C77524 /* cvglCues.hpp */,
+				112CA10323F3232000C77524 /* plastisphereCue0.cpp */,
 			);
 			path = cues;
 			sourceTree = "<group>";
@@ -422,6 +447,10 @@
 				216C667F214BB794009BDD3B /* cvglConversions.cpp */,
 				216C6680214BB794009BDD3B /* cvglConversions.hpp */,
 				216C6682214BB8F5009BDD3B /* cvglPrint.h */,
+				112CA0F923F3128400C77524 /* cvglHelperFunctions.cpp */,
+				112CA0FA23F3128400C77524 /* cvglHelperFunctions.hpp */,
+				112CA10023F3140E00C77524 /* cvglRandom.cpp */,
+				112CA10123F3140E00C77524 /* cvglRandom.hpp */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -628,6 +657,8 @@
 				21D875FD215A698E0068B7BD /* cvglMainProcess.cpp */,
 				21D7D4852149270900345757 /* vertex.vs */,
 				21D7D4862149274300345757 /* fragment.fs */,
+				112CA0FC23F312C900C77524 /* mixer */,
+				1132E0A523EDBC0700B81F65 /* cues */,
 				216C6698214BF250009BDD3B /* osc */,
 				21C0767A214D698B000F0AA4 /* camera */,
 				21D7D495214A3F6400345757 /* cv */,
@@ -820,10 +851,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				2112A4B7214DA3A300EC1C11 /* cvglCallbacks.cpp in Sources */,
+				112CA0FF23F312E300C77524 /* cvglMixer.cpp in Sources */,
 				2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */,
 				21D87601215A6BB30068B7BD /* cvgl_main.cpp in Sources */,
 				2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */,
 				11FB9E9922A839F500599CC9 /* delabella.cpp in Sources */,
+				112CA10423F3232000C77524 /* plastisphereCue0.cpp in Sources */,
 				2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */,
 				2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */,
 				2112A4BD214DA3A300EC1C11 /* OdotExpr.cpp in Sources */,
@@ -836,8 +869,11 @@
 				1151F2D522B9196C0099655F /* DeckLinkAPIDispatch.cpp in Sources */,
 				2112A4C5214DA3A300EC1C11 /* cvglConvexHull.cpp in Sources */,
 				1151F2D822B96C5D0099655F /* cvglDeckLinkCamera.cpp in Sources */,
+				112CA10223F3140E00C77524 /* cvglRandom.cpp in Sources */,
+				112CA0F823F311CA00C77524 /* cvglCues.cpp in Sources */,
 				2112A4C7214DA3A300EC1C11 /* OdotMessage.cpp in Sources */,
 				1149621D22C0AD6100F5B267 /* cvglUDPServer.cpp in Sources */,
+				112CA0FB23F3128400C77524 /* cvglHelperFunctions.cpp in Sources */,
 				2112A4C8214DA3A300EC1C11 /* cvglVAO.cpp in Sources */,
 				2112A4C9214DA3A300EC1C11 /* cvglCV.cpp in Sources */,
 				2112A4CA214DA3A300EC1C11 /* OdotHash.cpp in Sources */,

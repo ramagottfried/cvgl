@@ -490,7 +490,7 @@ void cvglCV::analysisThread()
     
     m_data.id = Eigen::Map<Eigen::ArrayXi, Eigen::Aligned>(idlist.data(), idlist.size());
 
-    processAnalysis(m_data);
+    processAnalysis();
     
 }
 

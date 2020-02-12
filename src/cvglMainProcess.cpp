@@ -57,9 +57,13 @@ void cvglMainProcess::receivedBundle( OdotBundle & b )
     auto msgs = b.getMessageArray();
     
     setCVParams(msgs);
-
     setGLparams(msgs);
     
+    m_mixer.proc(msgs);
+
+    // on input process OSC with current data and mixer (with osc lock)
+    OdotBundle out = m_cues.procDataAndMixer(m_data, m_mixer, b);
+    sendBundle( out );
 }
 
 /**
@@ -141,6 +145,7 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
         
         lock_guard<timed_mutex> lock_osc(m_osc_lock);
         
+        // pre-processes inherited from cvglCV
         switch (m_use_preprocess) {
             case 0:
                 preprocess();
@@ -163,42 +168,16 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
     
 }
 
-
 /**
- *  callback from camera loops
+ *  virtual function callback called from detached openCV worker thread
+ *  could add mappings here
  */
-/*
-void cvglMainProcess::processFrameCV(cv::Mat & frame, int camera_id )
+void cvglMainProcess::processAnalysis()
 {
-    
-    // cout << camera_id << endl;
-    
-    if( m_use_camera_id == camera_id )
-    {
-        lock_guard<timed_mutex> lock(m_gl_lock);
-        m_newframe = true;
-        m_frame = frame.clone();
-        
-        if( !m_frame.data || !objects_initialized )
-            return;
-        
-        lock_guard<timed_mutex> lock_osc(m_osc_lock);
-        
-        preprocess( m_frame );
-        
-        
-        //preprocessDifference( m_frame );
-        //preprocessCanny( m_frame );
-        
-        //    cvx.getFlow( flowMesh );
-        auto vecs = analyzeContour();
-        
-        processAnalysisVectors( vecs );
-    }
-    
+    // on new m_data, process with mixer (no osc lock?)
+    OdotBundle out = m_cues.procDataAndMixer(m_data, m_mixer);
+    sendBundle( out );
 }
-
-*/
 
 
 void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
@@ -242,15 +221,6 @@ void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
 
 }
 
-/**
- *  virtual function callback called from detached openCV worker thread
- *  could add mappings here
- */
-void cvglMainProcess::processAnalysis(AnalysisData& data)
-{
-//    sendBundle(bndl);
-    // call cues here and *then* send bundle    
-}
 
 /**
  *  called from GL thread

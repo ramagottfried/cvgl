@@ -4,7 +4,7 @@
 #include "cvglCV.hpp"
 #include "cvglObject.hpp"
 #include "cvglUDPServer.hpp"
-
+#include "cvglCues.hpp"
 
 class cvglMainProcess :  public cvglCV, public cvglUDPServer //public cvglCamera,
 {
@@ -28,8 +28,8 @@ public:
     void processFrame(cv::Mat & frame, int camera_id ) ;
     void analysisToGL(const AnalysisData& analysis);
 
-    // --- called from cv analysis worker thread to output to Max ---
-    void processAnalysis(AnalysisData& data) override;
+    // --- called from cv analysis worker thread when m_data has been set ---
+    void processAnalysis() override;
     
     // --- called from udp thread ---
     void receivedBundle( OdotBundle & b ) override;
@@ -45,6 +45,13 @@ public:
     inline void useCameraID( int i ){ m_use_camera_id = i; }
     
 private:
+    
+    cvglCues m_cues;
+    cvglMixer m_mixer;
+    // m_data is inherited from cvglCV
+    
+    
+    int m_cue_idx = 0;
     
     int m_use_camera_id = 1;
     int m_use_preprocess = 2;
