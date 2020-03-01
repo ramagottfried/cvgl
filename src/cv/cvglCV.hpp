@@ -15,6 +15,9 @@
 
 #include "cvglAnalysisData.hpp"
 
+#include "cvglTheadPool.hpp"
+
+
 /*
  to do: don't send OSC bundle for mapping, send struct with analysis data like in fabrica
         go through the CV path and clean up a bit
@@ -26,16 +29,16 @@ class cvglCV
     
 public:
     
-    cvglCV() : m_id_used(m_maxIDs) {}
+    cvglCV() : m_id_used(m_maxIDs)
+    {
+        m_thread_pool = std::make_unique<ThreadPool>(4);
+    }
     
     void preprocess();
     void preprocessDifference();
     void preprocessCanny();
     
-    
-   // void analyzeContour(cvglObject& outContour, cvglObject& outHull, cvglObject& minrectMesh);
-    
-    
+        
 //    struct cvglAnalysisReturnStruct {
 //        std::vector< cv::Mat > contours;
 //        std::vector< int > contour_idx;
@@ -45,8 +48,9 @@ public:
 //        float halfH;
 //    };
     
-    void analyzeContour();
-    
+//    void analyzeContour();
+    AnalysisData analyzeContour();
+
     /*
      *  implement in sub-class for callback to process CV vectors for drawing
      *
@@ -57,7 +61,7 @@ public:
     /**
         called from worker thread, when m_data has been set
      */
-    virtual void processAnalysis() {}
+    virtual void processAnalysis(AnalysisData& data) {}
 
     /*
      *  implement in sub-class for callback to process CV bundle before output
@@ -70,30 +74,8 @@ public:
     void getFlow(std::unique_ptr<cvglObject>& outFlow);
     
     
-    void analysisThread();
-    /*
-    void analysisThread(cv::Mat _src_color_sized,
-                        cv::Mat _sob,
-                        std::vector< cv::Mat >  contours,
-                        std::vector< int >      contour_idx,
-                        std::vector< double >   contour_area,
-                        std::vector< cv::Vec4i >    hierarchy,
-                        std::vector< cv::Mat >  hullP_vec,
-                        std::vector< cv::Mat >  hullI_vec,
-                        std::vector< std::vector<cv::Vec4i> >    defects_vec,
-                        std::vector< cv::RotatedRect> minRect_vec,
-                        double halfW, double halfH );
-    
-    
-    struct Stats {
-        double min = std::numeric_limits<double>::max();
-        double max = 0;
-        double mean = 0;
-        double sum = 0;
-        double dev_sum = 0;
-        double variance = 0;
-    };
-    */
+    void analysisThread(AnalysisData data);
+    void analysisTracking(AnalysisData& data, const AnalysisData& prev_data);
     
     std::vector<PixStats> getStatsChar( const cv::Mat& src, const cv::Mat& sobel, const cv::Mat& mask, const cv::Rect& roi);
     
@@ -145,11 +127,13 @@ public:
     
 protected:
     
-    //    std::mutex m_lock;
+    std::unique_ptr<ThreadPool>  m_thread_pool;
+    
+    std::mutex m_lock;
     
     // std::unordered_map<string, float> m_osc_values;
     
-    AnalysisData m_data;
+    AnalysisData m_prev_data;
     
     cv::Mat m_img, m_prev_frame;
     cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray, sob;
@@ -158,10 +142,12 @@ protected:
     
     bool m_invert = false;
     int m_thresh = 30;
-    float m_minsize = 0.00;
+    float m_minsize = 0.001;
     float m_maxsize = 0.9;
     bool m_parents_only = 0;
     double m_track_radius = 0.1;
+    
+    int m_color_mode = 2; 
     
     float m_canny_min = 0;
     float m_canny_max = 30;
@@ -173,8 +159,8 @@ protected:
     
     cv::Mat m_prev_points;
     
-    std::vector<cv::Point2f>    m_prev_centroids;
-    std::vector<int>            m_prev_centroid_id;
+ //   std::vector<cv::Point2f>    m_prev_centroids;
+ //   std::vector<int>            m_prev_centroid_id;
     
     
     

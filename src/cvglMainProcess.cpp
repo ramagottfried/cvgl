@@ -42,7 +42,7 @@ void cvglMainProcess::initObjs()
     rect->endObj();
     rect->initStaticDraw();
     
-   
+    
     
     objects_initialized = true;
     
@@ -51,25 +51,39 @@ void cvglMainProcess::initObjs()
     cout << objects_initialized << endl;
 }
 
+/**
+ virtual function called from UDP thread
+ */
 void cvglMainProcess::receivedBundle( OdotBundle & b )
 {
-    lock_guard<timed_mutex> lock_osc(m_osc_lock);
+    unique_lock<mutex> lock_osc(m_osc_lock);
+    
+    // process mixer first since the cues need to apply the pregain to the mixer faders
+    m_mixer.proc(b);
+    
+    // then process cues in case there are additions to bundle b,
+    // or overrides in case of new cue, to control the CV and GL processes
+    
+    
+    // >>>> proce cue function is called from UDP and CV threads -- causng some problems now
+    // >>>> maybe not necessary to do data analysis here? ... seems maybe reasonable to me
+    
+    OdotBundle out = m_cues.procDataAndMixer(m_data, m_mixer, b);
+    
     auto msgs = b.getMessageArray();
     
     setCVParams(msgs);
-    setGLparams(msgs);
+    setMainParams(msgs);
     
-    m_mixer.proc(msgs);
-
+    
     // on input process OSC with current data and mixer (with osc lock)
-    OdotBundle out = m_cues.procDataAndMixer(m_data, m_mixer, b);
     sendBundle( out );
 }
 
 /**
  *  note: must be be set  with m_osc_lock mutex since reader is on a gl thread
  */
-void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
+void cvglMainProcess::setMainParams( const vector<OdotMessage> & b )
 {
     for( auto& m : b )
     {
@@ -78,6 +92,10 @@ void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
         if( addr == "/video/enable" )
         {
             m_draw_frame = m.getInt() > 0;
+        }
+        else if( addr == "/video/black" )
+        {
+            m_draw_black = m.getInt() > 0;
         }
         else if( addr == "/use/camera" )
         {
@@ -123,6 +141,13 @@ void cvglMainProcess::setGLparams( const vector<OdotMessage> & b )
         {
             m_minrect_line_thickness = m.getFloat();
         }
+        if( addr == "/video/flip" )
+        {
+            if( m.size() == 2 )
+            {
+                context.flip( m[0].getFloat(), m[1].getFloat() );
+            }
+        }
     }
 }
 
@@ -135,16 +160,17 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 {
     if( m_use_camera_id == camera_id )
     {
-        lock_guard<timed_mutex> lock(m_gl_lock);
-    
+        unique_lock<mutex> lock(m_gl_lock);
+        
         if( !frame.data || !objects_initialized )
             return;
         
         m_newframe = true;
         setFrame(frame); // takes ownership of frame in local storage m_img
         
-        lock_guard<timed_mutex> lock_osc(m_osc_lock);
+        unique_lock<mutex> lock_osc(m_osc_lock);
         
+       // profile.markStart();
         // pre-processes inherited from cvglCV
         switch (m_use_preprocess) {
             case 0:
@@ -160,10 +186,15 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
                 break;
         }
         //    cvx.getFlow( flowMesh );
-      
-        analyzeContour();
-        analysisToGL( m_data );
-
+       // profile.markEnd("preproc");
+        
+        //profile.markStart();
+        AnalysisData data = analyzeContour();
+        //profile.markEnd("analyzeContour");
+        
+        analysisToGL( data );
+        
+        m_data = data;
     }
     
 }
@@ -172,11 +203,15 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
  *  virtual function callback called from detached openCV worker thread
  *  could add mappings here
  */
-void cvglMainProcess::processAnalysis()
+void cvglMainProcess::processAnalysis(AnalysisData& data)
 {
-    // on new m_data, process with mixer (no osc lock?)
-    OdotBundle out = m_cues.procDataAndMixer(m_data, m_mixer);
+    // on new data, process with mixer (no osc lock?)
+    OdotBundle out = m_cues.procDataAndMixer(data, m_mixer);
+    
+   // m_thread_pool->enqueue([this](OdotBundle b){ sendBundle( b );}, out);
+
     sendBundle( out );
+
 }
 
 
@@ -207,7 +242,7 @@ void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
         
         cvgl::pointMatToPolygonLineVertex(analysis.hullP_vec[i], hullMesh, analysis.halfW, analysis.halfH, m_hull_line_thickness);
         
-       // cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
+        // cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
         
         Point2f rectPts[4];
         analysis.minRect_vec[i].points( rectPts );
@@ -218,7 +253,7 @@ void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
         //cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, analysis.halfW, analysis.halfH, 10);
     }
     
-
+    
 }
 
 
@@ -228,42 +263,49 @@ void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
 void cvglMainProcess::draw()
 {
     //cout << ">> draw LOCK" << endl;
-   // auto start = std::chrono::system_clock::now();
+    // auto start = std::chrono::system_clock::now();
     
-    lock_guard<timed_mutex> lock(m_gl_lock); // lock or wait for gl_lock and then lock
-/*
-    if( !m_gl_lock.try_lock_for(std::chrono::milliseconds(10000) ) )
-    {
-        cout << "failed to lock" << endl;
-        return;
-    }
-  */
+    unique_lock<mutex> lock(m_gl_lock); // lock or wait for gl_lock and then lock
+    /*
+     if( !m_gl_lock.try_lock_for(std::chrono::milliseconds(10000) ) )
+     {
+     cout << "failed to lock" << endl;
+     return;
+     }
+     */
     
- //   cout << (start - std::chrono::system_clock::now()).count()  << endl;
-
+    //   cout << (start - std::chrono::system_clock::now()).count()  << endl;
+    
     // this can get slowed down if a new frame comes in while the old one is still being drawn?
     
     if( !context.isActive() || !objects_initialized || !m_img.data || !m_newframe ){
         //cout << "<< draw unlock" << endl;
         return;
     }
-
+    
     context.clear();
- 
+    
+    if( m_draw_black )
+    {
+        context.drawAndPoll();
+        m_newframe = false;
+        return;
+    }
+    
     if( m_draw_frame && m_use_camera_id > 0 )
     {
         rect->bind();
         frameTex->setTexture( getFrame() );
         rect->draw();
     }
-
+    
     if( m_draw_contour )
     {
         contourMesh->bind();
         contourTex->setTexture(m_contour_rgba);
         contourMesh->draw(GL_TRIANGLES);
     }
-
+    
     if( m_draw_contour_triangles )
     {
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -278,10 +320,10 @@ void cvglMainProcess::draw()
         hullTex->setTexture(m_hull_rgba);
         hullMesh->draw(GL_TRIANGLE_STRIP);//vector<int>({GL_TRIANGLES, GL_POINTS}));
     }
-   
+    
     if( m_draw_minrect )
     {
- //   glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        //   glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         minrectMesh->bind();
         minrectTex->setTexture(m_minrect_rgba);
         minrectMesh->draw(GL_TRIANGLE_STRIP);
@@ -289,8 +331,8 @@ void cvglMainProcess::draw()
     
     context.drawAndPoll();
     
-   // context.printFPS();
+    // context.printFPS();
     
     m_newframe = false;
-
+    
 }

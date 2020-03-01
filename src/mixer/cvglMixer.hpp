@@ -26,21 +26,40 @@ struct cvglMixer
         pregain = ArrayXd::Constant(nsliders, -100);
         gain = ArrayXd::Constant(nsliders, -100);
         amp = ArrayXd::Zero(nsliders);
-        
-        chan.emplace("/grains/1", 0); // zero indexed
-        chan.emplace("/grains/2", 1);
-        chan.emplace("/grains/3", 2);
-        chan.emplace("/grains/4", 3);
-        chan.emplace("/grains/5", 4);
-        chan.emplace("/filter",   5);
-        chan.emplace("/sine",     6);
 
-        chan.emplace("/main", 8);
+
+        chan.emplace("/perc",       0); // zero indexed
+        chan.emplace("/gran",       1);
+        chan.emplace("/res",        2);
+        chan.emplace("/filter",     3);
+
+        chan.emplace("/main",       8);
         
     }
     
-    void proc( vector<OdotMessage> & msgs)
+    void addPregainMidi( OdotBundle & b )
     {
+        b.addMessage("/mixer/knob/1", getPregainMidi("/perc") );
+        b.addMessage("/mixer/knob/2", getPregainMidi("/gran") );
+        b.addMessage("/mixer/knob/3", getPregainMidi("/res") );
+        b.addMessage("/mixer/knob/4", getPregainMidi("/filter") );
+    }
+    
+    void applyAddGains( OdotBundle & b )
+    {
+        applyPregain();
+        
+        b.addMessage("/perc/amp_scale", getAmp("/perc") );
+        b.addMessage("/gran/amp_scale", getAmp("/gran") );
+        b.addMessage("/res/amp_scale", getAmp("/res") );
+        b.addMessage("/filter/amp_scale", getAmp("/filter") );
+        b.addMessage("/main_dB", getGain("/main") );
+    }
+    
+    void proc( OdotBundle & b)
+    {
+        auto msgs = b.getMessageArray();
+        
         for( auto& m : msgs )
         {
             auto addr = m.getAddress();
@@ -108,7 +127,7 @@ struct cvglMixer
         }
     }
     
-    inline void set_pregain(string channel, double db)
+    inline void set_pregain(const string & channel, double db)
     {
         if( chan.count(channel) ){
             pregain[ chan[channel] ] = db;
@@ -126,7 +145,7 @@ struct cvglMixer
     
     //getters
     
-    inline double getAmp(string channel)
+    inline double getAmp(const string & channel)
     {
         if( chan.count(channel) ){
             //    std::cout << amp( chan[channel] ) << std::endl;
@@ -135,7 +154,7 @@ struct cvglMixer
         return 0;
     }
     
-    inline double getGain(string channel)
+    inline double getGain(const string & channel)
     {
         if( chan.count(channel) ){
             //    std::cout << amp( chan[channel] ) << std::endl;
@@ -144,7 +163,7 @@ struct cvglMixer
         return 0;
     }
     
-    inline double getPregain(string channel)
+    inline double getPregain(const string & channel)
     {
         if( chan.count(channel) ){
             return pregain( chan[channel] );
@@ -152,7 +171,7 @@ struct cvglMixer
         return 0;
     }
     
-    inline int32_t getPregainMidi(string channel)
+    inline int32_t getPregainMidi(const string & channel)
     {
         if( chan.count(channel) ){
             int32_t midi = dB2midi(pregain( chan[channel] ));
@@ -161,55 +180,43 @@ struct cvglMixer
         return 0;
     }
     
-    void addPregainMidi( OdotBundle & b )
-    {
-        b.addMessage("/mixer/knob/1", getPregainMidi("/grains/1") );
-        b.addMessage("/mixer/knob/2", getPregainMidi("/grains/2") );
-        b.addMessage("/mixer/knob/3", getPregainMidi("/grains/3") );
-        b.addMessage("/mixer/knob/4", getPregainMidi("/grains/4") );
-        b.addMessage("/mixer/knob/5", getPregainMidi("/grains/5") );
-        b.addMessage("/mixer/knob/6", getPregainMidi("/filter") );
-        b.addMessage("/mixer/knob/7", getPregainMidi("/sine") );
-
-    }
+    
     
     void initMidi( OdotBundle & b )
     {
         
-        b.addMessage("/mixer/knob/1", 0 );
-        b.addMessage("/mixer/knob/2", 0 );
-        b.addMessage("/mixer/knob/3", 0);
-        b.addMessage("/mixer/knob/4", 0);
-        b.addMessage("/mixer/knob/5", 0 );
-        b.addMessage("/mixer/knob/6", 0 );
-        b.addMessage("/mixer/knob/7", 0 );
-        b.addMessage("/mixer/knob/8", 0 );
+        int32_t zeroMidi_dB = dB2midi(0);
 
-        b.addMessage("/mixer/fader/1", dB2midi(0) );
-        b.addMessage("/mixer/fader/2", dB2midi(0)  );
-        b.addMessage("/mixer/fader/3", dB2midi(0) );
-        b.addMessage("/mixer/fader/4", dB2midi(0) );
-        b.addMessage("/mixer/fader/5", dB2midi(0) );
-        b.addMessage("/mixer/fader/6", dB2midi(0)  );
-        b.addMessage("/mixer/fader/7", dB2midi(0)  );
-        b.addMessage("/mixer/fader/8", dB2midi(0)  );
+        b.addMessage("/mixer/knob/1", zeroMidi_dB );
+        b.addMessage("/mixer/knob/2", zeroMidi_dB );
+        b.addMessage("/mixer/knob/3", zeroMidi_dB );
+        b.addMessage("/mixer/knob/4", zeroMidi_dB );
+        b.addMessage("/mixer/knob/5", zeroMidi_dB );
+        b.addMessage("/mixer/knob/6", zeroMidi_dB );
+        b.addMessage("/mixer/knob/7", zeroMidi_dB );
+        b.addMessage("/mixer/knob/8", zeroMidi_dB );
+
+        
+        b.addMessage("/mixer/fader/1", zeroMidi_dB );
+        b.addMessage("/mixer/fader/2", zeroMidi_dB  );
+        b.addMessage("/mixer/fader/3", zeroMidi_dB );
+        b.addMessage("/mixer/fader/4", zeroMidi_dB );
+        b.addMessage("/mixer/fader/5", zeroMidi_dB );
+        b.addMessage("/mixer/fader/6", zeroMidi_dB  );
+        b.addMessage("/mixer/fader/7", zeroMidi_dB  );
+        b.addMessage("/mixer/fader/8", zeroMidi_dB  );
         b.addMessage("/mixer/fader/main", 0 );
         
+        midi_gain(0, zeroMidi_dB );
+        midi_gain(1, zeroMidi_dB );
+        midi_gain(2, zeroMidi_dB );
+        midi_gain(3, zeroMidi_dB );
+        midi_gain(4, zeroMidi_dB );
+        midi_gain(5, zeroMidi_dB );
+        midi_gain(6, zeroMidi_dB );
+        midi_gain(7, zeroMidi_dB );
     }
     
-    void applyAddGains( OdotBundle & b )
-    {
-        applyPregain();
-        
-        b.addMessage("/grains/voice/1/amp_scale", getAmp("/grains/1") );
-        b.addMessage("/grains/voice/2/amp_scale", getAmp("/grains/2") );
-        b.addMessage("/grains/voice/3/amp_scale", getAmp("/grains/3") );
-        b.addMessage("/grains/voice/4/amp_scale", getAmp("/grains/4") );
-        b.addMessage("/grains/voice/5/amp_scale", getAmp("/grains/5") );
-        b.addMessage("/filter/amp_scale", getAmp("/filter") );
-        b.addMessage("/sine/amp_scale", getAmp("/sine") );
-
-        b.addMessage("/main_dB", getGain("/main") );
-    }
+    
     
 };

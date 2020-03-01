@@ -7,8 +7,12 @@
 int main( void )
 {
     
+    std::cout << "hardware_concurrency " << std::thread::hardware_concurrency() << std::endl;
+    std::string sendIp = "127.0.0.1";
+
     cvglMainProcess app;
-    
+    app.init(8888, 9999, sendIp);
+
     cvglDeckLinkCamera bm_cam(1);
     cvglCVCamera cvcam(0);
     
@@ -43,7 +47,13 @@ int main( void )
     if( !app.context.loadShaderFiles( "vertex.vs", "fragment.fs" ) )
         return -1;
     
+    // start UDP server
+    app.start();
+    
     app.initObjs();
+    
+    
+    app.initMixer();
     
     cout << "starting draw loop " << endl;
 

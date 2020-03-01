@@ -40,13 +40,13 @@ void cvglCV::setCVParams( const vector<OdotMessage> & b )
         {
             m_maxsize = m.getFloat();
         }
-    
+        
     }
 }
 
 void cvglCV::preprocess()
 {
-      
+    
     // later could wrap each function with a "set to output" flag, which could be used for debugging
     // or keep these all as class members and then query them as needed..
     if( m_img.empty() )
@@ -55,20 +55,33 @@ void cvglCV::preprocess()
         return;
     }
     
-   
+    
     cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
     cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
-   
-    if( m_invert )
-    {
-        
+    
+    // cout << "nchannels " << src_color_sized.channels() << endl;
+    
+    switch (m_color_mode) {
+        case 1:
+            cvtColor(src_color_sized, src_color_sized, COLOR_RGB2HLS_FULL);
+            break;
+        case 2:
+            cvtColor(src_color_sized, src_color_sized, COLOR_RGB2Lab);
+            break;
+        default:
+            break;
     }
     
-   
+    if( m_invert )
+    {
+        bitwise_not(src_gray, src_gray);
+    }
+    
+    
     GaussianBlur(src_gray, src_blur_gray, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
     erode( src_blur_gray, src_blur_gray, m_er_element );
     dilate( src_blur_gray, src_blur_gray, m_di_element );
-   
+    
     threshold( src_blur_gray, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
     
     Sobel(src_gray, sob, CV_32F, 1, 1);
@@ -83,29 +96,38 @@ void cvglCV::preprocessDifference()
     {
         return;
     }
-        
+    
+   
+    cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
+    
     if( m_prev_frame.empty() )
     {
-        m_prev_frame = m_img.clone();
+       m_prev_frame = src_color_sized.clone();
     }
-    
-    Mat diff = m_prev_frame - m_img;
-    
-   // mat = diff;
-    
-    m_prev_frame = m_img.clone();
-    
 
-    cv::resize(diff, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
+    Mat diff = m_prev_frame - src_color_sized;
+       
+    m_prev_frame = src_color_sized.clone();
+       
     
-    cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
+    cv::cvtColor(diff, src_gray, cv::COLOR_RGB2GRAY);
     
-    
+    switch (m_color_mode) {
+        case 1:
+            cvtColor(src_color_sized, src_color_sized, COLOR_RGB2HLS_FULL);
+            break;
+        case 2:
+            cvtColor(src_color_sized, src_color_sized, COLOR_RGB2Lab);
+            break;
+        default:
+            break;
+    }
     
     if( m_invert )
     {
-        
+        bitwise_not(src_gray, src_gray);
     }
+    
     
     GaussianBlur(src_gray, src_blur_gray, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
     erode( src_blur_gray, src_blur_gray, m_er_element );
@@ -114,14 +136,7 @@ void cvglCV::preprocessDifference()
     threshold( src_blur_gray, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
     
     Sobel(src_gray, sob, CV_32F, 1, 1);
-    
-    // add sobel here?
-    
-    // canny? for focus part?
-    
-    // optical flow? ... maybe CNN later?
-    
-    //  toDisplay = threshold_output;
+
     
 }
 
@@ -133,18 +148,28 @@ void cvglCV::preprocessCanny()
         return;
     }
     
-  //  m_img = mat.clone();
-   
+    //  m_img = mat.clone();
+    
     
     cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
     cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
     
-   // mat = src_gray;
+    switch (m_color_mode) {
+        case 1:
+            cvtColor(src_color_sized, src_color_sized, COLOR_RGB2HLS_FULL);
+            break;
+        case 2:
+            cvtColor(src_color_sized, src_color_sized, COLOR_RGB2Lab);
+            break;
+        default:
+            break;
+    }
     
     if( m_invert )
     {
-        
+        bitwise_not(src_gray, src_gray);
     }
+    
     
     GaussianBlur(src_gray, src_blur_gray, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
     erode( src_blur_gray, src_blur_gray, m_er_element );
@@ -157,17 +182,17 @@ void cvglCV::preprocessCanny()
     GaussianBlur(can, can_blur, cv::Size(m_gauss_ksize, m_gauss_ksize), m_gauss_sigma, m_gauss_sigma);
     erode( can_blur, can_blur, m_er_element );
     dilate( can_blur, can_blur, m_di_element );
-
-//    src_gray = can;
+    
+    //    src_gray = can;
     
     threshold( can_blur, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
     
     Sobel(src_gray, sob, CV_32F, 1, 1);
     
     
-   // cv::cvtColor(src_gray+can, mat, cv::COLOR_GRAY2RGB);
-
-   
+    // cv::cvtColor(src_gray+can, mat, cv::COLOR_GRAY2RGB);
+    
+    
     
 }
 
@@ -178,12 +203,12 @@ void cvglCV::getFlow( unique_ptr<cvglObject>& outFlow)
     Mat stat, err;
     Mat defect_startpt;
     
-// this is crashing
+    // this is crashing
     if( !m_prev_frame.empty() ){
         calcOpticalFlowPyrLK( m_prev_frame, src_gray, m_prev_points, defect_startpt, stat, err);
     }
     m_prev_frame = src_gray.clone();
-
+    
     
     cout << defect_startpt.rows << " " << defect_startpt.cols << endl;
     
@@ -194,136 +219,157 @@ void cvglCV::getFlow( unique_ptr<cvglObject>& outFlow)
     }
     
     cout << "copy" << endl;
-
-
+    
+    
     
     cout << "end" << endl;
 }
 
-void cvglCV::analyzeContour()
+AnalysisData cvglCV::analyzeContour()
 {
+    AnalysisData data;
+
     if( threshold_output.empty() )
     {
         cout << "no image" << endl;
-        return;
+        return data;
     }
- 
-    m_data = AnalysisData();
     
-    
-    findContours( threshold_output, m_data.contours, m_data.hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+    findContours( threshold_output, data.contours, data.hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
     
     size_t npix = threshold_output.rows * threshold_output.cols;
     
-    m_data.halfW = threshold_output.cols / 2.0f;
-    m_data.halfH = threshold_output.rows / 2.0f;
+    data.halfW = threshold_output.cols / 2.0f;
+    data.halfH = threshold_output.rows / 2.0f;
     
     vector< double > contour_area;
     
-    for( int i = 0; i < m_data.contours.size(); i++ )
+    for( int i = 0; i < data.contours.size(); i++ )
     {
-        double contour_a = contourArea( m_data.contours[i] ) / npix;
+        double contour_a = contourArea( data.contours[i] ) / npix;
         
-        if( (contour_a < m_minsize) || (contour_a > m_maxsize ) || ((m_parents_only && (m_data.hierarchy[i][3] != -1))) )
+        if( (contour_a < m_minsize) || (contour_a > m_maxsize ) || ((m_parents_only && (data.hierarchy[i][3] != -1))) )
             continue;
-    
+        
         contour_area.emplace_back(contour_a);
-        m_data.contour_idx.emplace_back(i);
-      
+        data.contour_idx.emplace_back(i);
+        
         // hull
         Mat hullP, hullI;
         cv::RotatedRect minRect;
         vector<Vec4i> defects;
         
-        cvgl::minAreaRectHull( m_data.contours[i], minRect, hullP, hullI );
+        cvgl::minAreaRectHull( data.contours[i], minRect, hullP, hullI );
         
         
         size_t hullI_size = hullI.rows * hullI.cols;
         if( hullI_size > 3 )
-            convexityDefects( m_data.contours[i], hullI, defects );
+            convexityDefects( data.contours[i], hullI, defects );
         
-        m_data.hullP_vec.emplace_back( hullP );
-        m_data.hullI_vec.emplace_back( hullI );
-        m_data.defects_vec.emplace_back( defects );
-        m_data.minRect_vec.emplace_back(minRect);
+        data.hullP_vec.emplace_back( hullP );
+        data.hullI_vec.emplace_back( hullI );
+        data.defects_vec.emplace_back( defects );
+        data.minRect_vec.emplace_back(minRect);
         
     }
     
     
-    m_data.initSizeFromIdx();
-    m_data.contour_area = Eigen::Map<Eigen::ArrayXd, Eigen::Aligned>(contour_area.data(), contour_area.size());
+    data.initSizeFromIdx();
+    data.contour_area = Eigen::Map<Eigen::ArrayXd, Eigen::Aligned>(contour_area.data(), contour_area.size());
     
-    // very stateful, this is probably ok since we know that it is only called from the camera thread, and only one camera at a time
-    thread worker(&cvglCV::analysisThread, this);
+   // lock_guard<mutex> lock(m_lock);
+   
+    m_thread_pool->enqueue([this](AnalysisData _data){ analysisThread(_data);}, data);
     
-    worker.detach();
+   // thread worker(&cvglCV::analysisThread, this, data);
+    //worker.detach();
     
+    return std::move(data);
 }
 
 
-void cvglCV::analysisThread()
+void cvglCV::analysisThread(AnalysisData data)
 {
+    unique_lock<mutex> lock(m_lock);
+    const AnalysisData& prev_data = m_prev_data;
+    m_lock.unlock();
     
     int nchans = src_color_sized.channels();
     double src_width = (double)src_color_sized.size().width;
     double src_height = (double)src_color_sized.size().height;
     double npix = src_width * src_height;
     
-    
     vector< double > channel_means[nchans];
     vector< double > channel_varience[nchans];
-
-    string prefix;
+        
+    data.centroids.reserve( data.ncontours );
     
-    m_data.centroids.reserve( m_data.ncontours );
-
-    
-    for( int i = 0; i < m_data.ncontours; i++ )
+    for( int i = 0; i < data.ncontours; i++ )
     {
-        const Mat& contour = m_data.contours[ m_data.contour_idx[i] ];
-
+        const Mat& contour = data.contours[ data.contour_idx[i] ];
+        
         
         Mat contour_mask = Mat::zeros( src_color_sized.size(), CV_8UC1 );
-        drawContours(contour_mask, m_data.contours, i, Scalar(255), FILLED);
+        drawContours(contour_mask, data.contours, i, Scalar(255), FILLED);
         
         cv::Rect boundRect = boundingRect( contour );
-
+        
         vector<PixStats> stats = getStatsChar( src_color_sized, sob, contour_mask, boundRect );
-        m_data.pix_channel_stats.emplace_back(stats);
-//
-//        for(int c = 0; c < nchans; c++)
-//        {
-//            channel_means[c].emplace_back( stats[c].mean );
-//            channel_varience[c].emplace_back( stats[c].variance );
-//        }
-//
-        m_data.focus(i) = stats[ src_color_sized.channels() ].variance;
-        
-        m_data.parent(i) = m_data.hierarchy[ m_data.contour_idx[i] ][3] ;
-        m_data.parimeter(i) = arcLength(contour, true) ;
-        
-        cv::RotatedRect& minRect = m_data.minRect_vec[i];
+        if (m_color_mode == 2 && stats.size() == 3) {
+            stats[0].mean *= 0.3921568627; // 100/255 to sacle to 0-100
+            stats[1].mean -= 128;
+            stats[2].mean -= 128;
+// scale std? add std? to stats?
+            
+            /* will have to deal with this from the plastisphere scripts
+             
+             if( bound(/pix/l/mean),
+               progn(
+                 /pix/l/mean *= 0.3921568627, # 100/255
+                 /pix/a/mean -= 128,
+                 /pix/b/mean -= 128,
+                 /pix/l/std = sqrt(/pix/l/var) * 0.3921568627,
+                 /pix/a/std = sqrt(/pix/a/var),
+                 /pix/b/std = sqrt(/pix/b/var),
 
+                 /pix/l/max = /pix/l/mean + /pix/l/std,
+                 /pix/a/max = /pix/a/mean + /pix/a/std,
+                 /pix/b/max = /pix/b/mean + /pix/b/std
+
+               )
+             )
+             */
+        }
+        
+        data.pix_channel_stats.emplace_back(stats);
+
+        data.focus(i) = stats[ src_color_sized.channels() ].variance;
+        
+        data.parent(i) = data.hierarchy[ data.contour_idx[i] ][3] ;
+        data.parimeter(i) = arcLength(contour, true) ;
+        
+        cv::RotatedRect& minRect = data.minRect_vec[i];
+        
         double hh = minRect.size.height / src_height;
         double ww = minRect.size.width / src_width;
         
         double major = max(hh, ww);
         double minor = min(hh, ww);
         
-        m_data.rotrect_minor(i) = minor;
-        m_data.rotrect_major(i) = major;
+        data.rotrect_minor(i) = minor;
+        data.rotrect_major(i) = major;
         
         double centerx = minRect.center.x;
         double centery = minRect.center.y;
         
-        m_data.center_x(i) =  centerx / src_width ;
-        m_data.center_y(i) =  1. - (centery / src_height) ;
+        data.center_x(i) =  centerx / src_width ;
+        data.center_y(i) =  1. - (centery / src_height) ;
         
         double _a = major / 2.;
         double _b = minor / 2.;
         double ecc = sqrt(1 - pow(_b/_a, 2));
         
-        m_data.eccentricity(i) =  ecc ;
+        data.eccentricity(i) =  ecc ;
         
         
         double r_angle = minRect.angle;
@@ -337,11 +383,11 @@ void cvglCV::analysisThread()
             out_angle = -r_angle;
         }
         
-        m_data.angle(i) = out_angle ;
+        data.angle(i) = out_angle ;
         
         
-        m_data.size_x(i) =  boundRect.width / src_width ;
-        m_data.size_y(i) =  boundRect.height / src_height ;
+        data.size_x(i) =  boundRect.width / src_width ;
+        data.size_y(i) =  boundRect.height / src_height ;
         
         double ctrdx = -1;
         double ctrdy = -1;
@@ -352,7 +398,7 @@ void cvglCV::analysisThread()
         double hu[7];
         HuMoments(moms, hu);
         
-      //  obj.contourPts.addMessage( "/hu", vector<double>(hu, hu+7) );
+        //  obj.contourPts.addMessage( "/hu", vector<double>(hu, hu+7) );
         
         if( moms.m00 != 0.0 )
         {
@@ -364,439 +410,232 @@ void cvglCV::analysisThread()
         double scaled_centroidX = ctrdx / src_width;
         double scaled_centroidY = 1. - (ctrdy / src_height);
         
-        m_data.centroids.emplace_back(cv::Point2f(scaled_centroidX, scaled_centroidY));
-
-        m_data.centroid_x(i) =  scaled_centroidX ;
-        m_data.centroid_y(i) =  scaled_centroidY ;
+        data.centroids.emplace_back(cv::Point2f(scaled_centroidX, scaled_centroidY));
+        
+        data.centroid_x(i) =  scaled_centroidX ;
+        data.centroid_y(i) =  scaled_centroidY ;
         
         // centroids.push_back( Point2f(ctrdx, ctrdy) );
         
-        m_data.convex(i) = cvgl::isContourConvex( contour ) ;
+        data.convex(i) = cvgl::isContourConvex( contour ) ;
         
         
         Mat convexcontour;
-        approxPolyDP( m_data.hullP_vec[i], convexcontour, 0.001, true);
+        approxPolyDP( data.hullP_vec[i], convexcontour, 0.001, true);
         
-        m_data.hull_area(i) =  contourArea(convexcontour) / npix ;
+        data.hull_area(i) =  contourArea(convexcontour) / npix ;
         
-        m_data.defect_count(i) =  (int)m_data.defects_vec[i].size() ;
+        data.defect_count(i) =  (int)data.defects_vec[i].size() ;
         
-        m_data.hull_count(i) =  (int)m_data.hullI_vec[i].rows * (int)m_data.hullI_vec[i].cols ;
+        data.hull_count(i) =  (int)data.hullI_vec[i].rows * (int)data.hullI_vec[i].cols ;
+        
+        
+        double graph_centroid_x = cvgl::scale( data.centroid_x(i), 0., 1., -1., 1.);
+        double graph_centroid_y = cvgl::scale( data.centroid_y(i), 0., 1., -1., 1.);
+
+        data.centroid_dist(i) = sqrt( graph_centroid_x*graph_centroid_x + graph_centroid_y*graph_centroid_y );
+        data.centroid_angle(i) = atan2(graph_centroid_y, graph_centroid_y ) * 57.2957795131;
+        
+        double aspect = src_width / src_height;
+        
+        data.elongation(i) = (data.size_x(i) * aspect) / data.size_y(i);
+        data.verticality(i) = sin( data.angle(i) * 0.01745329252);
         
         double dist_sum = 0;
-        vector<Vec4i>::iterator d =  m_data.defects_vec[i].begin();
-        vector<Vec4i>::iterator d_end =  m_data.defects_vec[i].end();
+//        vector<Vec4i>::iterator d =  data.defects_vec[i].begin();
+//        vector<Vec4i>::iterator d_end =  data.defects_vec[i].end();
         
-        while ( d != d_end )
+        ArrayXd defect_x(data.defects_vec[i].size());
+        ArrayXd defect_y(data.defects_vec[i].size());
+        ArrayXd defect_depth(data.defects_vec[i].size());
+        
+       // cout << "rows " << data.contours[i].rows << " columns " <<  data.contours[i].cols << " depth " << (data.contours[i].depth() == CV_32S) << endl;
+        
+        for( size_t j = 0; j < data.defects_vec[i].size(); ++j )
         {
-            Vec4i& v = (*d);
-            float depth = v[3] / 256.;
-            dist_sum += depth;
-            d++;
+            Vec4i& v = data.defects_vec[i][j];
+            cv::Point2i * ptFar = data.contours[i].ptr<cv::Point2i>( v[2] );
+            defect_x(j) = (double)ptFar->x / src_width;
+            defect_y(j) = (double)ptFar->y / src_height;
+            defect_depth(j) = (double)v[3] / 256.;
+            
+            dist_sum += defect_depth(j);
         }
         
-         m_data.defect_dist_sum(i) = dist_sum;
+        ArrayXd rel_x = defect_x - data.centroid_x(i);
+        ArrayXd rel_y = defect_y - data.centroid_y(i);
+        ArrayXd defect_theta =  rel_y.binaryExpr(rel_x, [](double a, double b) { return std::atan2(a,b);} );
+        ArrayXd defect_depthweight = defect_depth / dist_sum;
+        
+        ArrayXd defect_w_x = ( defect_depthweight * defect_theta.sin() );
+        ArrayXd defect_w_y = ( defect_depthweight * defect_theta.cos() );
+
+        data.defect_rel_mean_angle = std::atan2( defect_w_x.sum(),  defect_w_y.sum() ) * 57.2957795131;
+
+        data.defect_dist_sum(i) = dist_sum;
         
     }
     
-   
-    vector<int> idlist;
-
-    if( m_prev_centroids.size() == 0 )
+            
+    // id tracking
+    
+    if( prev_data.centroids.size() == 0 )
     {
-        vector<int> new_ids( m_data.centroids.size(), -1 );
         
-        for( int i = 0; i < m_data.centroids.size(); i++ )
+        for( int i = 0; i < data.centroids.size(); i++ )
         {
             m_id_used[i] = 1;
-            new_ids[i] = i;
+            data.id.emplace_back(i);
+            data.id_idx.emplace(i, i);
             
-            idlist.emplace_back(i);
             
         }
         
-        m_prev_centroids = m_data.centroids;
-        m_prev_centroid_id = new_ids;
     }
     else
     {
         // if prev centroids are accounted for, then keep the same ids, if not found release id for prev centroid
-        vector<int> new_ids( m_data.centroids.size(), -1 );
+        data.id = vector<int>( data.centroids.size(), -1 );
         
-        int closest_id = -1;
+        int closest_idx = -1;
         double radius_max = m_track_radius * src_height;
         double min = radius_max;
         int debug_count = 0;
         
+        data.sustain_idx.reserve( data.centroids.size() );
+        data.noteOn_idx.reserve( data.centroids.size() );
+        data.noteOff_prev_idx.reserve( prev_data.centroids.size() );
+
+        // get delta movement between tracked contours
+        
+        
         // fist check if previous points are found
-        for( int j = 0; j < m_prev_centroids.size(); j++ )
+        for( int j = 0; j < prev_data.centroids.size(); j++ )
         {
             
             min = radius_max;
-            closest_id = -1;
+            closest_idx = -1;
             debug_count = 0;
             
-            for( int i = 0; i < m_data.centroids.size(); i++ )
+            for( int i = 0; i < data.centroids.size(); i++ )
             {
                 
-                double delta = norm(m_data.centroids[i] - m_prev_centroids[j]);
+                double delta = norm(data.centroids[i] - prev_data.centroids[j]);
                 
                 // if within range and if not yet assigned, do assignment
-                if( delta <= radius_max && new_ids[i] == -1 )
+                if( delta <= radius_max && data.id[i] == -1 )
                 {
                     if( min >= delta )
                     {
                         min = delta;
-                        closest_id = i;
+                        closest_idx = i;
+                        // could maybe break here once we find something within the range,
+                        // but currnetly we look through *every* possibility and find the closest
                     }
                 }
                 
             }
             
-            if( closest_id > -1 )
+            if( closest_idx > -1 )
             {
-                new_ids[closest_id] = m_prev_centroid_id[j];
+                // selected a closest match index
+                data.id[closest_idx] = prev_data.id[j];
+                data.id_idx.emplace( prev_data.id[j], closest_idx );
+                data.sustain_idx.emplace_back( closest_idx );
             }
             else
             {
-                m_id_used[ m_prev_centroid_id[j] ] = 0;
+                // not found, so fee the id slot
+                m_id_used[ prev_data.id[j] ] = 0;
+                data.noteOff_prev_idx.emplace_back(j);
             }
             
         }
         
         // check for unassigned new_ids, and then find the first unused id number:
-        for( int i = 0; i < m_data.centroids.size(); i++ )
+        for( int i = 0; i < data.centroids.size(); i++ )
         {
-            if( new_ids[i] == -1 )
+            if( data.id[i] == -1 )
             {
                 for( int n = 0; n < m_maxIDs; n++ )
                 {
                     if( m_id_used[n] == 0)
                     {
-                        new_ids[i] = n;
+                        data.id[i] = n;
+                        data.id_idx.emplace(n, i);
+                        data.noteOn_idx.emplace_back(i);
+
                         m_id_used[n] = 1;
                         break;
                     }
                 }
             }
             
-            idlist.emplace_back( new_ids[i] );
-            
         }
         
-        m_prev_centroids = m_data.centroids;
-        m_prev_centroid_id = new_ids;
+
     }
     
-    m_data.id = Eigen::Map<Eigen::ArrayXi, Eigen::Aligned>(idlist.data(), idlist.size());
+    
+    
+    
+    /*
+    for( int i = 0; i < data.id.size(); i++)
+    {
+        cout << data.id[i] << " " << i << " " << data.id_idx[ data.id[i] ] << endl;
+    }*/
+    
+    // >> should now be possible to do deltas between data, using id_idx to look up index based on tracked ids
+    
 
-    processAnalysis();
+    analysisTracking(data, prev_data);
+    
+    processAnalysis(data);
+    
+    m_lock.lock();
+    m_prev_data = data;
+    m_lock.unlock();
     
 }
 
 
-/*
-void cvglCV::analysisThread(Mat _src_color_sized,
-                            Mat _sob,
-                            vector< Mat >                  contours,
-                            vector< int >                  contour_idx,
-                            vector< double >               contour_area,
-                            vector< cv::Vec4i >            hierarchy,
-                            vector< Mat >                  hullP_vec,
-                            vector< Mat >                  hullI_vec,
-                            vector< vector<cv::Vec4i> >    defects_vec,
-                            vector< cv::RotatedRect >      minRect_vec,
-                            double halfW, double halfH )
+void cvglCV::analysisTracking(AnalysisData& data, const AnalysisData& prev_data)
 {
-    OdotBundle bundle;
     
-    size_t ncontours = contour_idx.size();
+    auto time_now = std::chrono::system_clock::now();
     
-  
-    OdotMessage id("/ids");
-    OdotMessage cx("/center/x");
-    OdotMessage cy("/center/y");
-    OdotMessage sx("/size/x");
-    OdotMessage sy("/size/y");
-    OdotMessage centroidx("/centroid/x");
-    OdotMessage centroidy("/centroid/y");
-    OdotMessage parimeter("/parimeter");
-    OdotMessage angle("/angle");
-    OdotMessage eccentricity("/eccentricity");
-    OdotMessage rotmin("/rotrect/minor");
-    OdotMessage rotmaj("/rotrect/major");
-    OdotMessage child_of("/parent");
-    OdotMessage focus("/focus");
-    OdotMessage convex("/convex");
-    OdotMessage hull_count("/hull/count");
-    OdotMessage hullarea("/hull/area");
-    OdotMessage defect_count("/defect/count");
-    OdotMessage defect_dist_sum("/defect/dist_sum");
-    
-    
-    int nchans = _src_color_sized.channels();
-    double src_width = (double)_src_color_sized.size().width;
-    double src_height = (double)_src_color_sized.size().height;
-    double npix = src_width * src_height;
-    
-    
-    vector< double > channel_means[nchans];
-    vector< double > channel_varience[nchans];
-
-    string prefix;
-    
-    vector<Point2f> centroids;
-    centroids.reserve( ncontours );
-
-    
-    for( int i = 0; i < ncontours; i++ )
+    // note: preset delta varaibles to zero in init function in case there are no matching ids from prev frame
+    for( int i = 0; i < data.ncontours; ++i )
     {
-        const Mat& contour = contours[ contour_idx[i] ];
-
-        
-        Mat contour_mask = Mat::zeros( _src_color_sized.size(), CV_8UC1 );
-        drawContours(contour_mask, contours, i, Scalar(255), FILLED);
-        
-        cv::Rect boundRect = boundingRect( contour );
-
-        vector<Stats> stats = getStatsChar( _src_color_sized, _sob, contour_mask, boundRect );
-        
-        for(int c = 0; c < nchans; c++)
+        auto prev_ref = prev_data.id_idx.find( data.id[i] );
+        if( prev_ref != prev_data.id_idx.end() )
         {
-            channel_means[c].emplace_back( stats[c].mean );
-            channel_varience[c].emplace_back( stats[c].variance );
-        }
-        
-        focus.appendValue( stats[ _src_color_sized.channels() ].variance );
-        
-        child_of.appendValue( hierarchy[ contour_idx[i] ][3] );
-        parimeter.appendValue( arcLength(contour, true) );
-        
-        cv::RotatedRect& minRect = minRect_vec[i];
-
-        double hh = minRect.size.height / src_height;
-        double ww = minRect.size.width / src_width;
-        
-        double major = max(hh, ww);
-        double minor = min(hh, ww);
-        
-        rotmaj.appendValue( major );
-        rotmin.appendValue( minor );
-        
-        double centerx = minRect.center.x;
-        double centery = minRect.center.y;
-        
-        cx.appendValue( centerx / src_width );
-        cy.appendValue( 1. - (centery / src_height) );
-        
-        double _a = major / 2.;
-        double _b = minor / 2.;
-        double ecc = sqrt(1 - pow(_b/_a, 2));
-        
-        eccentricity.appendValue( ecc );
-        
-        
-        double r_angle = minRect.angle;
-        double out_angle = 0.0;
-        if( minRect.size.height > minRect.size.width )
-        {
-            out_angle = -r_angle + 90.0;
+            // found id in previous frame, can be used to get delta
+            int prev_idx = prev_ref->second;
+            double dx = data.centroid_x(i) - prev_data.centroid_x(prev_idx);
+            double dy = data.centroid_y(i) - prev_data.centroid_y(prev_idx);
+            data.delta_centroid_x(i) = dx;
+            data.delta_centroid_x(i) = dy;
+            data.delta_centroid_dist(i) = sqrt( dx*dx + dy*dy );
+                        
+            data.start_centroid_x(i) = prev_data.start_centroid_x(prev_idx);
+            data.start_centroid_y(i) = prev_data.start_centroid_y(prev_idx);
+            
+            data.start_time[i] = prev_data.start_time[prev_idx];
+            
+            data.elapsed_contour = (time_now - data.start_time[i]).count();
         }
         else
         {
-            out_angle = -r_angle;
+            data.start_time[i] = time_now;
+            data.start_centroid_x(i) = data.centroid_x(i);
+            data.start_centroid_y(i) = data.centroid_y(i);
         }
-        
-        angle.appendValue( out_angle );
-        
-        
-        sx.appendValue( boundRect.width / src_width );
-        sy.appendValue( boundRect.height / src_height );
-        
-        double ctrdx = -1;
-        double ctrdy = -1;
-        
-        Moments moms = moments( contour );
-        
-        // Hu momemnts
-        double hu[7];
-        HuMoments(moms, hu);
-        
-      //  obj.contourPts.addMessage( "/hu", vector<double>(hu, hu+7) );
-        
-        if( moms.m00 != 0.0 )
-        {
-            ctrdx = moms.m10 / moms.m00;
-            ctrdy = moms.m01 / moms.m00;
-            
-        }
-        
-        double scaled_centroidX = ctrdx / src_width;
-        double scaled_centroidY = 1. - (ctrdy / src_height);
-        
-        centroids.emplace_back(cv::Point2f(scaled_centroidX, scaled_centroidY));
-
-        centroidx.appendValue( scaled_centroidX );
-        centroidy.appendValue( scaled_centroidY );
-        
-        // centroids.push_back( Point2f(ctrdx, ctrdy) );
-        
-        convex.appendValue( cvgl::isContourConvex( contour ) );
-        
-        
-        Mat convexcontour;
-        approxPolyDP( hullP_vec[i], convexcontour, 0.001, true);
-        
-        hullarea.appendValue( contourArea(convexcontour) / npix );
-        
-        defect_count.appendValue( (int)defects_vec[i].size() );
-        
-        hull_count.appendValue( (int)hullI_vec[i].rows * (int)hullI_vec[i].cols );
-        
-        double dist_sum = 0;
-        vector<Vec4i>::iterator d = defects_vec[i].begin();
-        vector<Vec4i>::iterator d_end = defects_vec[i].end();
-        
-        while ( d != d_end )
-        {
-            Vec4i& v = (*d);
-            float depth = v[3] / 256.;
-            dist_sum += depth;
-            d++;
-        }
-        
-        defect_dist_sum.appendValue(dist_sum);
         
     }
-    
-   
-    
-    vector<int> idlist;
-    if( m_prev_centroids.size() == 0 )
-    {
-        vector<int> new_ids( centroids.size(), -1 );
-        
-        for( int i = 0; i < centroids.size(); i++ )
-        {
-            m_id_used[i] = 1;
-            new_ids[i] = i;
-            
-            idlist.emplace_back(i);
-            
-        }
-        
-        m_prev_centroids = centroids;
-        m_prev_centroid_id = new_ids;
-    }
-    else
-    {
-        // if prev centroids are accounted for, then keep the same ids, if not found release id for prev centroid
-        vector<int> new_ids( centroids.size(), -1 );
-        
-        int closest_id = -1;
-        double radius_max = m_track_radius * src_height;
-        double min = radius_max;
-        int debug_count = 0;
-        
-        // fist check if previous points are found
-        for( int j = 0; j < m_prev_centroids.size(); j++ )
-        {
-            
-            min = radius_max;
-            closest_id = -1;
-            debug_count = 0;
-            
-            for( int i = 0; i < centroids.size(); i++ )
-            {
-                
-                double delta = norm(centroids[i] - m_prev_centroids[j]);
-                
-                // if within range and if not yet assigned, do assignment
-                if( delta <= radius_max && new_ids[i] == -1 )
-                {
-                    if( min >= delta )
-                    {
-                        min = delta;
-                        closest_id = i;
-                    }
-                }
-                
-            }
-            
-            if( closest_id > -1 )
-            {
-                new_ids[closest_id] = m_prev_centroid_id[j];
-            }
-            else
-            {
-                m_id_used[ m_prev_centroid_id[j] ] = 0;
-            }
-            
-        }
-        
-        // check for unassigned new_ids, and then find the first unused id number:
-        for( int i = 0; i < centroids.size(); i++ )
-        {
-            if( new_ids[i] == -1 )
-            {
-                for( int n = 0; n < m_maxIDs; n++ )
-                {
-                    if( m_id_used[n] == 0)
-                    {
-                        new_ids[i] = n;
-                        m_id_used[n] = 1;
-                        break;
-                    }
-                }
-            }
-            
-            idlist.emplace_back( new_ids[i] );
-            
-        }
-        
-        m_prev_centroids = centroids;
-        m_prev_centroid_id = new_ids;
-    }
-    
-    id.appendValue(idlist);
-    
-    bundle.addMessage(id);
-
-    bundle.addMessage("/count", (long)ncontours);
-    bundle.addMessage("/area", contour_area );
-
-    bundle.addMessage( child_of );
-    bundle.addMessage(parimeter );
-    bundle.addMessage(focus);
-    bundle.addMessage(cx);
-    bundle.addMessage(cy);
-    bundle.addMessage(sx);
-    bundle.addMessage(sy);
-    bundle.addMessage(centroidx);
-    bundle.addMessage(centroidy);
-    bundle.addMessage(parimeter);
-    bundle.addMessage(angle);
-    bundle.addMessage(eccentricity);
-    bundle.addMessage(rotmin);
-    bundle.addMessage(rotmaj);
-    bundle.addMessage(child_of);
-    bundle.addMessage(focus);
-    bundle.addMessage(hull_count);
-    bundle.addMessage(hullarea);
-    bundle.addMessage(defect_count);
-    bundle.addMessage(defect_dist_sum);
-    
-    for(int c = 0; c < nchans; c++)
-    {
-        bundle.addMessage("/mean/"+to_string(c+1), channel_means[c] );
-        bundle.addMessage("/varience/"+to_string(c+1), channel_varience[c] );
-    }
-    
-    
-    processAnalysisBundle(bundle);
     
 }
-*/
+
 
 vector<PixStats> cvglCV::getStatsChar( const Mat& src, const Mat& sobel, const Mat& mask, const cv::Rect& roi)
 {

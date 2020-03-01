@@ -5,6 +5,7 @@
 #include "cvglObject.hpp"
 #include "cvglUDPServer.hpp"
 #include "cvglCues.hpp"
+#include "cvglProfile.hpp"
 
 class cvglMainProcess :  public cvglCV, public cvglUDPServer //public cvglCamera,
 {
@@ -29,11 +30,12 @@ public:
     void analysisToGL(const AnalysisData& analysis);
 
     // --- called from cv analysis worker thread when m_data has been set ---
-    void processAnalysis() override;
+    void processAnalysis(AnalysisData& data) override;
     
     // --- called from udp thread ---
     void receivedBundle( OdotBundle & b ) override;
-    void setGLparams( const vector<OdotMessage> & b );
+    
+    void setMainParams( const vector<OdotMessage> & b );
 
     // --- called from gl thread (main thread) ---
     void draw();
@@ -44,23 +46,34 @@ public:
     
     inline void useCameraID( int i ){ m_use_camera_id = i; }
     
+    inline void initMixer()
+    {
+        OdotBundle out;
+        m_mixer.initMidi(out);
+        std::cout << "initializing midi mixer" << std::endl;
+        sendBundle( out );
+    }
+    
 private:
     
     cvglCues m_cues;
     cvglMixer m_mixer;
-    // m_data is inherited from cvglCV
     
+    AnalysisData m_data;
     
+    cvglProfile profile;
+
     int m_cue_idx = 0;
     
     int m_use_camera_id = 1;
-    int m_use_preprocess = 2;
+    int m_use_preprocess = 1;
     
-    std::timed_mutex m_gl_lock, m_osc_lock;
+    std::mutex m_gl_lock, m_osc_lock;
     
     bool m_newframe = false;
-    
+        
     bool m_draw_frame = true;
+    bool m_draw_black = false;
     
     bool m_draw_contour = false;
     bool m_draw_contour_triangles = false;

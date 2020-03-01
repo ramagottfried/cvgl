@@ -7,7 +7,7 @@
 #include "OdotBundle.hpp"
 #include "cvglMixer.hpp"
 #include "cvglRandom.hpp"
-
+#include "cvglLookupFigure.hpp"
 
 using namespace Eigen;
 
@@ -16,6 +16,7 @@ class cvglCues
 public:
     
     OdotBundle cue0(AnalysisData& data, cvglMixer& mixer, OdotBundle& b);
+    OdotBundle cue1(AnalysisData& data, cvglMixer& mixer, OdotBundle& b);
 
     
     cvglCues()
@@ -23,6 +24,8 @@ public:
         using namespace std::placeholders;
         
         m_cueFunctions.emplace_back( bind(&cvglCues::cue0, this, _1, _2, _3 ) );
+        m_cueFunctions.emplace_back( bind(&cvglCues::cue1, this, _1, _2, _3 ) );
+
     
     }
 
@@ -42,7 +45,7 @@ private:
     
     OdotBundle  m_state_cache;
     
-    long m_cue = 0;
+    long m_cue = 1;
     bool m_newCue = false;
 
     timepoint_t m_section_start = sys_clock_t::now();

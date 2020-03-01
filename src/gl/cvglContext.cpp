@@ -14,13 +14,29 @@ void cvglContext::resize_callback(int w, int h)
         double adjust = aspect /  m_aspectRatio ;
         
         std::cout << "new aspect " << aspect << " src aspect " << m_aspectRatio << " adjust Y " << adjust << std::endl;
-
-        m_transform_matrix = glm::scale( glm::mat4(1.0f), glm::vec3(1.0f, adjust, 1.0f) );
-    
+        
+        m_transform_matrix = glm::scale( glm::mat4(1.0f), glm::vec3(m_x_scale * 1.0f, m_y_scale * adjust, 1.0f) );
+        
         glUniformMatrix4fv(m_transformAttrib, 1, GL_FALSE, &m_transform_matrix[0][0]);
-
+        
     }
+    
+}
 
+void cvglContext::flip( bool x, bool y)
+{
+    
+    if( m_transformAttrib )
+    {
+        m_x_scale = x ? -1 : 1;
+        m_y_scale = y ? -1 : 1;
+        
+        m_transform_matrix = glm::scale( m_transform_matrix, glm::vec3(m_x_scale, m_y_scale, 1.0f) );
+        
+        glUniformMatrix4fv(m_transformAttrib, 1, GL_FALSE, &m_transform_matrix[0][0]);
+        
+    }
+    
 }
 
 cvglContext::cvglContext()
@@ -41,7 +57,7 @@ cvglContext::~cvglContext()
     
     if( m_shaderProgram )
         glDeleteProgram(m_shaderProgram);
-
+    
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
 }
@@ -75,7 +91,7 @@ void cvglContext::setupWindow(int width, int height )
     }
     
     logWindow( m_window, this );
-
+    
     glfwMakeContextCurrent(m_window);
     glfwSetWindowSizeCallback(m_window, global_resize_callback);
     
@@ -100,7 +116,7 @@ void cvglContext::setupWindow(int width, int height )
     glfwSetErrorCallback(context_error_callback);
     
     cout << "initializing gl with size " << width << " " << height << " " << m_window << endl;
-
+    
 }
 
 std::string slurp(std::ifstream& in) {
@@ -130,7 +146,7 @@ int cvglContext::loadShaderFiles(const char * vertex_file_path, const char * fra
         useShader();
         return 1;
     }
-
+    
     return 0;
     
 }
@@ -189,11 +205,11 @@ int cvglContext::loadShaders(const char * vertex_src, const char * fragment_src)
     if( m_transformAttrib == -1 )
     {
         cout << "failed to find m_scaleAttrib " << endl;
-    //    return 0;
+        //    return 0;
     }
     
     glBindFragDataLocation(m_shaderProgram, 0, "outColor");
-
+    
     glUniformMatrix4fv(m_transformAttrib, 1, GL_FALSE, &m_transform_matrix[0][0]);
     
     glDetachShader(m_shaderProgram, m_vertexShader);
@@ -205,40 +221,40 @@ int cvglContext::loadShaders(const char * vertex_src, const char * fragment_src)
 }
 
 /*
-void cvglContext::genTexture()
-{
-    //------
-    // TEXTURE
-    glGenTextures(1, &m_tex);
-    glBindTexture(GL_TEXTURE_2D, m_tex);
-    
-    // wrap parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    
-    // interpolation
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    // Mipmap not sure if this is supposed to be used with the interpolation or not
-    glGenerateMipmap(GL_TEXTURE_2D);
-}
-
-void cvglContext::setMatTexture(cv::Mat mat)
-{
-    glTexImage2D(GL_TEXTURE_2D,     // Type of texture
-                 0,                 // Pyramid level (for mip-mapping) - 0 is the top level
-                 GL_RGB,            // Internal colour format to convert to
-                 mat.cols,          // Image width  i.e. 640 for Kinect in standard mode
-                 mat.rows,          // Image height i.e. 480 for Kinect in standard mode
-                 0,                 // Border width in pixels (can either be 1 or 0)
-                 GL_BGR, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
-                 GL_UNSIGNED_BYTE,  // Image data type
-                 mat.ptr());        // The actual image data itself
-    
-}
-
-*/
+ void cvglContext::genTexture()
+ {
+ //------
+ // TEXTURE
+ glGenTextures(1, &m_tex);
+ glBindTexture(GL_TEXTURE_2D, m_tex);
+ 
+ // wrap parameters
+ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+ 
+ // interpolation
+ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+ 
+ // Mipmap not sure if this is supposed to be used with the interpolation or not
+ glGenerateMipmap(GL_TEXTURE_2D);
+ }
+ 
+ void cvglContext::setMatTexture(cv::Mat mat)
+ {
+ glTexImage2D(GL_TEXTURE_2D,     // Type of texture
+ 0,                 // Pyramid level (for mip-mapping) - 0 is the top level
+ GL_RGB,            // Internal colour format to convert to
+ mat.cols,          // Image width  i.e. 640 for Kinect in standard mode
+ mat.rows,          // Image height i.e. 480 for Kinect in standard mode
+ 0,                 // Border width in pixels (can either be 1 or 0)
+ GL_BGR, // Input image format (i.e. GL_RGB, GL_RGBA, GL_BGR etc.)
+ GL_UNSIGNED_BYTE,  // Image data type
+ mat.ptr());        // The actual image data itself
+ 
+ }
+ 
+ */
 
 /*
  

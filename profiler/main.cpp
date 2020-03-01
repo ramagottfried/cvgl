@@ -3,6 +3,8 @@
 #include <vector>
 #include <chrono>
 
+#include "cvglTheadPool.hpp"
+
 using namespace std;
 
 
@@ -23,6 +25,8 @@ void markEnd()
 }
 
 int main(int argc, const char * argv[]) {
+    
+    ThreadPool pool(4);
     
     vector<float> foo( {1,2,3,4,6,7,8,9,10} );
     vector<float> bar( {11,12,13,14} );

@@ -23,7 +23,8 @@ public:
     ~cvglContext();
     void resize_callback(int w, int h);
     void setupWindow(int width, int height );
-    
+    void flip( bool x, bool y);
+
     int loadShaderFiles(const char * vertex_file_path, const char * fragment_file_path);
     int loadShaders(const GLchar* vertex_src, const GLchar* fragment_src);
     
@@ -101,6 +102,8 @@ private:
     GLuint m_fragmentShader = 0;
     
     double m_aspectRatio = 1.0;
+    float m_x_scale = 1;
+    float m_y_scale = 1;
 
     GLint m_transformAttrib = 0;
     glm::mat4 m_transform_matrix = glm::mat4(1.0f);
@@ -112,5 +115,7 @@ private:
     double prevtime = time;
     double accumulator = 0;
     double accumulator_alpha = 0.1;
+    
+    
 
 };

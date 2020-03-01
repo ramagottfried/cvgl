@@ -1,10 +1,14 @@
+
 #pragma once
+
+#include <iostream>
+#include <fstream>
 
 #include <string>
 #include <mutex>
 #include <thread>
-
 #include "OdotBundle.hpp"
+
 
 #include <errno.h>
 #include <unistd.h>
@@ -19,20 +23,21 @@ class cvglUDPServer
 {
 public:
     cvglUDPServer();
+    cvglUDPServer(int receivePort, int sendPort, std::string sendIP);
+    
     ~cvglUDPServer();
     
+    void init(int receivePort, int sendPort, std::string sendIP);
+    void loop();
     void start();
     void close();
     
-    inline void stop(){ close(); }
-    
-    void sendBundle( OdotBundle & b );
+    void sendBundle( const OdotBundle & b );
 
     virtual void receivedBundle( OdotBundle & b ) {}
 
 private:
     
-    void loop();
     void openSendSocket();
     void resizeSendBuffer();
     void openReceiveSocket();
@@ -54,5 +59,6 @@ private:
     
     std::mutex m_mutex;
     OdotBundle m_state_bundle;
+    
     
 };

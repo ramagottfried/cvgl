@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <Eigen/Dense>
-
+#include <string>
 
 namespace cvgl {
 
@@ -11,7 +11,7 @@ inline double clip(double v, double min, double max)
     return (v < min ? min : (v > max ? max : v));
 }
 
-inline Eigen::ArrayXd clip(Eigen::ArrayXd v, double min, double max)
+inline Eigen::ArrayXd clip(const Eigen::ArrayXd& v, double min, double max)
 {
     return v.unaryExpr([&](double x){return clip(x, min, max); });
 }
@@ -21,9 +21,22 @@ inline double scale(double v, double in_min, double in_max, double out_min, doub
     return (( (v - in_min) / (in_max - in_min) ) * (out_max - out_min)) + out_min;
 }
 
-inline Eigen::ArrayXd scale(Eigen::ArrayXd v, double in_min, double in_max, double out_min, double out_max)
+inline Eigen::ArrayXd scale(const Eigen::ArrayXd& v, double in_min, double in_max, double out_min, double out_max)
 {
     return v.unaryExpr([&](double x){ return scale(x, in_min, in_max, out_min, out_max); });
+}
+
+template <typename T>
+inline std::vector<T> scale(const std::vector<T>& v, const T in_min, const T in_max, const T out_min, const T out_max)
+{
+    T in_range = in_max - in_min;
+    T out_range = out_max - out_min;
+    std::vector<T> ret( v.size() );
+    for( auto& q : v )
+    {
+        ret.emplace_back( ( ((q - in_min) / in_range) * out_range) + out_min );
+    }
+    return ret;
 }
 
 inline double sum( std::vector<double> &vec )
@@ -64,7 +77,7 @@ inline Eigen::ArrayXd dur2x( Eigen::ArrayXd & vec)
     return seq_x;
 }
 
-inline Eigen::ArrayXd mtof( Eigen::ArrayXd & v, double a4 = 440.)
+inline Eigen::ArrayXd mtof( const Eigen::ArrayXd & v, double a4 = 440.)
 {
     return a4 * pow(2., (v - 69.) / 12.) ;
 }
@@ -93,5 +106,25 @@ inline double scaleInterval( long step, std::vector<double> scale )
 
 inline double dbtoa(double db){ return pow(10., (db / 20.)); }
 
+
+double ntom( const std::string & note );
+
+double lineLookup( double t, std::vector<double> x, std::vector<double> y );
+
+Eigen::ArrayXd lineLookup( const Eigen::ArrayXd& t, const std::vector<double>& x, const std::vector<double>& y );
+
+template <typename T>
+std::vector<T> aseq(T from, T to, T step = 1)
+{
+    std::vector<T> ret;
+    T incr = from;
+    while( incr <= to )
+    {
+        ret.emplace_back(incr);
+        incr += step;
+    }
+    
+    return ret;
+}
 
 }

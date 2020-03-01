@@ -176,7 +176,11 @@ public:
 
     /* ======= Export ======= */
     
-    inline OdotBundle_s serialize(){ return OdotBundle_s( osc_bundle_u_serialize( ptr.get() ) ); }
+    inline OdotBundle_s serialize() const
+    {
+        return OdotBundle_s( osc_bundle_u_serialize( ptr.get() ) );
+        
+    }
     
     // n.b. caller must free this pointer!
     inline t_osc_bndl_s * get_t_osc_bndl_s(){ return osc_bundle_u_serialize( ptr.get() ); }

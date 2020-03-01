@@ -7,6 +7,7 @@
 #include "OdotAtom.hpp"
 #include "OdotPointers.h"
 
+#include <Eigen/Dense>
 
 //using namespace std;
 
@@ -57,7 +58,7 @@ public:
     inline double getDouble(int argIndex = 0) const { return  osc_atom_u_getDouble( osc_message_u_getArg( ptr.get(), argIndex ) ); }
     inline int getInt(int argIndex = 0) const { return  osc_atom_u_getInt( osc_message_u_getArg( ptr.get(), argIndex ) ); }
     OdotBundle getBundle(int argIndex = 0) const;
-
+    
     
     /* ======= set message values ======= */
     
@@ -86,6 +87,40 @@ public:
 //    inline void appendValue( String& val ){   osc_message_u_appendString( ptr.get(), val.getCharPointer() );     }
 //    inline void appendValue( const String& val ){   osc_message_u_appendString( ptr.get(), val.getCharPointer() );     }
 
+    inline void appendValue( Eigen::ArrayXi & val )
+     {
+        if( val.size() > 0 )
+        {
+            for( size_t i = 0; i < val.rows(); ++i)
+            {
+                appendValue( val(i) );
+            }
+        }
+     }
+    
+    inline void appendValue( Eigen::ArrayXd & val )
+    {
+       if( val.size() > 0 )
+       {
+           for( size_t i = 0; i < val.rows(); ++i)
+           {
+               appendValue( val(i) );
+           }
+       }
+    }
+    
+    inline void appendValue( const Eigen::ArrayXd & val )
+    {
+       if( val.size() > 0 )
+       {
+           for( size_t i = 0; i < val.rows(); ++i)
+           {
+               appendValue( val(i) );
+           }
+       }
+    }
+    
+    
     template <typename T>
     void appendValue( vector<T> val )
     {
