@@ -2,7 +2,7 @@
 
 OdotBundle cvglCues::cue0( AnalysisData& data, cvglMixer& mixer, OdotBundle& b )
 {
-    
+    //b.print();
     OdotBundle out;
     out.addMessage("/descr", "prelude: setting up, putting on gloves");
     

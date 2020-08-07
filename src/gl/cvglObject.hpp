@@ -35,6 +35,13 @@ public:
     void addVertexIndexArray( std::vector<GLuint> idx );
     void rewriteVerticesWithIds( std::vector<GLuint> idx );
     
+    cvglVertex & getVertex(int idx){ return m_vertices[idx]; }
+    
+    void setTexCord( int idx, float u, float v ){
+        m_vertices[idx].texcoord[0] = u;
+        m_vertices[idx].texcoord[1] = v;
+    }
+    
 private:
     cvglVAO m_VAO;
     GLuint m_draw_mode = GL_STREAM_DRAW;

@@ -9,7 +9,7 @@
 #include "OdotMessage.hpp"
 #include "OdotAtom.hpp"
 #include "OdotBundle_s.hpp"
-#include "OdotExpr.hpp"
+//#include "OdotExpr.hpp"
 
 #include "OdotSelect.hpp"
 
@@ -122,11 +122,11 @@ public:
     //OdotSelect& selector(){ return m_select; }
     
     /* ======= Expressions ======= */
-    
+    /*
     int applyExpr( const OdotExpr& expr );
     inline int applyExpr( const string& expr ) { return applyExpr( OdotExpr(expr) ); }
     inline int applyExpr( const char * expr ) { return applyExpr( OdotExpr(expr) ); }
-    
+    */
     /* ======= Get Messages ======= */
 
     OdotMessage getMessage( const char * address ) const { return getMessage( string(address) ); };

@@ -17,7 +17,7 @@ public:
     
     // globals
     
-    std::unique_ptr<cvglObject>     rect, contourMesh, hullMesh, minrectMesh, flowMesh;
+    std::unique_ptr<cvglObject>     rect, contourMesh, hullMesh, minrectMesh, flowMesh, gitchRect;
     std::unique_ptr<cvglTexture>    frameTex, contourTex, contourTriTex, hullTex, minrectTex, flowTex;
     
     bool objects_initialized = false;
@@ -66,7 +66,7 @@ private:
     int m_cue_idx = 0;
     
     int m_use_camera_id = 1;
-    int m_use_preprocess = 1;
+    int m_use_preprocess = 0;
     
     std::mutex m_gl_lock, m_osc_lock;
     

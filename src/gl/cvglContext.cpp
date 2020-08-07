@@ -5,6 +5,14 @@
 using namespace std;
 
 
+void cvglContext::set_time_uniform(float t)
+{
+    if( m_timeAttrib > -1 )
+    {
+        glUniform1fv(m_timeAttrib, 1, &t );
+    }
+}
+
 void cvglContext::resize_callback(int w, int h)
 {
     
@@ -15,7 +23,7 @@ void cvglContext::resize_callback(int w, int h)
         
         std::cout << "new aspect " << aspect << " src aspect " << m_aspectRatio << " adjust Y " << adjust << std::endl;
         
-        m_transform_matrix = glm::scale( glm::mat4(1.0f), glm::vec3(m_x_scale * 1.0f, m_y_scale * adjust, 1.0f) );
+        m_transform_matrix = glm::scale( glm::mat4(1.0f), glm::vec3(m_x_scale, m_y_scale * adjust, 1.0f) );
         
         glUniformMatrix4fv(m_transformAttrib, 1, GL_FALSE, &m_transform_matrix[0][0]);
         
@@ -25,7 +33,6 @@ void cvglContext::resize_callback(int w, int h)
 
 void cvglContext::flip( bool x, bool y)
 {
-    
     if( m_transformAttrib )
     {
         m_x_scale = x ? -1 : 1;
@@ -33,7 +40,7 @@ void cvglContext::flip( bool x, bool y)
         
         m_transform_matrix = glm::scale( m_transform_matrix, glm::vec3(m_x_scale, m_y_scale, 1.0f) );
         
-        glUniformMatrix4fv(m_transformAttrib, 1, GL_FALSE, &m_transform_matrix[0][0]);
+        m_update_transform_matrix = true;
         
     }
     
@@ -207,6 +214,14 @@ int cvglContext::loadShaders(const char * vertex_src, const char * fragment_src)
         cout << "failed to find m_scaleAttrib " << endl;
         //    return 0;
     }
+
+    m_timeAttrib = glGetUniformLocation(m_shaderProgram, "time");
+    if( m_timeAttrib == -1 )
+    {
+        cout << "failed to find m_timeAttrib " << endl;
+        //    return 0;
+    }
+    
     
     glBindFragDataLocation(m_shaderProgram, 0, "outColor");
     

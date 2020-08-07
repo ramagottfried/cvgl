@@ -291,7 +291,7 @@ AnalysisData cvglCV::analyzeContour()
 void cvglCV::analysisThread(AnalysisData data)
 {
     unique_lock<mutex> lock(m_lock);
-    const AnalysisData& prev_data = m_prev_data;
+    const AnalysisData prev_data = m_prev_data;
     m_lock.unlock();
     
     int nchans = src_color_sized.channels();

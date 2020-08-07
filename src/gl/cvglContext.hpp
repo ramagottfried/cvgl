@@ -3,6 +3,7 @@
 // Include standard headers
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 
 
@@ -14,7 +15,7 @@
 #define GLM_ENABLE_EXPERIMENTAL 1
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
 
-#include "opencv2/core/utility.hpp"
+//#include "opencv2/core/utility.hpp"
 
 class cvglContext
 {
@@ -25,6 +26,8 @@ public:
     void setupWindow(int width, int height );
     void flip( bool x, bool y);
 
+    void set_time_uniform(float t);
+    
     int loadShaderFiles(const char * vertex_file_path, const char * fragment_file_path);
     int loadShaders(const GLchar* vertex_src, const GLchar* fragment_src);
     
@@ -47,6 +50,10 @@ public:
     inline void clear()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        if( m_update_transform_matrix ){
+            glUniformMatrix4fv(m_transformAttrib, 1, GL_FALSE, &m_transform_matrix[0][0]);
+            m_update_transform_matrix = false;
+        }
     }
     
     inline void drawAndPoll()
@@ -106,10 +113,12 @@ private:
     float m_y_scale = 1;
 
     GLint m_transformAttrib = 0;
-    glm::mat4 m_transform_matrix = glm::mat4(1.0f);
+    glm::mat4 m_transform_matrix = glm::scale( glm::mat4(1.0f), glm::vec3(m_x_scale, m_y_scale, 1.0f) );// glm::mat4(1.0f);
+    GLint m_timeAttrib = 0;
     
     bool m_should_close = false;
 
+    bool m_update_transform_matrix = false;
     
     double time = glfwGetTime();
     double prevtime = time;

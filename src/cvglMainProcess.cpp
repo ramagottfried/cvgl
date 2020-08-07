@@ -1,6 +1,9 @@
 
 #include "cvglMainProcess.hpp"
 
+#include "cvglRandom.hpp"
+#include "cvglHelperFunctions.hpp"
+
 using namespace std;
 using namespace cv;
 
@@ -12,11 +15,12 @@ using namespace cv;
 
 void cvglMainProcess::initObjs()
 {
-    rect =  unique_ptr<cvglObject>(new cvglObject);
-    contourMesh =  unique_ptr<cvglObject>(new cvglObject);
-    hullMesh =  unique_ptr<cvglObject>(new cvglObject);
-    minrectMesh =  unique_ptr<cvglObject>(new cvglObject);
-    flowMesh =  unique_ptr<cvglObject>(new cvglObject);
+    rect = unique_ptr<cvglObject>(new cvglObject);
+    contourMesh = unique_ptr<cvglObject>(new cvglObject);
+    hullMesh = unique_ptr<cvglObject>(new cvglObject);
+    minrectMesh = unique_ptr<cvglObject>(new cvglObject);
+    flowMesh = unique_ptr<cvglObject>(new cvglObject);
+    gitchRect = unique_ptr<cvglObject>(new cvglObject);
     
     frameTex =  unique_ptr<cvglTexture>(new cvglTexture);
     contourTex = unique_ptr<cvglTexture>(new cvglTexture);
@@ -42,6 +46,68 @@ void cvglMainProcess::initObjs()
     rect->endObj();
     rect->initStaticDraw();
     
+    
+    gitchRect->newObj(GL_TRIANGLES);
+    gitchRect->addVertex(cvglVertex({x[0], y[0], 0.0f,  0.0f, 0.0f }));
+    gitchRect->addVertex(cvglVertex({x[1], y[1], 0.0f,  1.0f, 0.0f }));
+    gitchRect->addVertex(cvglVertex({x[2], y[2], 0.0f,  1.0f, 1.0f }));
+    
+    gitchRect->addVertex(cvglVertex({x[2], y[2], 0.0f,  1.0f, 1.0f }));
+    gitchRect->addVertex(cvglVertex({x[3], y[3], 0.0f,  0.0f, 1.0f }));
+    gitchRect->addVertex(cvglVertex({x[0], y[0], 0.0f,  0.0f, 0.0f }));
+    
+    cvglRandom rand;
+    float xrange = 5;
+    float yrange = 0.25;
+    for(int i = 0 ; i < xrange; i++)
+    {
+        float minxrange =  i == 0 ? 0 : i / xrange;
+        float maxxrange =  ((i + 1) / xrange) ;
+        
+        float rx1 = cvgl::scale( rand.uniformRand(), 0., 1., minxrange, maxxrange);
+        float ry1 = cvgl::scale( rand.uniformRand(), 0., 1., 1 - yrange, 1.);
+        
+        float minx = rx1;
+        float miny = ry1;
+        float maxx = rx1;
+        float maxy = ry1;
+        
+        float rx2 = cvgl::scale( rand.uniformRand(), 0., 1., minxrange, maxxrange);
+        float ry2 = cvgl::scale( rand.uniformRand(), 0., 1., 0., yrange);
+        
+        minx = rx2 < minx ? rx2 : minx;
+        miny = ry2 < miny ? ry2 : miny;
+        maxx = rx2 > minx ? rx2 : maxx;
+        maxy = ry2 > miny ? ry2 : maxy;
+        
+        float rx3 = cvgl::scale( rand.uniformRand(), 0., 1., minxrange, maxxrange);
+        float ry3 = cvgl::scale( rand.uniformRand(), 0., 1., 1 - yrange, 1.);
+        
+        minx = rx3 < minx ? rx3 : minx;
+        miny = ry3 < miny ? ry3 : miny;
+        maxx = rx3 > minx ? rx3 : maxx;
+        maxy = ry3 > miny ? ry3 : maxy;
+        
+        float w = maxx - minx;
+        float h = maxy - miny;
+            
+        float xx = cvgl::scale( rx1, 0., 1., -1., 1);
+        float yy = cvgl::scale( ry1, 0., 1., -1., 1);
+        gitchRect->addVertex(cvglVertex({xx, yy, 0.0f, rx1, ry1}));
+
+        xx = cvgl::scale( rx2, 0., 1., -1., 1);
+        yy = cvgl::scale( ry2, 0., 1., -1., 1);
+        gitchRect->addVertex(cvglVertex({xx, yy, 0.0f,  rx2, ry2}));
+
+        xx = cvgl::scale( rx3, 0., 1., -1., 1);
+        yy = cvgl::scale( ry3, 0., 1., -1., 1);
+        gitchRect->addVertex(cvglVertex({xx, yy, 0.0f,  rx3, ry3}));
+
+    }
+    gitchRect->endObj();
+
+//    gitchRect->triangulate();
+    gitchRect->initStaticDraw();
     
     
     objects_initialized = true;
@@ -103,7 +169,8 @@ void cvglMainProcess::setMainParams( const vector<OdotMessage> & b )
         }
         else if( addr == "/use/preprocess" )
         {
-            m_use_preprocess = m.getInt();
+            m_use_preprocess = (int)m.getFloat();
+            cout << "setting preprocess to " << m_use_preprocess << " " << m.getInt() << endl;
         }
         else if( addr == "/enable/contour" )
         {
@@ -214,6 +281,15 @@ void cvglMainProcess::processAnalysis(AnalysisData& data)
 
 }
 
+void setTriangleTexcords(unique_ptr<cvglObject> & obj )
+{
+    for( int i = 0; i < obj->getSize(); i++  )
+    {
+        cvglVertex vert = obj->getVertex(i);
+
+        obj->setTexCord(i, cvgl::scale( vert.position[0], -1., 1., 0., 1.), cvgl::scale( vert.position[1], -1., 1., 0., 1.));
+    }
+}
 
 void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
 {
@@ -239,6 +315,7 @@ void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
         
         cvgl::pointMatToVertex( analysis.contours[ analysis.contour_idx[i] ], contourMesh, analysis.halfW, analysis.halfH );
         contourMesh->triangulate();
+        //setTriangleTexcords( contourMesh );
         
         cvgl::pointMatToPolygonLineVertex(analysis.hullP_vec[i], hullMesh, analysis.halfW, analysis.halfH, m_hull_line_thickness);
         
@@ -283,6 +360,7 @@ void cvglMainProcess::draw()
         return;
     }
     
+    context.set_time_uniform( (float)glfwGetTime() );
     context.clear();
     
     if( m_draw_black )
@@ -302,7 +380,7 @@ void cvglMainProcess::draw()
     if( m_draw_contour )
     {
         contourMesh->bind();
-        contourTex->setTexture(m_contour_rgba);
+        contourTex->setTexture(m_contour_rgba);//getFrame());
         contourMesh->draw(GL_TRIANGLES);
     }
     

@@ -14,7 +14,7 @@ int main( void )
     app.init(8888, 9999, sendIp);
 
     cvglDeckLinkCamera bm_cam(1);
-    cvglCVCamera cvcam(0);
+    cvglCVCamera cvcam(1);
     
     if( bm_cam.hasCamera() )
     {
@@ -57,7 +57,7 @@ int main( void )
     
     cout << "starting draw loop " << endl;
 
-    // main GL loop
+    // main GL loop`
     while( !app.context.shouldClose() )
     {
         app.draw();

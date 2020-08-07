@@ -18,7 +18,7 @@ public:
     {
         
         glGenVertexArrays(1, &m_vao);
-        glGenBuffers( 1, &m_vbo);
+        glGenBuffers(1, &m_vbo);
         glGenBuffers(1, &m_ebo);
         
         glBindVertexArray(m_vao);

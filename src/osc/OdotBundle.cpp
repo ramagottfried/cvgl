@@ -11,7 +11,7 @@
 #include <sstream>
 
 extern "C" {
-    int odot_expr_error_handler(void *context, t_osc_err errorcode, const char * const errorstr)
+    int odot_expr_error_handler(void *context, const char * const errorstr)
     {
         cout << errorstr << endl;
         return 0;
@@ -21,7 +21,7 @@ extern "C" {
 OdotBundle::OdotBundle()
 {
     ptr = odot::newOdotBundlePtr();
-    osc_error_setHandler( odot_expr_error_handler );
+ //   osc_error_setHandler( odot_expr_error_handler );
 
 //    D_(std::cout << "new bundle " << &ptr << " " << ptr.get() << std::endl;)
 }
@@ -32,7 +32,7 @@ OdotBundle::OdotBundle( const OdotBundle& src )
     t_osc_bndl_u *b = nullptr;
     osc_bundle_u_copy( &b, src.ptr.get() );
     ptr = odot::newOdotBundlePtr( b );
-    osc_error_setHandler( odot_expr_error_handler );
+ //   osc_error_setHandler( odot_expr_error_handler );
 }
 
 OdotBundle::OdotBundle( const OdotBundle* src )
@@ -41,7 +41,7 @@ OdotBundle::OdotBundle( const OdotBundle* src )
     t_osc_bndl_u *b = nullptr;
     osc_bundle_u_copy( &b, src->ptr.get() );
     ptr = odot::newOdotBundlePtr( b );
-    osc_error_setHandler( odot_expr_error_handler );
+  //  osc_error_setHandler( odot_expr_error_handler );
 }
 
 // takes ownership if not const
@@ -51,7 +51,7 @@ OdotBundle::OdotBundle( t_osc_bndl_u * src )
     //t_osc_bndl_u *b = nullptr;
     //osc_bundle_u_copy( &b, (t_osc_bndl_u *)src );
     ptr = odot::newOdotBundlePtr( src );
-    osc_error_setHandler( odot_expr_error_handler );
+//    osc_error_setHandler( odot_expr_error_handler );
 }
 
 OdotBundle::OdotBundle( const t_osc_bndl_u * src )
@@ -60,28 +60,28 @@ OdotBundle::OdotBundle( const t_osc_bndl_u * src )
     t_osc_bndl_u *b = nullptr;
     osc_bundle_u_copy( &b, (t_osc_bndl_u *)src );
     ptr = odot::newOdotBundlePtr( b );
-    osc_error_setHandler( odot_expr_error_handler );
+//.    osc_error_setHandler( odot_expr_error_handler );
 }
 
 OdotBundle::OdotBundle( const OdotBundle_s& src )
 {
     OdotBundle b( src.get_o_ptr() );
     ptr = odot::newOdotBundlePtr( b.release() );
-    osc_error_setHandler( odot_expr_error_handler );
+//    osc_error_setHandler( odot_expr_error_handler );
 }
 
 OdotBundle::OdotBundle( const t_osc_bndl_s * src )
 {
     ptr = odot::newOdotBundlePtr(osc_bundle_s_deserialize(osc_bundle_s_getLen((t_osc_bndl_s *)src),
                                                            osc_bundle_s_getPtr((t_osc_bndl_s *)src)));
-    osc_error_setHandler( odot_expr_error_handler );
+//    osc_error_setHandler( odot_expr_error_handler );
 }
 
 OdotBundle::OdotBundle( const OdotMessage& msg )
 {
     ptr = odot::newOdotBundlePtr();
     addMessage( msg );
-    osc_error_setHandler( odot_expr_error_handler );
+//    osc_error_setHandler( odot_expr_error_handler );
 }
 
 OdotBundle& OdotBundle::operator=( const OdotBundle& src )
@@ -93,7 +93,7 @@ OdotBundle& OdotBundle::operator=( const OdotBundle& src )
         t_osc_bndl_u *b = nullptr;
         osc_bundle_u_copy( &b, (t_osc_bndl_u *)src.ptr.get() );
         ptr = odot::newOdotBundlePtr( b );
-        osc_error_setHandler( odot_expr_error_handler );
+//        osc_error_setHandler( odot_expr_error_handler );
     }
     
     return *this;
@@ -121,7 +121,7 @@ void OdotBundle::unionWith( const OdotBundle& other, bool passive )
 
     ptr = odot::newOdotBundlePtr( unioned );
 }
-
+/*
 int OdotBundle::applyExpr( const OdotExpr& expr )
 {
     int error = 0;
@@ -144,7 +144,7 @@ int OdotBundle::applyExpr( const OdotExpr& expr )
     
     return 0;
 }
-
+*/
 void OdotBundle::addMessage( vector<OdotMessage> msg_vec )
 {
     for( int i = 0; i < msg_vec.size(); i++ )
