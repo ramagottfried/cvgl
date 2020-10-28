@@ -156,13 +156,13 @@ void OdotBundle::addMessage( const OdotMessage& msg )
     // makes a copy which will be owned by the bundle,
     // this way the incoming msg is still available to be used by the caller if needed
     OdotMessage msg_cpy( msg );
-    osc_bundle_u_replaceMessage( ptr.get(), msg_cpy.release() );
+    osc_bundle_u_addMsgWithoutDups( ptr.get(), msg_cpy.release() );
 }
 
 void OdotBundle::addMessage( t_osc_msg_u * msg )
 {
     //  cout << "replace " << endl;
-    osc_bundle_u_replaceMessage( ptr.get(), msg );
+    osc_bundle_u_addMsgWithoutDups( ptr.get(), msg );
 }
 
 void OdotBundle::removeMessage( t_osc_msg_u * msg )

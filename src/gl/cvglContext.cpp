@@ -122,6 +122,8 @@ void cvglContext::setupWindow(int width, int height )
     
     glfwSetErrorCallback(context_error_callback);
     
+    glfwSwapInterval(0);
+    
     cout << "initializing gl with size " << width << " " << height << " " << m_window << endl;
     
 }

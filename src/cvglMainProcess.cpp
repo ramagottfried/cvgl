@@ -131,7 +131,7 @@ void cvglMainProcess::receivedBundle( OdotBundle & b )
     // or overrides in case of new cue, to control the CV and GL processes
     
     
-    // >>>> proce cue function is called from UDP and CV threads -- causng some problems now
+    // >>>> process cue function is called from UDP and CV threads -- causng some problems now
     // >>>> maybe not necessary to do data analysis here? ... seems maybe reasonable to me
     
     OdotBundle out = m_cues.procDataAndMixer(m_data, m_mixer, b);
@@ -159,6 +159,10 @@ void cvglMainProcess::setMainParams( const vector<OdotMessage> & b )
         {
             m_draw_frame = m.getInt() > 0;
         }
+        else if( addr == "/analysis/resize" )
+        {
+            m_resize = m.getFloat();
+        }
         else if( addr == "/video/black" )
         {
             m_draw_black = m.getInt() > 0;
@@ -169,7 +173,7 @@ void cvglMainProcess::setMainParams( const vector<OdotMessage> & b )
         }
         else if( addr == "/use/preprocess" )
         {
-            m_use_preprocess = (int)m.getFloat();
+            m_use_preprocess = m.getInt();
             cout << "setting preprocess to " << m_use_preprocess << " " << m.getInt() << endl;
         }
         else if( addr == "/enable/contour" )
@@ -301,33 +305,53 @@ void cvglMainProcess::analysisToGL(const AnalysisData &analysis)
     for( auto& c : analysis.contours )
         npoints += (c.cols * c.rows);
     
-    contourMesh->clear();
-    contourMesh->reserve( npoints );
+    if( m_draw_contour ){
+        contourMesh->clear();
+        contourMesh->reserve( npoints );
+    }
+   
+    if( m_draw_hull )
+    {
+        hullMesh->clear();
+        hullMesh->reserve( npoints );
+    }
     
-    hullMesh->clear();
-    hullMesh->reserve( npoints );
-    
-    minrectMesh->clear();
-    minrectMesh->reserve( analysis.contours.size() * 4 * 2 );
+    if( m_draw_minrect )
+    {
+        minrectMesh->clear();
+        minrectMesh->reserve( analysis.contours.size() * 4 * 2 );
+    }
     
     for( int i = 0 ; i < analysis.contour_idx.size(); i++ )
     {
         
-        cvgl::pointMatToVertex( analysis.contours[ analysis.contour_idx[i] ], contourMesh, analysis.halfW, analysis.halfH );
-        contourMesh->triangulate();
-        //setTriangleTexcords( contourMesh );
+        if( m_draw_contour )
+        {
+            cvgl::pointMatToVertex( analysis.contours[ analysis.contour_idx[i] ], contourMesh, analysis.halfW, analysis.halfH );
+            contourMesh->triangulate();
+            //setTriangleTexcords( contourMesh );
+        }
+       
+        if( m_draw_hull )
+        {
+           cvgl::pointMatToPolygonLineVertex(analysis.hullP_vec[i], hullMesh, analysis.halfW, analysis.halfH, m_hull_line_thickness * m_resize);
+        }
         
-        cvgl::pointMatToPolygonLineVertex(analysis.hullP_vec[i], hullMesh, analysis.halfW, analysis.halfH, m_hull_line_thickness);
+        if( m_draw_minrect )
+        {
+            // cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
+            
+            Point2f rectPts[4];
+            analysis.minRect_vec[i].points( rectPts );
+            vector<Point2f> rect_v(rectPts, rectPts+4);
+            
+            cvgl::linePointsToPolygon(rect_v, minrectMesh, analysis.halfW, analysis.halfH, m_minrect_line_thickness * m_resize, true);
+            
+            //cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, analysis.halfW, analysis.halfH, 10);
+        }
+
         
-        // cvgl::rotatedRectToVertex(minRec_vec[i], minrectMesh, halfW, halfH );
         
-        Point2f rectPts[4];
-        analysis.minRect_vec[i].points( rectPts );
-        vector<Point2f> rect_v(rectPts, rectPts+4);
-        
-        cvgl::linePointsToPolygon(rect_v, minrectMesh, analysis.halfW, analysis.halfH, m_minrect_line_thickness, true);
-        
-        //cvgl::pointsToPolygonLineVertex(rect_v, minrectMesh, analysis.halfW, analysis.halfH, 10);
     }
     
     
@@ -341,21 +365,14 @@ void cvglMainProcess::draw()
 {
     //cout << ">> draw LOCK" << endl;
     // auto start = std::chrono::system_clock::now();
-    
-    unique_lock<mutex> lock(m_gl_lock); // lock or wait for gl_lock and then lock
-    /*
-     if( !m_gl_lock.try_lock_for(std::chrono::milliseconds(10000) ) )
-     {
-     cout << "failed to lock" << endl;
-     return;
-     }
-     */
+
+    unique_lock<mutex> lock(m_gl_lock, std::defer_lock); // lock or wait for gl_lock and then lock
     
     //   cout << (start - std::chrono::system_clock::now()).count()  << endl;
     
     // this can get slowed down if a new frame comes in while the old one is still being drawn?
     
-    if( !context.isActive() || !objects_initialized || !m_img.data || !m_newframe ){
+    if( !lock.try_lock() || !context.isActive() || !objects_initialized || !m_img.data || !m_newframe ){
         //cout << "<< draw unlock" << endl;
         return;
     }

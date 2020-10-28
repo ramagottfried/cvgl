@@ -55,8 +55,8 @@ void cvglCV::preprocess()
         return;
     }
     
-    
-    cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
+    float resize = m_resize; // avoid lock
+    cv::resize(m_img, src_color_sized, cv::Size(), resize, resize, cv::INTER_AREA);
     cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
     
     // cout << "nchannels " << src_color_sized.channels() << endl;
@@ -97,8 +97,8 @@ void cvglCV::preprocessDifference()
         return;
     }
     
-   
-    cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
+    float resize = m_resize; // avoid lock
+    cv::resize(m_img, src_color_sized, cv::Size(), resize, resize, cv::INTER_AREA);
     
     if( m_prev_frame.empty() )
     {
@@ -150,8 +150,8 @@ void cvglCV::preprocessCanny()
     
     //  m_img = mat.clone();
     
-    
-    cv::resize(m_img, src_color_sized, cv::Size(), m_resize, m_resize, cv::INTER_AREA);
+    float resize = m_resize; // avoid lock
+    cv::resize(m_img, src_color_sized, cv::Size(), resize, resize, cv::INTER_AREA);
     cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
     
     switch (m_color_mode) {
@@ -187,7 +187,7 @@ void cvglCV::preprocessCanny()
     
     threshold( can_blur, threshold_output, m_thresh, 255, cv::THRESH_BINARY );
     
-    Sobel(src_gray, sob, CV_32F, 1, 1);
+    //Sobel(src_gray, sob, CV_32F, 1, 1);
     
     
     // cv::cvtColor(src_gray+can, mat, cv::COLOR_GRAY2RGB);

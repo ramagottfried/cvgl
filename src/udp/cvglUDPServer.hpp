@@ -8,6 +8,7 @@
 #include <mutex>
 #include <thread>
 #include "OdotBundle.hpp"
+#include "MapOSC.hpp"
 
 
 #include <errno.h>

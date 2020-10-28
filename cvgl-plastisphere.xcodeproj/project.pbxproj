@@ -13,6 +13,7 @@
 		112CA10223F3140E00C77524 /* cvglRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA10023F3140E00C77524 /* cvglRandom.cpp */; };
 		112CA10423F3232000C77524 /* plastisphereCue0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA10323F3232000C77524 /* plastisphereCue0.cpp */; };
 		1132E0A423EC8D1F00B81F65 /* cvglAnalysisData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1132E0A223EC8D1F00B81F65 /* cvglAnalysisData.cpp */; };
+		113692122549603700261A9C /* libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11D26D782428BFE9007BD78A /* libo.a */; };
 		1140CAF623F5F842001D724D /* plastisphereCue1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1140CAF523F5F842001D724D /* plastisphereCue1.cpp */; };
 		114159AB23F940C600D15A30 /* cvglLookupFigure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114159A923F940C600D15A30 /* cvglLookupFigure.cpp */; };
 		114159AE23FAA56E00D15A30 /* cvglTheadPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114159AC23FAA56E00D15A30 /* cvglTheadPool.cpp */; };
@@ -22,6 +23,9 @@
 		1151F2D822B96C5D0099655F /* cvglDeckLinkCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2D622B96C5D0099655F /* cvglDeckLinkCamera.cpp */; };
 		1151F2DB22B96F720099655F /* cvglCVCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2D922B96F720099655F /* cvglCVCamera.cpp */; };
 		1151F2DF22B980990099655F /* cvglCameraBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2DD22B980990099655F /* cvglCameraBase.cpp */; };
+		115AA9DA2548553300F34713 /* MapOSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115AA9D82548553300F34713 /* MapOSC.cpp */; };
+		115AA9E225485E6800F34713 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115AA9E125485E6800F34713 /* main.cpp */; };
+		115AA9E62548B64400F34713 /* MapOSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115AA9D82548553300F34713 /* MapOSC.cpp */; };
 		118EDE3A21D98AB500F391D0 /* Info.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 118EDE3921D9866300F391D0 /* Info.plist */; };
 		11D26D792428BFE9007BD78A /* libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11D26D782428BFE9007BD78A /* libo.a */; };
 		11FB9E9922A839F500599CC9 /* delabella.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11FB9E9822A839F500599CC9 /* delabella.cpp */; };
@@ -53,6 +57,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		115AA9DD25485E6800F34713 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		21038D12214AECB10078F594 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -102,6 +115,10 @@
 		1151F2DA22B96F720099655F /* cvglCVCamera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCVCamera.hpp; sourceTree = "<group>"; };
 		1151F2DD22B980990099655F /* cvglCameraBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglCameraBase.cpp; sourceTree = "<group>"; };
 		1151F2DE22B980990099655F /* cvglCameraBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCameraBase.hpp; sourceTree = "<group>"; };
+		115AA9D82548553300F34713 /* MapOSC.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MapOSC.cpp; sourceTree = "<group>"; };
+		115AA9D92548553300F34713 /* MapOSC.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MapOSC.hpp; sourceTree = "<group>"; };
+		115AA9DF25485E6800F34713 /* tester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tester; sourceTree = BUILT_PRODUCTS_DIR; };
+		115AA9E125485E6800F34713 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		118EDE3921D9866300F391D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		11D26D782428BFE9007BD78A /* libo.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libo.a; path = ../libo/libo.a; sourceTree = "<group>"; };
 		11FB9E9522A7A48E00599CC9 /* delaunator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = delaunator.hpp; sourceTree = "<group>"; };
@@ -168,6 +185,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		115AA9DC25485E6800F34713 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				113692122549603700261A9C /* libo.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21038D11214AECB10078F594 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -202,6 +227,7 @@
 				21DDFAC92146CC53001FF716 /* src */,
 				216C66BE214BF2E1009BDD3B /* libo */,
 				21038D15214AECB10078F594 /* profiler */,
+				115AA9E025485E6800F34713 /* tester */,
 				112485191A9EA8F90032B37A /* Products */,
 				2104B00421413FA400C2CF41 /* Frameworks */,
 			);
@@ -213,6 +239,7 @@
 				21038D14214AECB10078F594 /* profiler */,
 				216C66BA214BF2BD009BDD3B /* libcvgl-plastisphere-libo.a */,
 				2112A4EB214DA3A300EC1C11 /* CVGL-plastisphere */,
+				115AA9DF25485E6800F34713 /* tester */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -235,6 +262,14 @@
 				1140CAF523F5F842001D724D /* plastisphereCue1.cpp */,
 			);
 			path = cues;
+			sourceTree = "<group>";
+		};
+		115AA9E025485E6800F34713 /* tester */ = {
+			isa = PBXGroup;
+			children = (
+				115AA9E125485E6800F34713 /* main.cpp */,
+			);
+			path = tester;
 			sourceTree = "<group>";
 		};
 		21038D01214A42F50078F594 /* glad */ = {
@@ -309,6 +344,8 @@
 				216C669E214BF299009BDD3B /* OdotPointers.h */,
 				216C66A1214BF299009BDD3B /* OdotSelect.cpp */,
 				216C66A5214BF299009BDD3B /* OdotSelect.hpp */,
+				115AA9D82548553300F34713 /* MapOSC.cpp */,
+				115AA9D92548553300F34713 /* MapOSC.hpp */,
 			);
 			path = osc;
 			sourceTree = "<group>";
@@ -422,6 +459,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		115AA9DE25485E6800F34713 /* tester */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 115AA9E325485E6800F34713 /* Build configuration list for PBXNativeTarget "tester" */;
+			buildPhases = (
+				115AA9DB25485E6800F34713 /* Sources */,
+				115AA9DC25485E6800F34713 /* Frameworks */,
+				115AA9DD25485E6800F34713 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tester;
+			productName = tester;
+			productReference = 115AA9DF25485E6800F34713 /* tester */;
+			productType = "com.apple.product-type.tool";
+		};
 		21038D13214AECB10078F594 /* profiler */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 21038D18214AECB10078F594 /* Build configuration list for PBXNativeTarget "profiler" */;
@@ -482,6 +536,11 @@
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = cnmat;
 				TargetAttributes = {
+					115AA9DE25485E6800F34713 = {
+						CreatedOnToolsVersion = 11.2;
+						DevelopmentTeam = 43QFH4NBN8;
+						ProvisioningStyle = Automatic;
+					};
 					21038D13214AECB10078F594 = {
 						CreatedOnToolsVersion = 9.4.1;
 						ProvisioningStyle = Automatic;
@@ -508,11 +567,21 @@
 				2112A4B5214DA3A300EC1C11 /* cvgl-plastisphere_blackmagic */,
 				21038D13214AECB10078F594 /* profiler */,
 				216C66B9214BF2BD009BDD3B /* cvgl-plastisphere-libo */,
+				115AA9DE25485E6800F34713 /* tester */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		115AA9DB25485E6800F34713 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				115AA9E62548B64400F34713 /* MapOSC.cpp in Sources */,
+				115AA9E225485E6800F34713 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21038D10214AECB10078F594 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -561,6 +630,7 @@
 				1151F2DF22B980990099655F /* cvglCameraBase.cpp in Sources */,
 				2112A4CC214DA3A300EC1C11 /* cvglVertex.cpp in Sources */,
 				2112A4CD214DA3A300EC1C11 /* platform.cpp in Sources */,
+				115AA9DA2548553300F34713 /* MapOSC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -673,6 +743,68 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SYMROOT = $SRCROOT/build;
+			};
+			name = Release;
+		};
+		115AA9E425485E6800F34713 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 43QFH4NBN8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		115AA9E525485E6800F34713 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 43QFH4NBN8;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -869,6 +1001,15 @@
 			buildConfigurations = (
 				1124851D1A9EA8F90032B37A /* Debug */,
 				1124851E1A9EA8F90032B37A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		115AA9E325485E6800F34713 /* Build configuration list for PBXNativeTarget "tester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				115AA9E425485E6800F34713 /* Debug */,
+				115AA9E525485E6800F34713 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

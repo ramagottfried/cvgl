@@ -317,6 +317,14 @@ void cvglUDPServer::loop()
             if( read )
             {
              
+                MapOSC o;
+                o.inputOSC(read, buf);
+                std::cout << "map size " << o.map.size() << std::endl;
+                for( auto& p : o.map )
+                {
+                    std::cout << "{" << p.first << ": " << p.second[0].get<std::string>() << "}\n";
+                }
+                
                 OdotBundle_s s(buf, read);
                  
                 OdotBundle b = s.deserialize();

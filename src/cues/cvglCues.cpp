@@ -1,6 +1,7 @@
 
 #include "cvglCues.hpp"
 
+// called from analysis thread
 OdotBundle cvglCues::procDataAndMixer(AnalysisData& data, cvglMixer& mixer)
 {
     
@@ -13,6 +14,7 @@ OdotBundle cvglCues::procDataAndMixer(AnalysisData& data, cvglMixer& mixer)
     return out;
 }
 
+// called from UDP input thread
 OdotBundle cvglCues::procDataAndMixer(AnalysisData& data, cvglMixer& mixer, OdotBundle& b)
 {
     if( b.addressExists("/cue") )

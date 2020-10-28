@@ -106,7 +106,10 @@ public:
     {
         auto addr_vec = split(address, ".");
         if( addr_vec.size() == 1 )
-            addMessage( OdotMessage( address, args... ).release() );
+        {
+            OdotMessage m(address, args...);
+            addMessage( m.release() );
+        }
         else
             assignToBundleMember_recusive( ptr.get(), addr_vec, 0, OdotMessage( addr_vec.back(), args... ).release() );
         
