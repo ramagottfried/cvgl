@@ -214,18 +214,20 @@ cvglUDPServer::~cvglUDPServer()
     
 }
 
-void cvglUDPServer::sendBundle( const OdotBundle & b )
+void cvglUDPServer::sendBundle( MapOSC & b )
 {
     if( m_fd < 0 )
         return;
     
-    OdotBundle_s serialized = b.serialize();
-    
-    ssize_t sentbytes = send(m_fd, serialized.getPtr(), (size_t)serialized.getLen(), 0);
+    t_osc_bundle_s *serialized = b.getBundle();
+        
+    ssize_t sentbytes = send(m_fd, osc_bundle_s_getPtr(serialized), (size_t)osc_bundle_s_getLen(serialized), 0);
     if( sentbytes < 0 )
     {
       // cout << "failed to send " << serialized.getLen() << " returned: " << sentbytes << " errno " << strerror(errno) << endl;
     }
+    
+    osc_bundle_s_deepFree(serialized);
     
 }
 
@@ -319,20 +321,15 @@ void cvglUDPServer::loop()
              
                 MapOSC o;
                 o.inputOSC(read, buf);
-                std::cout << "map size " << o.map.size() << std::endl;
-                for( auto& p : o.map )
-                {
-                    std::cout << "{" << p.first << ": " << p.second[0].get<std::string>() << "}\n";
-                }
                 
-                OdotBundle_s s(buf, read);
+                //OdotBundle_s s(buf, read);
                  
-                OdotBundle b = s.deserialize();
+                //OdotBundle b = s.deserialize();
                 
-                receivedBundle(b);
+                receivedBundle(o);
                 
                 //cout << "sent" << endl;
-                s.release();
+                //s.release();
             
                  
                 /*

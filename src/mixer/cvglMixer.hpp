@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <Eigen/Dense>
-#include "OdotBundle.hpp"
+#include "MapOSC.hpp"
 
 using namespace Eigen;
 using namespace std;
@@ -37,7 +37,7 @@ struct cvglMixer
         
     }
     
-    void addPregainMidi( OdotBundle & b )
+    void addPregainMidi( MapOSC & b )
     {
         b.addMessage("/mixer/knob/1", getPregainMidi("/perc") );
         b.addMessage("/mixer/knob/2", getPregainMidi("/gran") );
@@ -45,7 +45,7 @@ struct cvglMixer
         b.addMessage("/mixer/knob/4", getPregainMidi("/filter") );
     }
     
-    void applyAddGains( OdotBundle & b )
+    void applyAddGains( MapOSC & b )
     {
         applyPregain();
         
@@ -56,48 +56,48 @@ struct cvglMixer
         b.addMessage("/main_dB", getGain("/main") );
     }
     
-    void proc( OdotBundle & b)
+    void proc( MapOSC & b)
     {
-        auto msgs = b.getMessageArray();
-        
-        for( auto& m : msgs )
-        {
-            auto addr = m.getAddress();
             
+        for( auto& m : b.map )
+        {
+            const std::string& addr = m.first;
+            auto& atomVec = m.second;
+
             if( addr == "/mixer/fader/1") {
-                midi_gain(1, m.getInt() );
+                midi_gain(1, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/fader/2") {
-                midi_gain(2, m.getInt() );
+                midi_gain(2, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/fader/3") {
-                midi_gain(3, m.getInt() );
+                midi_gain(3, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/fader/4") {
-                midi_gain(4, m.getInt() );
+                midi_gain(4, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/fader/5") {
-                midi_gain(5, m.getInt() );
+                midi_gain(5, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/fader/6") {
-                midi_gain(6, m.getInt() );
+                midi_gain(6, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/fader/7") {
-                midi_gain(7, m.getInt() );
+                midi_gain(7, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/fader/8") {
-                midi_gain(8, m.getInt() );
+                midi_gain(8, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/fader/main") {
-                midi_gain(9, m.getInt() );
+                midi_gain(9, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/knob/1") {
-                midi_pregain(1, m.getInt() );
+                midi_pregain(1, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/knob/2") {
-                midi_pregain(2, m.getInt() );
+                midi_pregain(2, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/knob/3") {
-                midi_pregain(3, m.getInt() );
+                midi_pregain(3, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/knob/4") {
-                midi_pregain(4, m.getInt() );
+                midi_pregain(4, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/knob/5") {
-                midi_pregain(5, m.getInt() );
+                midi_pregain(5, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/knob/6") {
-                midi_pregain(6, m.getInt() );
+                midi_pregain(6, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/knob/7") {
-                midi_pregain(7, m.getInt() );
+                midi_pregain(7, atomVec[0].get<int32_t>() );
             } else if( addr == "/mixer/knob/8") {
-                midi_pregain(8, m.getInt() );
+                midi_pregain(8, atomVec[0].get<int32_t>() );
             }
         }
         
@@ -182,7 +182,7 @@ struct cvglMixer
     
     
     
-    void initMidi( OdotBundle & b )
+    void initMidi( MapOSC & b )
     {
         
         int32_t zeroMidi_dB = dB2midi(0);

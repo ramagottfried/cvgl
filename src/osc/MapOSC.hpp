@@ -7,6 +7,8 @@
 #include <vector>
 #include <variant>
 
+#include <Eigen/Dense>
+
 typedef std::variant<float, double, int32_t, int64_t, char, bool, std::string> AtomVar_t;
 
 struct MapAtom : public AtomVar_t
@@ -40,18 +42,128 @@ struct MapAtom : public AtomVar_t
         }
     }
     
-
+    inline int getInt()
+    {
+        return get<int32_t>();
+    }
+    
+    inline float getFloat(){
+        return get<float>();
+    }
   
+};
+
+
+struct MapOSCArray
+{
+    std::vector<MapAtom> vec;
+    
+    MapAtom& operator[](size_t idx) { return vec[idx]; }
+
+    inline size_t size(){ return vec.size(); }
+    inline void reserve(size_t size){ vec.reserve(size); }
+    
+    std::vector<MapAtom>& getAtomVector(){ return vec; }
+
+    template <typename T>
+    inline T get(size_t idx = 0) {
+        return vec[idx].get<T>();
+    }
+        
+    inline int getInt(){
+        return vec[0].get<int32_t>();
+    }
+    
+    inline float getFloat(){
+        return vec[0].get<float>();
+    }
+    
+
+    template <typename Derived>
+    void appendValue(const Eigen::ArrayBase<Derived> &val)
+    {
+        if( val.size() > 0 )
+        {
+           for( size_t i = 0; i < val.rows(); ++i)
+           {
+               appendValue( val(i) );
+           }
+        }
+    }
+    
+    template <typename Derived>
+    void appendValue(Eigen::ArrayBase<Derived> &val)
+    {
+        if( val.size() > 0 )
+        {
+           for( size_t i = 0; i < val.rows(); ++i)
+           {
+               appendValue( val(i) );
+           }
+        }
+    }
+    
+    template <typename Derived>
+    void appendValue(std::vector<Derived> &val)
+    {
+       for( auto it = val.begin(); it != val.end(); it++ )
+       {
+           appendValue(*it);
+       }
+    }
+
+    template <typename Derived>
+    void appendValue(const std::vector<Derived> &val)
+    {
+        for( auto it = val.begin(); it != val.end(); it++ )
+        {
+            appendValue(*it);
+        }
+    }
+
+
+    inline void appendValue(float val ) { vec.emplace_back(val); }
+    inline void appendValue(double val ) { vec.emplace_back(val); }
+    inline void appendValue(int32_t val ) { vec.emplace_back(val); }
+    inline void appendValue(int64_t val ) { vec.emplace_back(val); }
+    inline void appendValue(char val ) { vec.emplace_back(val); }
+    inline void appendValue(const std::string& val ) { vec.emplace_back(val); }
+
 };
 
 class MapOSC
 {
 public:
     
-    std::unordered_map<std::string, std::vector<MapAtom> > map;
+    std::unordered_map<std::string, MapOSCArray > map;
     
-    std::vector<MapAtom>& operator[](std::string& addr) { return map[addr]; }
-    std::vector<MapAtom>& operator[](const char * addr) { return map[addr]; }
+    
+    std::unordered_map<std::string, MapOSCArray >& getMap() { return map; }
+    
+    template <typename... Ts>
+    void addMessage (const std::string& address, Ts&&... args)
+    {
+        using expand = int[];
+       (void)expand{0, ((void)map[address].appendValue( std::forward<Ts>(args) ), 0) ... };
+    }
+
+    template <typename... Ts>
+    void addMessage (const char * address, Ts&&... args)
+    {
+        using expand = int[];
+        (void)expand{0, ((void)map[address].appendValue( std::forward<Ts>(args) ), 0) ... };
+    }
+
+    bool addressExists(const char * address) {
+        return map.find(address) != map.end();
+    }
+    
+    MapAtom& getMessage(const char * address, size_t idx = 0){
+        return map[address][idx];
+    }
+        
+    MapOSCArray& operator[](std::string& addr) { return map[addr]; }
+    MapOSCArray& operator[](const char * addr) { return map[addr]; }
     
     void inputOSC( long len, char * ptr  );
      
@@ -59,7 +171,6 @@ public:
 
     size_t getMapOSCSize();
 
-    
 };
 
 // std::vector<MapAtom>

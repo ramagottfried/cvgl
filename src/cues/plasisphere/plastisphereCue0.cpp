@@ -1,9 +1,9 @@
 #include "cvglCues.hpp"
 
-OdotBundle cvglCues::cue0( AnalysisData& data, cvglMixer& mixer, OdotBundle& b )
+MapOSC cvglCues::cue0( AnalysisData& data, cvglMixer& mixer, MapOSC& b )
 {
     //b.print();
-    OdotBundle out;
+    MapOSC out;
     out.addMessage("/descr", "prelude: setting up, putting on gloves");
     
     const double elapsed_section = m_elapsed_section.count();

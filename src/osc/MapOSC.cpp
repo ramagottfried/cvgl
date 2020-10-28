@@ -53,7 +53,7 @@ void MapOSC::inputOSC( long len, char * ptr )
     while(osc_bndl_it_s_hasNext(it)){
         t_osc_msg_s *m = osc_bndl_it_s_next(it);
                     
-        std::vector<MapAtom> newVec;
+        MapOSCArray newVec;
         newVec.reserve( osc_message_s_getArgCount(m) );
         
         t_osc_msg_it_s *mit = osc_msg_it_s_get(m);
@@ -65,25 +65,25 @@ void MapOSC::inputOSC( long len, char * ptr )
             switch ( osc_atom_s_getTypetag(a) )
             {
                 case 'f':
-                    newVec.emplace_back( osc_atom_s_getFloat(a) );
+                    newVec.appendValue( osc_atom_s_getFloat(a) );
                     break;
                 case 'd':
-                    newVec.emplace_back( osc_atom_s_getDouble(a) );
+                    newVec.appendValue( osc_atom_s_getDouble(a) );
                     break;
                 case 'i':
-                    newVec.emplace_back( osc_atom_s_getInt32(a) );
+                    newVec.appendValue( osc_atom_s_getInt32(a) );
                     break;
                 case 's':
                     {
                         char *buf = NULL;
                         osc_atom_s_getString(a, 0, &buf); // allocates memory and makes a copy
-                        newVec.emplace_back( std::string(buf) );
+                        newVec.appendValue( std::string(buf) );
                         
                         osc_mem_free(buf);
                     }
                     break;
                 case 'c':
-                    newVec.emplace_back(osc_atom_s_getInt8(a));
+                    newVec.appendValue((char)osc_atom_s_getInt8(a));
                     break;
 //                    case 'C':
 //                        osc_atom_u_setUInt8(atom_u, osc_atom_s_getUInt8(a));
@@ -95,7 +95,7 @@ void MapOSC::inputOSC( long len, char * ptr )
 //                        osc_atom_u_setUInt16(atom_u, osc_atom_s_getUInt16(a));
 //                        break;
                 case 'h':
-                    newVec.emplace_back( osc_atom_s_getInt64(a) );
+                    newVec.appendValue( osc_atom_s_getInt64(a) );
                     break;
 //                    case 'I':
 //                        osc_atom_u_setUInt32(atom_u, osc_atom_s_getUInt32(a));
@@ -104,13 +104,13 @@ void MapOSC::inputOSC( long len, char * ptr )
 //                        osc_atom_u_setUInt64(atom_u, osc_atom_s_getUInt64(a));
 //                        break;
                 case 'T':
-                    newVec.emplace_back( true );
+                    newVec.appendValue( true );
                     break;
                 case 'F':
-                    newVec.emplace_back( false );
+                    newVec.appendValue( false );
                     break;
                 case 'N':
-                    newVec.emplace_back( false );
+                    newVec.appendValue( false );
                     break;
 //                    case OSC_BUNDLE_TYPETAG:
 //                        {
@@ -159,7 +159,7 @@ size_t MapOSC::getMapOSCSize()
         _n += osc_util_getPaddedStringLen( (char *)it.first.c_str() );
         _n += osc_util_getPaddingForNBytes( it.second.size() + 1 );
         
-        for( auto& at : it.second )
+        for( auto& at : it.second.getAtomVector() )
         {
             _n += at.getSizeInBytes();
         }
@@ -256,23 +256,7 @@ size_t serializeVector( char *buf, size_t n, const char * address, std::vector<M
             default:
                 break;
         }
-        /*
-            [&ptr](float f) {      *((int32_t *)ptr) = hton32(*((int32_t *)(&f))); return 4; },
-            [&ptr](double d) {     *((int64_t *)ptr) = hton64(*((int64_t *)(&d))); return 8; },
-            [&ptr](char i) {       *((int32_t *)ptr) = hton32(i); return 4; },
-            [&ptr](int32_t i) {    *((int32_t *)ptr) = hton32(i); return 4; },
-            [&ptr](int64_t h) {    *((int64_t *)ptr) = hton64(h); return 8; },
-            [&ptr](std::string& s){
-                size_t len = strlen( s.c_str() );
-                size_t plen = osc_util_getPaddingForNBytes(len);
-                memset(ptr, '\0', plen);
-                memcpy(ptr, s.c_str(), len);
-                return plen;
-            },
-            [&ptr](bool b){        return b ? 'T' : 'F'; },
-            [](auto arg) {  return 0; }
-        }, at );
-        */
+        
     }
     
     *((int32_t *)buf) = hton32((int32_t)_n - 4);
@@ -294,7 +278,7 @@ t_osc_bundle_s* MapOSC::getBundle()
     
     for (auto& it : map)
     {
-        _n += serializeVector(ptr + _n, len - _n, it.first.c_str(), it.second );
+        _n += serializeVector(ptr + _n, len - _n, it.first.c_str(), it.second.getAtomVector() );
     }
     
    // printf("_n %ld \n", _n);
@@ -302,41 +286,4 @@ t_osc_bundle_s* MapOSC::getBundle()
     return osc_bundle_s_alloc(_n, ptr);
    
 }
-
-
-
-/*
- 
- 
- 
- while(osc_msg_it_u_hasNext(it) && ttptr < (buf + n)){
-     t_osc_atom_u *a = osc_msg_it_u_next(it);
-     *ttptr++ = osc_atom_u_getTypetag(a);
-     if(_n <= n){
-         _n += osc_atom_u_nserialize(buf + _n, n - _n, a);
-     }
- }
- osc_msg_it_u_destroy(it);
-
-
-
-size_t osc_bundle_u_nserialize(char *buf, size_t n, t_osc_bndl_u *b)
-{
-    size_t _n = 0;
-    t_osc_bndl_it_u *it = osc_bndl_it_u_get(b);
-
-        if(n < OSC_HEADER_SIZE){
-            return 0;
-        }
-        memcpy(buf, OSC_EMPTY_HEADER, OSC_HEADER_SIZE);
-        _n += OSC_HEADER_SIZE;
-        while(osc_bndl_it_u_hasNext(it) && _n < n){
-            t_osc_msg_u *m = osc_bndl_it_u_next(it);
-            _n += osc_message_u_nserialize(buf + _n, n - _n, m);
-        }
-
-    osc_bndl_it_u_destroy(it);
-    return _n;
-}
-*/
 

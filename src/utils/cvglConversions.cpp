@@ -8,10 +8,10 @@ using namespace cv;
 namespace cvgl
 {
     
-    std::vector<float> getRGBA( const OdotMessage & msg )
+    std::vector<float> getRGBA( MapOSCArray & msg )
     {
         std::vector<float> _rgba;
-        for( auto & a : msg.getAtoms() )
+        for( auto & a : msg.getAtomVector() )
         {
             _rgba.emplace_back( a.getFloat() );
         }
@@ -499,7 +499,7 @@ namespace cvgl
     
     
     template<typename ptT, typename outT>
-    void pointMatToXYBundle(const Mat& points, OdotBundle& b, const float halfScreenW, const float halfScreenH )
+    void pointMatToXYBundle(const Mat& points, MapOSC& b, const float halfScreenW, const float halfScreenH )
     {
 
         vector<outT> x, y;
@@ -518,7 +518,7 @@ namespace cvgl
         
     }
     
-    void pointMatToXYBundle(const Mat& points, OdotBundle& b, const float halfScreenW, const float halfScreenH )
+    void pointMatToXYBundle(const Mat& points, MapOSC& b, const float halfScreenW, const float halfScreenH )
     {
         switch( points.depth() )
         {

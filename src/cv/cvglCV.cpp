@@ -6,11 +6,12 @@ using namespace cv;
 using namespace std;
 
 
-void cvglCV::setCVParams( const vector<OdotMessage> & b )
+void cvglCV::setCVParams( MapOSC & b )
 {
-    for( const auto& m : b )
+    for( auto& msg : b.getMap() )
     {
-        const string& addr = m.getAddress();
+        const string& addr = msg.first;
+        MapOSCArray& m = msg.second;
         
         if( addr == "/invert" )
         {

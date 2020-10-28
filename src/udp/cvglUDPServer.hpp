@@ -33,9 +33,9 @@ public:
     void start();
     void close();
     
-    void sendBundle( const OdotBundle & b );
+    void sendBundle( MapOSC & b );
 
-    virtual void receivedBundle( OdotBundle & b ) {}
+    virtual void receivedBundle( MapOSC & b ) {}
 
 private:
     

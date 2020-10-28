@@ -33,9 +33,9 @@ public:
     void processAnalysis(AnalysisData& data) override;
     
     // --- called from udp thread ---
-    void receivedBundle( OdotBundle & b ) override;
+    void receivedBundle( MapOSC & b ) override;
     
-    void setMainParams( const vector<OdotMessage> & b );
+    void setMainParams( MapOSC & b );
 
     // --- called from gl thread (main thread) ---
     void draw();
@@ -48,7 +48,7 @@ public:
     
     inline void initMixer()
     {
-        OdotBundle out;
+        MapOSC out;
         m_mixer.initMidi(out);
         std::cout << "initializing midi mixer" << std::endl;
         sendBundle( out );

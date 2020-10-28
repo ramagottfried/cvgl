@@ -120,7 +120,7 @@ void cvglMainProcess::initObjs()
 /**
  virtual function called from UDP thread
  */
-void cvglMainProcess::receivedBundle( OdotBundle & b )
+void cvglMainProcess::receivedBundle( MapOSC & b )
 {
     unique_lock<mutex> lock_osc(m_osc_lock);
     
@@ -134,12 +134,11 @@ void cvglMainProcess::receivedBundle( OdotBundle & b )
     // >>>> process cue function is called from UDP and CV threads -- causng some problems now
     // >>>> maybe not necessary to do data analysis here? ... seems maybe reasonable to me
     
-    OdotBundle out = m_cues.procDataAndMixer(m_data, m_mixer, b);
+    MapOSC out = m_cues.procDataAndMixer(m_data, m_mixer, b);
     
-    auto msgs = b.getMessageArray();
-    
-    setCVParams(msgs);
-    setMainParams(msgs);
+   
+    setCVParams(b);
+    setMainParams(b);
     
     
     // on input process OSC with current data and mixer (with osc lock)
@@ -149,74 +148,75 @@ void cvglMainProcess::receivedBundle( OdotBundle & b )
 /**
  *  note: must be be set  with m_osc_lock mutex since reader is on a gl thread
  */
-void cvglMainProcess::setMainParams( const vector<OdotMessage> & b )
+void cvglMainProcess::setMainParams( MapOSC & b )
 {
-    for( auto& m : b )
+    for( auto& m : b.map )
     {
-        const string& addr = m.getAddress();
+        const string& addr = m.first;
+        MapOSCArray& val = m.second;
         
         if( addr == "/video/enable" )
         {
-            m_draw_frame = m.getInt() > 0;
+            m_draw_frame = val.getInt() > 0;
         }
         else if( addr == "/analysis/resize" )
         {
-            m_resize = m.getFloat();
+            m_resize = val.getFloat();
         }
         else if( addr == "/video/black" )
         {
-            m_draw_black = m.getInt() > 0;
+            m_draw_black = val.getInt() > 0;
         }
         else if( addr == "/use/camera" )
         {
-            m_use_camera_id = m.getInt();
+            m_use_camera_id = val.getInt();
         }
         else if( addr == "/use/preprocess" )
         {
-            m_use_preprocess = m.getInt();
-            cout << "setting preprocess to " << m_use_preprocess << " " << m.getInt() << endl;
+            m_use_preprocess = val.getInt();
+            cout << "setting preprocess to " << m_use_preprocess << " " << val.getInt() << endl;
         }
         else if( addr == "/enable/contour" )
         {
-            m_draw_contour = m.getInt() > 0;
+            m_draw_contour = val.getInt() > 0;
         }
         else if( addr == "/contour/color" )
         {
-            m_contour_rgba = cvgl::getRGBA(m);
+            m_contour_rgba = cvgl::getRGBA(val);
         }
         else if( addr == "/contour/width" )
         {
-            m_contour_line_thickness = m.getFloat();
+            m_contour_line_thickness = val.getFloat();
         }
         else if( addr == "/enable/hull" )
         {
-            m_draw_hull = m.getInt() > 0;
+            m_draw_hull = val.getInt() > 0;
         }
         else if( addr == "/hull/color" )
         {
-            m_hull_rgba = cvgl::getRGBA(m);;
+            m_hull_rgba = cvgl::getRGBA(val);;
         }
         else if( addr == "/hull/width" )
         {
-            m_hull_line_thickness = m.getFloat();
+            m_hull_line_thickness = val.getFloat();
         }
         else if( addr == "/enable/minrect" )
         {
-            m_draw_minrect = m.getInt() > 0;
+            m_draw_minrect = val.getInt() > 0;
         }
         else if( addr == "/minrect/color" )
         {
-            m_minrect_rgba = cvgl::getRGBA(m);;
+            m_minrect_rgba = cvgl::getRGBA(val);;
         }
         else if( addr == "/minrect/width" )
         {
-            m_minrect_line_thickness = m.getFloat();
+            m_minrect_line_thickness = val.getFloat();
         }
         if( addr == "/video/flip" )
         {
-            if( m.size() == 2 )
+            if( val.size() == 2 )
             {
-                context.flip( m[0].getFloat(), m[1].getFloat() );
+                context.flip( val[0].getFloat(), val[1].getFloat() );
             }
         }
     }
@@ -277,7 +277,7 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 void cvglMainProcess::processAnalysis(AnalysisData& data)
 {
     // on new data, process with mixer (no osc lock?)
-    OdotBundle out = m_cues.procDataAndMixer(data, m_mixer);
+    MapOSC out = m_cues.procDataAndMixer(data, m_mixer);
     
    // m_thread_pool->enqueue([this](OdotBundle b){ sendBundle( b );}, out);
 

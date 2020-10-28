@@ -17,7 +17,7 @@
 
 #include "cvglTheadPool.hpp"
 
-
+#include "MapOSC.hpp"
 /*
  to do: don't send OSC bundle for mapping, send struct with analysis data like in fabrica
         go through the CV path and clean up a bit
@@ -67,7 +67,7 @@ public:
      *  implement in sub-class for callback to process CV bundle before output
      *
      */
-    virtual void processAnalysisBundle(OdotBundle &bndl) {}
+    virtual void processAnalysisBundle(MapOSC &bndl) {}
     
 
     
@@ -86,7 +86,7 @@ public:
     }
     
     // setters
-    void setCVParams( const vector<OdotMessage> & b );
+    void setCVParams( MapOSC & b );
     
     inline void setFrame( cv::Mat & frame )
     {

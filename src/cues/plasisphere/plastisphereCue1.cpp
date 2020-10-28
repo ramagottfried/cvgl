@@ -4,11 +4,11 @@
 
 // >> Need to have limits on number of voices below -- the UDP port is getting blocked when the size is too big
 
-OdotBundle cvglCues::cue1( AnalysisData& data, cvglMixer& mixer, OdotBundle& b )
+MapOSC cvglCues::cue1( AnalysisData& data, cvglMixer& mixer, MapOSC& b )
 {
     using namespace cvgl;
     
-    OdotBundle out;
+    MapOSC out;
     out.addMessage("/descr", "black and feather, venus flytrap spider");
     
     const double elapsed_section = m_elapsed_section.count();
@@ -69,7 +69,7 @@ OdotBundle cvglCues::cue1( AnalysisData& data, cvglMixer& mixer, OdotBundle& b )
     
     
     size_t new_contours = data.noteOn_idx.size();
-    int32_t contour_incr = !m_state_cache.addressExists("/contour_incr") || m_newCue ? 0 : m_state_cache.getMessage("/contour_incr").getInt();
+    int32_t contour_incr = !m_state_cache.addressExists("/contour_incr") || m_newCue ? 0 : m_state_cache["/contour_incr"][0].get<int32_t>();
     
     contour_incr += new_contours;
     // (same as noteon/incr in cues)
@@ -197,9 +197,9 @@ OdotBundle cvglCues::cue1( AnalysisData& data, cvglMixer& mixer, OdotBundle& b )
     }
     else
     {
-        for( auto& at : m_state_cache.getMessage("/fig_1_x").getAtoms() )
+        for( auto& at : m_state_cache["/fig_1_x"].getAtomVector() )
         {
-            fig_1_x.emplace_back( at.getDouble() );
+            fig_1_x.emplace_back( at.get<double>() );
         }
     }
     
@@ -294,7 +294,7 @@ OdotBundle cvglCues::cue1( AnalysisData& data, cvglMixer& mixer, OdotBundle& b )
         out.addMessage("/filter/down/area", filter_down_area );
         out.addMessage("/filter/downsamp/wobble/time", ArrayXd::Constant( data.ncontours, 100) );
         out.addMessage("/filter/downsamp/wobble/start", filter_down_angle );
-        out.addMessage("/filter/downsamp/wobble/end", filter_down_angle + filter_down_area );
+        out.addMessage("/filter/downsamp/wobble/end", ArrayXd(filter_down_angle + filter_down_area) );
         out.addMessage("/filter/hz", mtof( scale( data.contour_area, 0, 1, 120., 60.) ) );
     }
    

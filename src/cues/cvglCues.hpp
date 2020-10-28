@@ -4,7 +4,7 @@
 
 #include <Eigen/Dense>
 #include "cvglAnalysisData.hpp"
-#include "OdotBundle.hpp"
+#include "MapOSC.hpp"
 #include "cvglMixer.hpp"
 #include "cvglRandom.hpp"
 #include "cvglLookupFigure.hpp"
@@ -15,8 +15,8 @@ class cvglCues
 {
 public:
     
-    OdotBundle cue0(AnalysisData& data, cvglMixer& mixer, OdotBundle& b);
-    OdotBundle cue1(AnalysisData& data, cvglMixer& mixer, OdotBundle& b);
+    MapOSC cue0(AnalysisData& data, cvglMixer& mixer, MapOSC& b);
+    MapOSC cue1(AnalysisData& data, cvglMixer& mixer, MapOSC& b);
 
     
     cvglCues()
@@ -32,8 +32,8 @@ public:
     /**
      processes data and input settings, outputs OSC bundle to send to audio process
      */
-    OdotBundle procDataAndMixer(AnalysisData& data, cvglMixer& mixer, OdotBundle& b);
-    OdotBundle procDataAndMixer(AnalysisData& data, cvglMixer& mixer);
+    MapOSC procDataAndMixer(AnalysisData& data, cvglMixer& mixer, MapOSC& b);
+    MapOSC procDataAndMixer(AnalysisData& data, cvglMixer& mixer);
 
     
 private:
@@ -41,9 +41,9 @@ private:
     typedef std::chrono::system_clock sys_clock_t;
     typedef std::chrono::time_point<sys_clock_t> timepoint_t;
     typedef std::chrono::duration<double> duration_t;
-    typedef std::function<OdotBundle(AnalysisData&, cvglMixer&, OdotBundle&)> cueFunction_t;
+    typedef std::function< MapOSC(AnalysisData&, cvglMixer&, MapOSC&) > cueFunction_t;
     
-    OdotBundle  m_state_cache;
+    MapOSC m_state_cache;
     
     long m_cue = 1;
     bool m_newCue = false;
@@ -55,7 +55,7 @@ private:
     
     cvglRandom m_rand_generator;
 
-    OdotBundle m_input;
+    MapOSC m_input;
     
     AnalysisData m_prev_data;
 };
