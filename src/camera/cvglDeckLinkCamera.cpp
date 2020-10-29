@@ -377,9 +377,12 @@ HRESULT STDMETHODCALLTYPE cvglDeckLinkCamera::VideoInputFrameArrived (IDeckLinkV
     
     if( data )
     {
-        cv::Mat mat = cv::Mat((int)videoFrame->GetHeight(), (int)videoFrame->GetWidth(), CV_8UC2, data);
+        //checkFrameOrderStart();
+        
         cv::Mat mRGB;
-        cv::cvtColor(mat, mRGB, cv::COLOR_YUV2BGR_UYVY);
+        cv::cvtColor(cv::Mat((int)videoFrame->GetHeight(), (int)videoFrame->GetWidth(), CV_8UC2, data),
+                     mRGB,
+                     cv::COLOR_YUV2BGR_UYVY );
         
         /**
                 note: processFrameCallback may take ownership of Mat
@@ -387,7 +390,7 @@ HRESULT STDMETHODCALLTYPE cvglDeckLinkCamera::VideoInputFrameArrived (IDeckLinkV
         if( blackmagic && m_processFrameCallback )
             m_processFrameCallback( mRGB );
         
-       
+        //checkFrameOrderEnde();
     }
     
     return S_OK;

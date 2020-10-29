@@ -56,5 +56,12 @@ private:
     IDeckLink*              m_deckLink = NULL;
     IDeckLinkInput*         m_deckLinkInput = NULL;
     
+    size_t m_framecount = 0, m_next_framecount = 0;
+    
+    void checkFrameOrderStart(){ m_next_framecount++; }
+    void checkFrameOrderEnde(){ m_framecount++;
+        if( m_framecount != m_next_framecount)
+            printf("******* camera backup *******\n");
+    }
     
 };

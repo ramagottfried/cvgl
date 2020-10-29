@@ -226,6 +226,7 @@ void cvglMainProcess::setMainParams( MapOSC & b )
 
 /**
  *  callback from camera thread
+ *  wondering if maybe the camera thread is getting slowed down by the analysis
  */
 void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 {
@@ -274,9 +275,10 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
  *  virtual function callback called from detached openCV worker thread
  *  could add mappings here
  */
-void cvglMainProcess::processAnalysis(AnalysisData& data)
+void cvglMainProcess::processAnalysis(const AnalysisData& data)
 {
     // on new data, process with mixer (no osc lock?)
+    unique_lock<mutex> lock_osc(m_osc_lock);
     MapOSC out = m_cues.procDataAndMixer(data, m_mixer);
     
    // m_thread_pool->enqueue([this](OdotBundle b){ sendBundle( b );}, out);

@@ -1,5 +1,6 @@
 #include "cvglUDPServer.hpp"
 
+using namespace std;
 
 void cvglUDPServer::openSendSocket()
 {
@@ -219,6 +220,27 @@ void cvglUDPServer::sendBundle( MapOSC & b )
     if( m_fd < 0 )
         return;
     
+    size_t len = b.getMapOSCSize();
+    if( len < 9 )
+        return;
+    
+    //char buf[len];
+    
+    char *buf = NULL;
+    buf = (char *)malloc(len);
+    
+    b.serializeIntoBuffer(buf, len);
+    
+    ssize_t sentbytes = send(m_fd, buf, len, 0);
+    if( sentbytes < 0 )
+    {
+     // cout << "failed to send " << serialized.getLen() << " returned: " << sentbytes << " errno " << strerror(errno) << endl;
+    }
+       
+    free(buf);
+    buf = NULL;
+    
+    /*
     t_osc_bundle_s *serialized = b.getBundle();
         
     ssize_t sentbytes = send(m_fd, osc_bundle_s_getPtr(serialized), (size_t)osc_bundle_s_getLen(serialized), 0);
@@ -228,7 +250,7 @@ void cvglUDPServer::sendBundle( MapOSC & b )
     }
     
     osc_bundle_s_deepFree(serialized);
-    
+    */
 }
 
 void cvglUDPServer::start()

@@ -4,7 +4,7 @@
 
 // >> Need to have limits on number of voices below -- the UDP port is getting blocked when the size is too big
 
-MapOSC cvglCues::cue1( AnalysisData& data, cvglMixer& mixer, MapOSC& b )
+MapOSC cvglCues::cue1( const AnalysisData& data, cvglMixer& mixer, MapOSC& b )
 {
     using namespace cvgl;
     

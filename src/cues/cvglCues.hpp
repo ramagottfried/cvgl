@@ -15,8 +15,8 @@ class cvglCues
 {
 public:
     
-    MapOSC cue0(AnalysisData& data, cvglMixer& mixer, MapOSC& b);
-    MapOSC cue1(AnalysisData& data, cvglMixer& mixer, MapOSC& b);
+    MapOSC cue0(const AnalysisData& data, cvglMixer& mixer, MapOSC& b);
+    MapOSC cue1(const AnalysisData& data, cvglMixer& mixer, MapOSC& b);
 
     
     cvglCues()
@@ -32,8 +32,8 @@ public:
     /**
      processes data and input settings, outputs OSC bundle to send to audio process
      */
-    MapOSC procDataAndMixer(AnalysisData& data, cvglMixer& mixer, MapOSC& b);
-    MapOSC procDataAndMixer(AnalysisData& data, cvglMixer& mixer);
+    MapOSC procDataAndMixer(const AnalysisData& data, cvglMixer& mixer, MapOSC& b);
+    MapOSC procDataAndMixer(const AnalysisData& data, cvglMixer& mixer);
 
     
 private:
@@ -41,7 +41,7 @@ private:
     typedef std::chrono::system_clock sys_clock_t;
     typedef std::chrono::time_point<sys_clock_t> timepoint_t;
     typedef std::chrono::duration<double> duration_t;
-    typedef std::function< MapOSC(AnalysisData&, cvglMixer&, MapOSC&) > cueFunction_t;
+    typedef std::function< MapOSC(const AnalysisData&, cvglMixer&, MapOSC&) > cueFunction_t;
     
     MapOSC m_state_cache;
     

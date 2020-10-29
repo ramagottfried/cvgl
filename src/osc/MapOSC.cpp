@@ -36,8 +36,7 @@ size_t MapAtom::getSizeInBytes()
             return 8;
          case 's':
          {
-            const char * str = (*this).get<std::string>().c_str();
-            size_t len = strlen( str );
+            size_t len = (*this).get<std::string>().length();
             size_t plen = osc_util_getPaddingForNBytes(len);
             return plen;
          }
@@ -269,7 +268,7 @@ t_osc_bundle_s* MapOSC::getBundle()
 {
     size_t len = getMapOSCSize();
     //printf("allocating %ld bytes \n", len);
-    char * ptr = (char *)malloc(len);
+    char * ptr = (char *)osc_mem_alloc(len);
     
     size_t _n = 0;
     
@@ -286,4 +285,23 @@ t_osc_bundle_s* MapOSC::getBundle()
     return osc_bundle_s_alloc(_n, ptr);
    
 }
+
+void MapOSC::serializeIntoBuffer(char *ptr, size_t size )
+{
+    size_t _n = 0;
+    
+   // memset(ptr, '\0', size);
+    memcpy(ptr, OSC_EMPTY_HEADER, OSC_HEADER_SIZE);
+    _n += OSC_HEADER_SIZE;
+    
+    for (auto& it : map)
+    {
+        _n += serializeVector(ptr + _n, size - _n, it.first.c_str(), it.second.getAtomVector() );
+    }
+    
+   // printf("_n %ld \n", _n);
+   
+}
+
+
 

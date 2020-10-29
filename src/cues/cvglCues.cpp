@@ -2,7 +2,7 @@
 #include "cvglCues.hpp"
 
 // called from analysis thread
-MapOSC cvglCues::procDataAndMixer(AnalysisData& data, cvglMixer& mixer)
+MapOSC cvglCues::procDataAndMixer(const AnalysisData& data, cvglMixer& mixer)
 {
     
     m_elapsed_section = sys_clock_t::now() - m_section_start;
@@ -15,7 +15,7 @@ MapOSC cvglCues::procDataAndMixer(AnalysisData& data, cvglMixer& mixer)
 }
 
 // called from UDP input thread
-MapOSC cvglCues::procDataAndMixer(AnalysisData& data, cvglMixer& mixer, MapOSC& b)
+MapOSC cvglCues::procDataAndMixer(const AnalysisData& data, cvglMixer& mixer, MapOSC& b)
 {
     if( b.addressExists("/cue") )
     {
@@ -39,6 +39,7 @@ MapOSC cvglCues::procDataAndMixer(AnalysisData& data, cvglMixer& mixer, MapOSC& 
         
     MapOSC out = m_cueFunctions[m_cue]( data, mixer, b );
     
+    // this shoud copy bundle
     m_input = b; //OdotBundle((const OdotBundle)b);
     m_newCue = false;
     

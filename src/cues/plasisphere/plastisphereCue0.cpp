@@ -1,6 +1,6 @@
 #include "cvglCues.hpp"
 
-MapOSC cvglCues::cue0( AnalysisData& data, cvglMixer& mixer, MapOSC& b )
+MapOSC cvglCues::cue0( const AnalysisData& data, cvglMixer& mixer, MapOSC& b )
 {
     //b.print();
     MapOSC out;

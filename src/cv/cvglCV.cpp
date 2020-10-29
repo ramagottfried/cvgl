@@ -285,7 +285,7 @@ AnalysisData cvglCV::analyzeContour()
    // thread worker(&cvglCV::analysisThread, this, data);
     //worker.detach();
     
-    return std::move(data);
+    return data;// std::move(data);
 }
 
 
@@ -609,7 +609,7 @@ void cvglCV::analysisTracking(AnalysisData& data, const AnalysisData& prev_data)
     for( int i = 0; i < data.ncontours; ++i )
     {
         auto prev_ref = prev_data.id_idx.find( data.id[i] );
-        if( prev_ref != prev_data.id_idx.end() )
+        if( prev_ref != prev_data.id_idx.end() && prev_data.ncontours > 0 )
         {
             // found id in previous frame, can be used to get delta
             int prev_idx = prev_ref->second;

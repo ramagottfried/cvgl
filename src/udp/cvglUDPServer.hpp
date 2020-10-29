@@ -7,7 +7,7 @@
 #include <string>
 #include <mutex>
 #include <thread>
-#include "OdotBundle.hpp"
+//#include "OdotBundle.hpp"
 #include "MapOSC.hpp"
 
 
@@ -59,7 +59,7 @@ private:
     std::thread m_listenLoop;
     
     std::mutex m_mutex;
-    OdotBundle m_state_bundle;
+   // OdotBundle m_state_bundle;
     
     
 };

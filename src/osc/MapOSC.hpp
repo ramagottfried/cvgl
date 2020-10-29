@@ -29,8 +29,8 @@ struct MapAtom : public AtomVar_t
         if constexpr (std::is_same<typename std::decay<T>::type, std::string>::value)
         {
             return std::visit( overloaded {
-                    [](std::string& arg) { return arg; },
-                    [](auto&& arg) { return std::to_string(arg); }
+                    [](std::string arg) { return arg; },
+                    [](auto& arg) { return std::to_string(arg); }
             }, *this);
         }
         else
@@ -168,8 +168,11 @@ public:
     void inputOSC( long len, char * ptr  );
      
     t_osc_bundle_s *getBundle();
-
+    
     size_t getMapOSCSize();
+    // expert mode! requires having your own buffer of the right size
+    void serializeIntoBuffer(char * ptr, size_t size );
+    
 
 };
 

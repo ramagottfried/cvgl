@@ -32,6 +32,7 @@ public:
     cvglCV() : m_id_used(m_maxIDs)
     {
         m_thread_pool = std::make_unique<ThreadPool>(4);
+        printf("cv optimization %i\n", cv::useOptimized() );
     }
     
     void preprocess();
@@ -61,7 +62,7 @@ public:
     /**
         called from worker thread, when m_data has been set
      */
-    virtual void processAnalysis(AnalysisData& data) {}
+    virtual void processAnalysis(const AnalysisData& data) {}
 
     /*
      *  implement in sub-class for callback to process CV bundle before output
@@ -141,8 +142,8 @@ protected:
     float m_resize = 0.5;
     
     bool m_invert = false;
-    int m_thresh = 30;
-    float m_minsize = 0.001;
+    int m_thresh = 102;
+    float m_minsize = 0.000;
     float m_maxsize = 0.9;
     bool m_parents_only = 0;
     double m_track_radius = 0.1;

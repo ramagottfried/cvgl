@@ -30,7 +30,7 @@ public:
     void analysisToGL(const AnalysisData& analysis);
 
     // --- called from cv analysis worker thread when m_data has been set ---
-    void processAnalysis(AnalysisData& data) override;
+    void processAnalysis(const AnalysisData& data) override;
     
     // --- called from udp thread ---
     void receivedBundle( MapOSC & b ) override;
