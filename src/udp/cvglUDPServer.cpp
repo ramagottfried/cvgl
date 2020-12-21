@@ -72,6 +72,15 @@ void cvglUDPServer::openSendSocket()
     
     cout << "connected! on socket " << m_fd << endl;
 
+    
+    MapOSC overflowMessage;
+    
+    overflowMessage["/error"].appendValue("send buffer exceeded max size");
+    
+    m_overflowMessage.resize( overflowMessage.getMapOSCSize() );
+    
+    overflowMessage.serializeIntoBuffer( m_overflowMessage.data(), m_overflowMessage.size() );
+    
 }
 
 
@@ -225,20 +234,22 @@ void cvglUDPServer::sendBundle( MapOSC & b )
         return;
     
     //char buf[len];
-    
+    std::vector<char> buf(len);
+    /*
     char *buf = NULL;
     buf = (char *)malloc(len);
+    */
+    b.serializeIntoBuffer(buf.data(), len);
     
-    b.serializeIntoBuffer(buf, len);
-    
-    ssize_t sentbytes = send(m_fd, buf, len, 0);
+    ssize_t sentbytes = send(m_fd, buf.data(), len, 0);
     if( sentbytes < 0 )
     {
-     // cout << "failed to send " << serialized.getLen() << " returned: " << sentbytes << " errno " << strerror(errno) << endl;
+        send(m_fd, m_overflowMessage.data(), m_overflowMessage.size(), 0);
+//        cout << "failed to send " << len << " returned: " << sentbytes << " errno " << strerror(errno) << endl;
     }
        
-    free(buf);
-    buf = NULL;
+   // free(buf);
+    //buf = NULL;
     
     /*
     t_osc_bundle_s *serialized = b.getBundle();
@@ -301,7 +312,7 @@ void cvglUDPServer::loop()
     
     if( m_recv_fd < 0 )
     {
-        cout << "no open port!" << endl;
+        printf("no open port!\n");
         return;
     }
     
@@ -312,7 +323,7 @@ void cvglUDPServer::loop()
     
     char buf[m_max_buf_size];
     
-    cout << "starting loop " << endl;
+    printf("starting loop \n");
 
     fd_set readfds;
     struct timeval timeout;
@@ -368,7 +379,7 @@ void cvglUDPServer::loop()
         
     }
     
-    cout << "exited loop " << endl;
+    printf("exited loop\n");
 
     
 }

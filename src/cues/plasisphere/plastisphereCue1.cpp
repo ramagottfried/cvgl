@@ -31,11 +31,11 @@ MapOSC cvglCues::cue1( const AnalysisData& data, cvglMixer& mixer, MapOSC& b )
     mixer.applyAddGains(out);
     
     b.addMessage("/video/black",  0);
-    b.addMessage("/use/preprocess",  1);
+    b.addMessage("/use/preprocess",  2);
     
-    b.addMessage("/size/min", 0.001 );
+    b.addMessage("/size/min", 0.000 );
     b.addMessage("/size/max", 0.9 );
-    b.addMessage("/thresh", 8 );
+    b.addMessage("/thresh", 16 );
     b.addMessage("/invert", 0 );
 
     

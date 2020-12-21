@@ -27,24 +27,17 @@
 		115AA9E225485E6800F34713 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115AA9E125485E6800F34713 /* main.cpp */; };
 		115AA9E62548B64400F34713 /* MapOSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115AA9D82548553300F34713 /* MapOSC.cpp */; };
 		118EDE3A21D98AB500F391D0 /* Info.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 118EDE3921D9866300F391D0 /* Info.plist */; };
-		11D26D792428BFE9007BD78A /* libo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11D26D782428BFE9007BD78A /* libo.a */; };
 		11FB9E9922A839F500599CC9 /* delabella.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11FB9E9822A839F500599CC9 /* delabella.cpp */; };
 		11FB9E9A22A839F500599CC9 /* delabella.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11FB9E9822A839F500599CC9 /* delabella.cpp */; };
 		21038D17214AECB10078F594 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D16214AECB10078F594 /* main.cpp */; };
 		2112A4B7214DA3A300EC1C11 /* cvglCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4892149426A00345757 /* cvglCallbacks.cpp */; };
 		2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21DDFACD2146CCDC001FF716 /* cvglObject.cpp */; };
-		2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A1214BF299009BDD3B /* OdotSelect.cpp */; };
-		2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669D214BF299009BDD3B /* OdotAtom.cpp */; };
-		2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A6214BF299009BDD3B /* OdotBundle_s.cpp */; };
 		2112A4C1214DA3A300EC1C11 /* cvglTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D48C214946E700345757 /* cvglTexture.cpp */; };
 		2112A4C2214DA3A300EC1C11 /* cvglContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4682147E7E000345757 /* cvglContext.cpp */; };
 		2112A4C3214DA3A300EC1C11 /* cvglConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C667F214BB794009BDD3B /* cvglConversions.cpp */; };
-		2112A4C4214DA3A300EC1C11 /* OdotBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C669B214BF299009BDD3B /* OdotBundle.cpp */; };
 		2112A4C5214DA3A300EC1C11 /* cvglConvexHull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D0D214AD2A20078F594 /* cvglConvexHull.cpp */; };
-		2112A4C7214DA3A300EC1C11 /* OdotMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A0214BF299009BDD3B /* OdotMessage.cpp */; };
 		2112A4C8214DA3A300EC1C11 /* cvglVAO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D04214A89650078F594 /* cvglVAO.cpp */; };
 		2112A4C9214DA3A300EC1C11 /* cvglCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D7D4782147FEEF00345757 /* cvglCV.cpp */; };
-		2112A4CA214DA3A300EC1C11 /* OdotHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 216C66A4214BF299009BDD3B /* OdotHash.cpp */; };
 		2112A4CB214DA3A300EC1C11 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 21038D02214A43080078F594 /* glad.c */; };
 		2112A4CC214DA3A300EC1C11 /* cvglVertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21038D07214A89B60078F594 /* cvglVertex.cpp */; };
 		2112A4CD214DA3A300EC1C11 /* platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C0768D214D6D4F000F0AA4 /* platform.cpp */; };
@@ -142,21 +135,6 @@
 		216C667F214BB794009BDD3B /* cvglConversions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglConversions.cpp; sourceTree = "<group>"; };
 		216C6680214BB794009BDD3B /* cvglConversions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglConversions.hpp; sourceTree = "<group>"; };
 		216C6682214BB8F5009BDD3B /* cvglPrint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cvglPrint.h; sourceTree = "<group>"; };
-		216C6699214BF299009BDD3B /* OdotHash.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OdotHash.hpp; sourceTree = "<group>"; };
-		216C669A214BF299009BDD3B /* OdotAtom.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OdotAtom.hpp; sourceTree = "<group>"; };
-		216C669B214BF299009BDD3B /* OdotBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OdotBundle.cpp; sourceTree = "<group>"; };
-		216C669C214BF299009BDD3B /* OdotMessage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OdotMessage.hpp; sourceTree = "<group>"; };
-		216C669D214BF299009BDD3B /* OdotAtom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OdotAtom.cpp; sourceTree = "<group>"; };
-		216C669E214BF299009BDD3B /* OdotPointers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OdotPointers.h; sourceTree = "<group>"; };
-		216C669F214BF299009BDD3B /* OdotBundle_s.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OdotBundle_s.hpp; sourceTree = "<group>"; };
-		216C66A0214BF299009BDD3B /* OdotMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OdotMessage.cpp; sourceTree = "<group>"; };
-		216C66A1214BF299009BDD3B /* OdotSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OdotSelect.cpp; sourceTree = "<group>"; };
-		216C66A2214BF299009BDD3B /* OdotBundle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OdotBundle.hpp; sourceTree = "<group>"; };
-		216C66A3214BF299009BDD3B /* OdotExpr.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OdotExpr.hpp; sourceTree = "<group>"; };
-		216C66A4214BF299009BDD3B /* OdotHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OdotHash.cpp; sourceTree = "<group>"; };
-		216C66A5214BF299009BDD3B /* OdotSelect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OdotSelect.hpp; sourceTree = "<group>"; };
-		216C66A6214BF299009BDD3B /* OdotBundle_s.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OdotBundle_s.cpp; sourceTree = "<group>"; };
-		216C66A7214BF299009BDD3B /* OdotExpr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OdotExpr.cpp; sourceTree = "<group>"; };
 		216C66BA214BF2BD009BDD3B /* libcvgl-plastisphere-libo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcvgl-plastisphere-libo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		21AA02FD2159531600D9751F /* cvglCamera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglCamera.cpp; sourceTree = "<group>"; };
 		21AA02FE2159531600D9751F /* cvglCamera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCamera.hpp; sourceTree = "<group>"; };
@@ -204,7 +182,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				11D26D792428BFE9007BD78A /* libo.a in Frameworks */,
 				2112A4CF214DA3A300EC1C11 /* CoreFoundation.framework in Frameworks */,
 				2112A4D3214DA3A300EC1C11 /* OpenGL.framework in Frameworks */,
 			);
@@ -225,7 +202,6 @@
 			children = (
 				118EDE3921D9866300F391D0 /* Info.plist */,
 				21DDFAC92146CC53001FF716 /* src */,
-				216C66BE214BF2E1009BDD3B /* libo */,
 				21038D15214AECB10078F594 /* profiler */,
 				115AA9E025485E6800F34713 /* tester */,
 				112485191A9EA8F90032B37A /* Products */,
@@ -329,32 +305,10 @@
 		216C6698214BF250009BDD3B /* osc */ = {
 			isa = PBXGroup;
 			children = (
-				216C669D214BF299009BDD3B /* OdotAtom.cpp */,
-				216C669A214BF299009BDD3B /* OdotAtom.hpp */,
-				216C66A6214BF299009BDD3B /* OdotBundle_s.cpp */,
-				216C669F214BF299009BDD3B /* OdotBundle_s.hpp */,
-				216C669B214BF299009BDD3B /* OdotBundle.cpp */,
-				216C66A2214BF299009BDD3B /* OdotBundle.hpp */,
-				216C66A7214BF299009BDD3B /* OdotExpr.cpp */,
-				216C66A3214BF299009BDD3B /* OdotExpr.hpp */,
-				216C66A4214BF299009BDD3B /* OdotHash.cpp */,
-				216C6699214BF299009BDD3B /* OdotHash.hpp */,
-				216C66A0214BF299009BDD3B /* OdotMessage.cpp */,
-				216C669C214BF299009BDD3B /* OdotMessage.hpp */,
-				216C669E214BF299009BDD3B /* OdotPointers.h */,
-				216C66A1214BF299009BDD3B /* OdotSelect.cpp */,
-				216C66A5214BF299009BDD3B /* OdotSelect.hpp */,
 				115AA9D82548553300F34713 /* MapOSC.cpp */,
 				115AA9D92548553300F34713 /* MapOSC.hpp */,
 			);
 			path = osc;
-			sourceTree = "<group>";
-		};
-		216C66BE214BF2E1009BDD3B /* libo */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = libo;
 			sourceTree = "<group>";
 		};
 		21C0767A214D698B000F0AA4 /* camera */ = {
@@ -538,8 +492,7 @@
 				TargetAttributes = {
 					115AA9DE25485E6800F34713 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = 43QFH4NBN8;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					21038D13214AECB10078F594 = {
 						CreatedOnToolsVersion = 9.4.1;
@@ -601,30 +554,24 @@
 				2112A4B8214DA3A300EC1C11 /* cvglObject.cpp in Sources */,
 				114159AB23F940C600D15A30 /* cvglLookupFigure.cpp in Sources */,
 				21D87601215A6BB30068B7BD /* cvgl_main.cpp in Sources */,
-				2112A4B9214DA3A300EC1C11 /* OdotSelect.cpp in Sources */,
 				11FB9E9922A839F500599CC9 /* delabella.cpp in Sources */,
 				112CA10423F3232000C77524 /* plastisphereCue0.cpp in Sources */,
-				2112A4BA214DA3A300EC1C11 /* OdotAtom.cpp in Sources */,
-				2112A4BB214DA3A300EC1C11 /* OdotBundle_s.cpp in Sources */,
 				2112A4C1214DA3A300EC1C11 /* cvglTexture.cpp in Sources */,
 				2112A4C2214DA3A300EC1C11 /* cvglContext.cpp in Sources */,
 				21D87602215A6D070068B7BD /* cvglMainProcess.cpp in Sources */,
 				1151F2DB22B96F720099655F /* cvglCVCamera.cpp in Sources */,
 				2112A4C3214DA3A300EC1C11 /* cvglConversions.cpp in Sources */,
 				1140CAF623F5F842001D724D /* plastisphereCue1.cpp in Sources */,
-				2112A4C4214DA3A300EC1C11 /* OdotBundle.cpp in Sources */,
 				1151F2D522B9196C0099655F /* DeckLinkAPIDispatch.cpp in Sources */,
 				2112A4C5214DA3A300EC1C11 /* cvglConvexHull.cpp in Sources */,
 				1151F2D822B96C5D0099655F /* cvglDeckLinkCamera.cpp in Sources */,
 				112CA10223F3140E00C77524 /* cvglRandom.cpp in Sources */,
 				112CA0F823F311CA00C77524 /* cvglCues.cpp in Sources */,
-				2112A4C7214DA3A300EC1C11 /* OdotMessage.cpp in Sources */,
 				1149621D22C0AD6100F5B267 /* cvglUDPServer.cpp in Sources */,
 				114159AE23FAA56E00D15A30 /* cvglTheadPool.cpp in Sources */,
 				112CA0FB23F3128400C77524 /* cvglHelperFunctions.cpp in Sources */,
 				2112A4C8214DA3A300EC1C11 /* cvglVAO.cpp in Sources */,
 				2112A4C9214DA3A300EC1C11 /* cvglCV.cpp in Sources */,
-				2112A4CA214DA3A300EC1C11 /* OdotHash.cpp in Sources */,
 				1132E0A423EC8D1F00B81F65 /* cvglAnalysisData.cpp in Sources */,
 				2112A4CB214DA3A300EC1C11 /* glad.c in Sources */,
 				1151F2DF22B980990099655F /* cvglCameraBase.cpp in Sources */,
@@ -765,16 +712,31 @@
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 43QFH4NBN8;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-luv",
+					"-lopencv_highgui",
+					"-lopencv_photo",
+					"-lopencv_videoio",
+					"-lopencv_video",
+					"-lopencv_objdetect",
+					"-lopencv_imgcodecs",
+					"-lopencv_core",
+					"-lopencv_features2d",
+					"-lopencv_imgproc",
+					"-lglfw",
+					"-lo",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -804,6 +766,20 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-luv",
+					"-lopencv_highgui",
+					"-lopencv_photo",
+					"-lopencv_videoio",
+					"-lopencv_video",
+					"-lopencv_objdetect",
+					"-lopencv_imgcodecs",
+					"-lopencv_core",
+					"-lopencv_features2d",
+					"-lopencv_imgproc",
+					"-lglfw",
+					"-lo",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -895,6 +871,7 @@
 					"-lopencv_features2d",
 					"-lopencv_imgproc",
 					"-lglfw",
+					"-lo",
 				);
 				PRODUCT_NAME = "CVGL-plastisphere";
 				SDKROOT = macosx;
@@ -923,6 +900,7 @@
 					"-lopencv_features2d",
 					"-lopencv_imgproc",
 					"-lglfw",
+					"-lo",
 				);
 				PRODUCT_NAME = "CVGL-plastisphere";
 				SDKROOT = macosx;

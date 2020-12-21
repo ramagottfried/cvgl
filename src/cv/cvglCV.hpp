@@ -8,6 +8,8 @@
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/video/tracking.hpp"
+#include <opencv2/video/background_segm.hpp>
+#include <opencv2/core/ocl.hpp>
 
 #include "cvglObject.hpp"
 #include "cvglConversions.hpp"
@@ -39,6 +41,7 @@ public:
     void preprocessDifference();
     void preprocessCanny();
     
+    void getFlow();
         
 //    struct cvglAnalysisReturnStruct {
 //        std::vector< cv::Mat > contours;
@@ -72,7 +75,7 @@ public:
     
 
     
-    void getFlow(std::unique_ptr<cvglObject>& outFlow);
+    
     
     
     void analysisThread(AnalysisData data);
@@ -158,7 +161,13 @@ protected:
     cv::Mat m_er_element = cv::getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
     cv::Mat m_di_element = getStructuringElement( cv::MORPH_RECT, cv::Size(1,1), cv::Point(0,0) );
     
-    cv::Mat m_prev_points;
+    //cv::Mat m_prev_points;
+    std::vector<cv::Point2f> m_prev_points;
+    
+    size_t m_prev_n_flow_points = 0;
+    cv::Ptr<cv::BackgroundSubtractorMOG2> pBackSub = cv::createBackgroundSubtractorMOG2();
+    cv::Mat fgMask;
+
     
  //   std::vector<cv::Point2f>    m_prev_centroids;
  //   std::vector<int>            m_prev_centroid_id;

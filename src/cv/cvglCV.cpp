@@ -2,6 +2,7 @@
 #include "cvglCV.hpp"
 #include "cvglMainProcess.hpp"
 
+
 using namespace cv;
 using namespace std;
 
@@ -197,33 +198,182 @@ void cvglCV::preprocessCanny()
     
 }
 
+
 // not sure if this is a good idea, gl should probably be separated
-void cvglCV::getFlow( unique_ptr<cvglObject>& outFlow)
+void cvglCV::getFlow()
 {
     
-    Mat stat, err;
-    Mat defect_startpt;
+    //printf("hi \n");
     
-    // this is crashing
-    if( !m_prev_frame.empty() ){
-        calcOpticalFlowPyrLK( m_prev_frame, src_gray, m_prev_points, defect_startpt, stat, err);
-    }
-    m_prev_frame = src_gray.clone();
-    
-    
-    cout << defect_startpt.rows << " " << defect_startpt.cols << endl;
-    
-    if( !defect_startpt.empty() )
+    if( m_img.empty() )
     {
-        cout << defect_startpt.rows << " " << defect_startpt.cols << endl;
-        //cvgl::pointMatToVertex(defect_startpt, outFlow, m_img.cols/2.0f, m_img.rows/2.0f );
+        return;
     }
     
-    cout << "copy" << endl;
+    float resize = m_resize * 0.5;
+    cv::resize(m_img, src_color_sized, cv::Size(), resize, resize, cv::INTER_AREA);
+    cv::cvtColor(src_color_sized, src_gray, cv::COLOR_RGB2GRAY);
+    
+    if( m_prev_frame.empty() ){
+        m_prev_frame = src_gray.clone();
+        return;
+    }
+
+    pBackSub->apply(src_gray, fgMask);
+    
+    const double resize_scalar = 1.0 / resize;
+
+    Mat mask(src_gray.size(), CV_8UC1);
+
+    int maxCorners = 50;
+    maxCorners = MAX(maxCorners, 1);
+       vector<Point2f> corners;
+       double qualityLevel = 0.05;
+       double minDistance = 10;
+       int blockSize = 3, gradientSize = 3;
+       bool useHarrisDetector = false;
+       double k = 0.04;
+        if( m_prev_points.size() < 10 )
+        {
+            
+            //Mat can;
+            //cv::Canny(src_blur_gray, can, m_canny_min, m_canny_max, 3);
+            goodFeaturesToTrack( fgMask,
+                m_prev_points,
+                maxCorners,
+                qualityLevel,
+                minDistance,
+                mask,
+                blockSize,
+                gradientSize,
+                useHarrisDetector,
+                k );
+        }
+       
+    
+     //   cv::resize(mask, mask, cv::Size(), (1 / m_resize),  (1 / m_resize), cv::INTER_AREA);
+    
+       // add(m_img, mask, m_img);
+
+  //  bitwise_not(m_img,m_img, mask);
+
+        if( !m_prev_frame.empty() && m_prev_points.size() != 0 )
+        {
+
+            vector<uchar> status;
+            vector<float> err;
+
+            calcOpticalFlowPyrLK( m_prev_frame, fgMask, m_prev_points, corners, status, err);
+            
+            vector<Point2f> good_new;
+            
+
+            for(uint i = 0; i < m_prev_points.size(); i++)
+            {
+                // Select good points
+                if(status[i] == 1) {
+                    good_new.push_back(corners[i]);
+                    // draw the tracks
+                   // cout << corners[i] << endl;
+                    line(m_img,
+                         corners[i] * resize_scalar,
+                         m_prev_points[i] * resize_scalar,
+                         cv::Scalar(255,255,0), 1);
+                    auto diff = (corners[i] - m_prev_points[i]);
+                    float dist = cv::sqrt(diff.x*diff.x + diff.y*diff.y);
+
+                    circle(m_img, corners[i] * resize_scalar, 1, cv::Scalar(255,255,0, 0.5) * dist, -1);
+                }
+            }
+            
+            m_prev_points = good_new;
+
+        }
+    else
+    {
+        m_prev_points = corners;
+    }
+
     
     
+    /*
+        if( m_prev_n_flow_points != corners.size() ){
+           cout << "** Number of corners detected: " << corners.size() << endl;
+            m_prev_n_flow_points = corners.size();
+        }
+       int radius = 10;
+       for( size_t i = 0; i < corners.size(); i++ )
+       {
+           circle( m_img, corners[i] * (1 / m_resize), radius, Scalar(255,255,255), FILLED );
+       }
+    */
+
+    /*
+       @param prev first 8-bit single-channel input image.
+       @param next second input image of the same size and the same type as prev.
+       @param flow computed flow image that has the same size as prev and type CV_32FC2.
+       @param pyr_scale parameter, specifying the image scale (\<1) to build pyramids for each image;
+       pyr_scale=0.5 means a classical pyramid, where each next layer is twice smaller than the previous
+       one.
+       @param levels number of pyramid layers including the initial image; levels=1 means that no extra
+       layers are created and only the original images are used.
+       @param winsize averaging window size; larger values increase the algorithm robustness to image
+       noise and give more chances for fast motion detection, but yield more blurred motion field.
+       @param iterations number of iterations the algorithm does at each pyramid level.
+       @param poly_n size of the pixel neighborhood used to find polynomial expansion in each pixel;
+       larger values mean that the image will be approximated with smoother surfaces, yielding more
+       robust algorithm and more blurred motion field, typically poly_n =5 or 7.
+       @param poly_sigma standard deviation of the Gaussian that is used to smooth derivatives used as a
+       basis for the polynomial expansion; for poly_n=5, you can set poly_sigma=1.1, for poly_n=7, a
+       good value would be poly_sigma=1.5.
+       @param flags operation flags that can be a combination of the following:
+        -   **OPTFLOW_USE_INITIAL_FLOW** uses the input flow as an initial flow approximation.
+        -   **OPTFLOW_FARNEBACK_GAUSSIAN** uses the Gaussian \f$\texttt{winsize}\times\texttt{winsize}\f$
+            filter instead of a box filter of the same size for optical flow estimation; usually, this
+            option gives z more accurate flow than with a box filter, at the cost of lower speed;
+            normally, winsize for a Gaussian window should be set to a larger value to achieve the same
+            level of robustness.
+
+       The function finds an optical flow for each prev pixel using the @cite Farneback2003 algorithm so that
+       */
     
-    cout << "end" << endl;
+    /*
+    Mat flow(src_gray.size(), CV_32FC2);
+    double pyr_scale = 0.5;
+    int levels = 3;
+    int winsize = 25;
+                                               
+    int iterations = 3;
+    int poly_n = 7;
+    double poly_sigma = 1.5;
+                                               
+    int flags = OPTFLOW_USE_INITIAL_FLOW;
+   
+    calcOpticalFlowFarneback(m_prev_frame, src_gray, flow, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags);
+
+    for (int y = 0; y < m_prev_frame.rows; y += 5) {
+     for (int x = 0; x < m_prev_frame.cols; x += 5)  {
+         
+         // get the flow from y, x position * 10 for better visibility
+         const Point2f flowatxy = flow.at<Point2f>(y, x) * 10;
+         //cout << flowatxy << endl;
+              // draw line at flow direction
+        if( flowatxy == flowatxy )
+        {
+            line(m_img,
+                  Point(x, y) * resize_scalar,
+                  Point( cvRound(x + flowatxy.x), cvRound(y + flowatxy.y) ) * resize_scalar,
+                  Scalar(255,0,0) );
+             // draw initial point
+            // circle(m_img, Point(x, y) * resize_scalar, 1, Scalar(0, 0, 0), -1);
+        }
+       
+     }
+    }
+*/
+    m_prev_frame = fgMask.clone();
+
+    
 }
 
 AnalysisData cvglCV::analyzeContour()
@@ -232,7 +382,7 @@ AnalysisData cvglCV::analyzeContour()
 
     if( threshold_output.empty() )
     {
-        cout << "no image" << endl;
+       // cout << "no image" << endl;
         return data;
     }
     
@@ -293,6 +443,7 @@ void cvglCV::analysisThread(AnalysisData data)
 {
     unique_lock<mutex> lock(m_lock);
     const AnalysisData prev_data = m_prev_data;
+    vector<int> id_used = m_id_used;
     m_lock.unlock();
     
     int nchans = src_color_sized.channels();
@@ -485,7 +636,7 @@ void cvglCV::analysisThread(AnalysisData data)
         
         for( int i = 0; i < data.centroids.size(); i++ )
         {
-            m_id_used[i] = 1;
+            id_used[i] = 1;
             data.id.emplace_back(i);
             data.id_idx.emplace(i, i);
             
@@ -547,7 +698,7 @@ void cvglCV::analysisThread(AnalysisData data)
             else
             {
                 // not found, so fee the id slot
-                m_id_used[ prev_data.id[j] ] = 0;
+                id_used[ prev_data.id[j] ] = 0;
                 data.noteOff_prev_idx.emplace_back(j);
             }
             
@@ -560,13 +711,13 @@ void cvglCV::analysisThread(AnalysisData data)
             {
                 for( int n = 0; n < m_maxIDs; n++ )
                 {
-                    if( m_id_used[n] == 0)
+                    if( id_used[n] == 0)
                     {
                         data.id[i] = n;
                         data.id_idx.emplace(n, i);
                         data.noteOn_idx.emplace_back(i);
 
-                        m_id_used[n] = 1;
+                        id_used[n] = 1;
                         break;
                     }
                 }
@@ -595,6 +746,7 @@ void cvglCV::analysisThread(AnalysisData data)
     
     m_lock.lock();
     m_prev_data = data;
+    m_id_used = id_used;
     m_lock.unlock();
     
 }

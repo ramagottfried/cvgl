@@ -66,7 +66,7 @@ private:
     int m_cue_idx = 0;
     
     int m_use_camera_id = 1;
-    int m_use_preprocess = 0;
+    int m_use_preprocess = 4;
     
     std::mutex m_gl_lock, m_osc_lock;
     

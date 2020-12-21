@@ -61,5 +61,7 @@ private:
     std::mutex m_mutex;
    // OdotBundle m_state_bundle;
     
+    std::vector<char> m_overflowMessage;
+    
     
 };

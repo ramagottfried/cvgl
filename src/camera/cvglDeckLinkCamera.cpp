@@ -11,11 +11,14 @@ cvglDeckLinkCamera::cvglDeckLinkCamera(int index) : m_refCount(1)
         
         m_opencamera = true;
         
+        
+        m_thread_pool = std::make_unique<ThreadPool>(2);
+
         // lock and wait for auto-detection to update
-        cout << "checking for lock " << endl;
+        printf("checking for lock \n");
         
         lock_guard<mutex> lock(m_mutex);
-        cout << "exiting mutex lock with size : " << m_width << " " << m_height << endl;
+        printf("exiting mutex lock with size : %d %d\n" , m_width, m_height);
         
         init_softlock = false;
         pause();
@@ -357,7 +360,7 @@ HRESULT STDMETHODCALLTYPE cvglDeckLinkCamera::VideoInputFrameArrived (IDeckLinkV
     
     if( init_softlock )
     {
-        std::cout << "waiting for init" << std::endl;
+        printf("waiting for init\n");
         return S_OK;
     }
     
@@ -388,8 +391,15 @@ HRESULT STDMETHODCALLTYPE cvglDeckLinkCamera::VideoInputFrameArrived (IDeckLinkV
                 note: processFrameCallback may take ownership of Mat
          */
         if( blackmagic && m_processFrameCallback )
-            m_processFrameCallback( mRGB );
-        
+             m_thread_pool->enqueue([&](cv::Mat _data){ m_processFrameCallback(_data);}, std::move(mRGB));
+            //m_processFrameCallback( mRGB );
+
+           // m_thread_pool->enqueue([&](cv::Mat _data){ m_processFrameCallback(_data);}, std::move(mRGB));
+           // m_processFrameCallback( mRGB );
+
+        // changed to making a copy with the thread pool, maybe 
+
+
         //checkFrameOrderEnde();
     }
     

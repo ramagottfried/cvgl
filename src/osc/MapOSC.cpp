@@ -1,9 +1,10 @@
 #include "MapOSC.hpp"
 #include "osc_bundle_iterator_s.h"
 #include "osc_message_iterator_s.h"
-#include "osc_mem.h"
 #include "osc.h"
 #include "osc_util.h"
+//#include "osc_mem.h"
+
 
 // typedef std::variant<float, double, int32_t, int64_t, char, bool, std::string> AtomVar_t;
 char MapAtom::getOSCTypeTag()
@@ -74,11 +75,13 @@ void MapOSC::inputOSC( long len, char * ptr )
                     break;
                 case 's':
                     {
-                        char *buf = NULL;
-                        osc_atom_s_getString(a, 0, &buf); // allocates memory and makes a copy
-                        newVec.appendValue( std::string(buf) );
+                        //char buf[ strlen(osc_atom_s_getData(a)) ];
+                        //char *ptr = buf;
+                        //osc_atom_s_getString(a, 0, &ptr); // allocates memory and makes a copy
+//                        printf("test %s \n", std::string(osc_atom_s_getData(a)).c_str() );
+                        newVec.appendValue( std::string(osc_atom_s_getData(a)) );
                         
-                        osc_mem_free(buf);
+                     //   osc_mem_free(buf);
                     }
                     break;
                 case 'c':
@@ -263,7 +266,7 @@ size_t serializeVector( char *buf, size_t n, const char * address, std::vector<M
     return _n;
 }
 
-
+/*
 t_osc_bundle_s* MapOSC::getBundle()
 {
     size_t len = getMapOSCSize();
@@ -285,6 +288,7 @@ t_osc_bundle_s* MapOSC::getBundle()
     return osc_bundle_s_alloc(_n, ptr);
    
 }
+ */
 
 void MapOSC::serializeIntoBuffer(char *ptr, size_t size )
 {

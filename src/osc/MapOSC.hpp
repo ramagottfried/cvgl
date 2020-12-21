@@ -1,6 +1,6 @@
 #pragma once
 
-#include "osc_bundle_s.h"
+//#include "osc_bundle_s.h"
 
 #include <unordered_map>
 #include <string>
@@ -167,10 +167,17 @@ public:
     
     void inputOSC( long len, char * ptr  );
      
-    t_osc_bundle_s *getBundle();
+    //t_osc_bundle_s *getBundle();
+    
     
     size_t getMapOSCSize();
-    // expert mode! requires having your own buffer of the right size
+    
+    /**
+     need to call getMapOSCSize() first to get size of OSC buffer
+     then allocate the memory for the buffer your self
+     then you can send the char * ptr to serializeIntoBuffer() to do the serialization,
+     along with the size you got from the getMapOSCSize() call.
+     */
     void serializeIntoBuffer(char * ptr, size_t size );
     
 

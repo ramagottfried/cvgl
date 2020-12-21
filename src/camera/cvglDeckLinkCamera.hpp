@@ -8,7 +8,7 @@
 
 #include "opencv2/imgproc.hpp"
 #include "cvglCameraBase.hpp"
-
+#include "cvglTheadPool.hpp"
 
 class cvglDeckLinkCamera : public cvglCameraBase, public IDeckLinkInputCallback
 {
@@ -63,5 +63,8 @@ private:
         if( m_framecount != m_next_framecount)
             printf("******* camera backup *******\n");
     }
+    
+    std::unique_ptr<ThreadPool>  m_thread_pool;
+
     
 };

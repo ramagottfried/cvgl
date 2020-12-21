@@ -135,14 +135,17 @@ void cvglMainProcess::receivedBundle( MapOSC & b )
     // >>>> maybe not necessary to do data analysis here? ... seems maybe reasonable to me
     
     MapOSC out = m_cues.procDataAndMixer(m_data, m_mixer, b);
-    
    
-    setCVParams(b);
-    setMainParams(b);
-    
-    
     // on input process OSC with current data and mixer (with osc lock)
     sendBundle( out );
+    
+    setCVParams(b);
+    
+    // seems like this should be locked to avoid reading the values in the draw loop, but it's hanging...
+    
+    //unique_lock<mutex> lock(m_gl_lock);
+    setMainParams(b);
+   
 }
 
 /**
@@ -174,7 +177,7 @@ void cvglMainProcess::setMainParams( MapOSC & b )
         else if( addr == "/use/preprocess" )
         {
             m_use_preprocess = val.getInt();
-            cout << "setting preprocess to " << m_use_preprocess << " " << val.getInt() << endl;
+         //   cout << "setting preprocess to " << m_use_preprocess << " " << val.getInt() << endl;
         }
         else if( addr == "/enable/contour" )
         {
@@ -232,41 +235,60 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 {
     if( m_use_camera_id == camera_id )
     {
-        unique_lock<mutex> lock(m_gl_lock);
+        {
+            unique_lock<mutex> lock(m_gl_lock);
+            
+            if( !frame.data || !objects_initialized )
+                return;
+            
+            m_newframe = true;
+            setFrame(frame); // takes ownership of frame in local storage m_img
+            // note that any graphics processing to display needs to happen here, otherwise, the frame is not redrawn...
+            getFlow();
+
+        }
         
-        if( !frame.data || !objects_initialized )
-            return;
         
-        m_newframe = true;
-        setFrame(frame); // takes ownership of frame in local storage m_img
+        AnalysisData data;
         
-        unique_lock<mutex> lock_osc(m_osc_lock);
-        
-       // profile.markStart();
-        // pre-processes inherited from cvglCV
-        switch (m_use_preprocess) {
-            case 0:
-                preprocess();
-                break;
-            case 1:
-                preprocessDifference();
-                break;
-            case 2:
-                preprocessCanny(); // << really slow! (now a bit faster after using move above)
-                break;
-            default:
-                break;
+        {
+            unique_lock<mutex> lock_osc(m_osc_lock);
+            
+           // profile.markStart();
+            // pre-processes inherited from cvglCV
+            switch (m_use_preprocess) {
+                case 0:
+                    preprocess();
+                    break;
+                case 1:
+                    preprocessDifference();
+                    break;
+                case 2:
+                    preprocessCanny(); // << really slow! (now a bit faster after using move above)
+                    break;
+                case 3:
+//                    getFlow();
+                default:
+                    break;
+            }
+            
+            //data = analyzeContour();
+            m_data = data;
+            
         }
         //    cvx.getFlow( flowMesh );
        // profile.markEnd("preproc");
         
         //profile.markStart();
-        AnalysisData data = analyzeContour();
+        
         //profile.markEnd("analyzeContour");
         
-        analysisToGL( data );
+        {
+            unique_lock<mutex> lock(m_gl_lock);
+            analysisToGL( data );
         
-        m_data = data;
+        }
+        
     }
     
 }
@@ -278,9 +300,12 @@ void cvglMainProcess::processFrame(cv::Mat & frame, int camera_id )
 void cvglMainProcess::processAnalysis(const AnalysisData& data)
 {
     // on new data, process with mixer (no osc lock?)
-    unique_lock<mutex> lock_osc(m_osc_lock);
-    MapOSC out = m_cues.procDataAndMixer(data, m_mixer);
+    MapOSC out;
     
+    {
+        unique_lock<mutex> lock_osc(m_osc_lock);
+        out = m_cues.procDataAndMixer(data, m_mixer);
+    }
    // m_thread_pool->enqueue([this](OdotBundle b){ sendBundle( b );}, out);
 
     sendBundle( out );
