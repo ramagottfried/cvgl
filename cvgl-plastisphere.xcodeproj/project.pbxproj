@@ -23,6 +23,7 @@
 		1151F2D822B96C5D0099655F /* cvglDeckLinkCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2D622B96C5D0099655F /* cvglDeckLinkCamera.cpp */; };
 		1151F2DB22B96F720099655F /* cvglCVCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2D922B96F720099655F /* cvglCVCamera.cpp */; };
 		1151F2DF22B980990099655F /* cvglCameraBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1151F2DD22B980990099655F /* cvglCameraBase.cpp */; };
+		115A15D92590E01400B74B49 /* cvglGaussian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115A15D72590E01400B74B49 /* cvglGaussian.cpp */; };
 		115AA9DA2548553300F34713 /* MapOSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115AA9D82548553300F34713 /* MapOSC.cpp */; };
 		115AA9E225485E6800F34713 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115AA9E125485E6800F34713 /* main.cpp */; };
 		115AA9E62548B64400F34713 /* MapOSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 115AA9D82548553300F34713 /* MapOSC.cpp */; };
@@ -108,6 +109,8 @@
 		1151F2DA22B96F720099655F /* cvglCVCamera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCVCamera.hpp; sourceTree = "<group>"; };
 		1151F2DD22B980990099655F /* cvglCameraBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglCameraBase.cpp; sourceTree = "<group>"; };
 		1151F2DE22B980990099655F /* cvglCameraBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCameraBase.hpp; sourceTree = "<group>"; };
+		115A15D72590E01400B74B49 /* cvglGaussian.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglGaussian.cpp; sourceTree = "<group>"; };
+		115A15D82590E01400B74B49 /* cvglGaussian.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglGaussian.hpp; sourceTree = "<group>"; };
 		115AA9D82548553300F34713 /* MapOSC.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MapOSC.cpp; sourceTree = "<group>"; };
 		115AA9D92548553300F34713 /* MapOSC.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MapOSC.hpp; sourceTree = "<group>"; };
 		115AA9DF25485E6800F34713 /* tester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tester; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -361,6 +364,8 @@
 				21038D0E214AD2A20078F594 /* cvglConvexHull.hpp */,
 				1132E0A223EC8D1F00B81F65 /* cvglAnalysisData.cpp */,
 				1132E0A323EC8D1F00B81F65 /* cvglAnalysisData.hpp */,
+				115A15D72590E01400B74B49 /* cvglGaussian.cpp */,
+				115A15D82590E01400B74B49 /* cvglGaussian.hpp */,
 			);
 			path = cv;
 			sourceTree = "<group>";
@@ -563,6 +568,7 @@
 				2112A4C3214DA3A300EC1C11 /* cvglConversions.cpp in Sources */,
 				1140CAF623F5F842001D724D /* plastisphereCue1.cpp in Sources */,
 				1151F2D522B9196C0099655F /* DeckLinkAPIDispatch.cpp in Sources */,
+				115A15D92590E01400B74B49 /* cvglGaussian.cpp in Sources */,
 				2112A4C5214DA3A300EC1C11 /* cvglConvexHull.cpp in Sources */,
 				1151F2D822B96C5D0099655F /* cvglDeckLinkCamera.cpp in Sources */,
 				112CA10223F3140E00C77524 /* cvglRandom.cpp in Sources */,

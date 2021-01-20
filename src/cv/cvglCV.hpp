@@ -142,7 +142,7 @@ protected:
     cv::Mat m_img, m_prev_frame;
     cv::Mat src_color_sized, threshold_output, src_gray, src_blur_gray, sob;
     
-    float m_resize = 0.5;
+    float m_resize = 0.5; // { (512. / 1920), (512. / 1080.) };
     
     bool m_invert = false;
     int m_thresh = 102;
