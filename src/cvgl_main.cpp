@@ -2,7 +2,7 @@
 #include "cvglMainProcess.hpp"
 #include "cvglCVCamera.hpp"
 #include "cvglDeckLinkCamera.hpp"
-
+#include "cvglVideoPlayer.hpp"
 
 int main( void )
 {
@@ -16,7 +16,8 @@ int main( void )
     cvglDeckLinkCamera bm_cam(2);
     //cvglDeckLinkCamera bm_cam2(2);
     
-    cvglCVCamera cvcam(1);
+    //cvglCVCamera cvcam(1);
+    cvglVideoPlayer cvcam("/Users/r/Movies/MAH00404.MP4");
    
     if( bm_cam.hasCamera() )
     {

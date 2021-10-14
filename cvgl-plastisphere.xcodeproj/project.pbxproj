@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		112936562716D4CC00B641DA /* cvglVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112936542716D4CC00B641DA /* cvglVideoPlayer.cpp */; };
 		112CA0F823F311CA00C77524 /* cvglCues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA0F623F311CA00C77524 /* cvglCues.cpp */; };
 		112CA0FB23F3128400C77524 /* cvglHelperFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA0F923F3128400C77524 /* cvglHelperFunctions.cpp */; };
 		112CA0FF23F312E300C77524 /* cvglMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112CA0FD23F312E300C77524 /* cvglMixer.cpp */; };
@@ -84,6 +85,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		112936542716D4CC00B641DA /* cvglVideoPlayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglVideoPlayer.cpp; sourceTree = "<group>"; };
+		112936552716D4CC00B641DA /* cvglVideoPlayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglVideoPlayer.hpp; sourceTree = "<group>"; };
 		112CA0F623F311CA00C77524 /* cvglCues.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglCues.cpp; sourceTree = "<group>"; };
 		112CA0F723F311CA00C77524 /* cvglCues.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cvglCues.hpp; sourceTree = "<group>"; };
 		112CA0F923F3128400C77524 /* cvglHelperFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cvglHelperFunctions.cpp; sourceTree = "<group>"; };
@@ -324,6 +327,8 @@
 				21C0768E214D6D4F000F0AA4 /* platform.h */,
 				1151F2D922B96F720099655F /* cvglCVCamera.cpp */,
 				1151F2DA22B96F720099655F /* cvglCVCamera.hpp */,
+				112936542716D4CC00B641DA /* cvglVideoPlayer.cpp */,
+				112936552716D4CC00B641DA /* cvglVideoPlayer.hpp */,
 				1151F2DD22B980990099655F /* cvglCameraBase.cpp */,
 				1151F2DE22B980990099655F /* cvglCameraBase.hpp */,
 				21D875FB215A5CC20068B7BD /* old */,
@@ -576,6 +581,7 @@
 				1149621D22C0AD6100F5B267 /* cvglUDPServer.cpp in Sources */,
 				114159AE23FAA56E00D15A30 /* cvglTheadPool.cpp in Sources */,
 				112CA0FB23F3128400C77524 /* cvglHelperFunctions.cpp in Sources */,
+				112936562716D4CC00B641DA /* cvglVideoPlayer.cpp in Sources */,
 				2112A4C8214DA3A300EC1C11 /* cvglVAO.cpp in Sources */,
 				2112A4C9214DA3A300EC1C11 /* cvglCV.cpp in Sources */,
 				1132E0A423EC8D1F00B81F65 /* cvglAnalysisData.cpp in Sources */,
@@ -637,7 +643,7 @@
 					"$(SRCROOT)/../libo",
 					"\"$(SRCROOT)/../Blackmagic DeckLink SDK 11.2/Mac/include\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/usr/local/Cellar/eigen/3.3.7/include/eigen3,
+					/usr/local/Cellar/eigen/3.3.9/include/eigen3,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/../libo",
@@ -686,7 +692,7 @@
 					"$(SRCROOT)/../libo",
 					"\"$(SRCROOT)/../Blackmagic DeckLink SDK 11.2/Mac/include\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/usr/local/Cellar/eigen/3.3.7/include/eigen3,
+					/usr/local/Cellar/eigen/3.3.9/include/eigen3,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/../libo",
